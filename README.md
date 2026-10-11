@@ -9,8 +9,7 @@
 ### 1. Cloner le dépôt GitHub
 
 ```bash
-git clone [<URL_DU_REPOSITORY>](https://github.com/husseindakroube/IADATA701-PROJET.git)
-cd IADATA701-PROJET
+git clone [https://github.com/husseindakroube/IADATA701-PROJET.git]
 ```
 
 ### 2. Installer les dépendances
