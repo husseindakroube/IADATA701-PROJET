@@ -11,18 +11,18 @@ st.set_page_config(
     page_icon=str(IMAGES_PATH / "TGV_icon.png"),
     layout="wide",
 )
-col_logo, col_title = st.columns(
+Logo_title, title_title = st.columns(
     [2, 6],
     gap="small",
     vertical_alignment="center",
 )
 
-with col_logo:
+with Logo_title:
     st.image(
         str(IMAGES_PATH / "TGV_title.png"),
         width=190,
     )
-with col_title:
+with title_title:
     st.html(
         '<h1 class="hero-title">TGVision</h1>'
     )
