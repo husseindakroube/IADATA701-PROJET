@@ -1,9 +1,10 @@
-import streamlit as st
 from pathlib import Path
+
+import streamlit as st
 
 GLOBAL_Path = Path(__file__).resolve().parent
 IMAGES_PATH = GLOBAL_Path.parent.parent / "images"
-CSS_FILE = GLOBAL_Path.parent/ "styles" / "style.css"
+CSS_FILE = GLOBAL_Path.parent / "styles" / "style.css"
 
 st.html(CSS_FILE)
 
@@ -46,7 +47,8 @@ with title_title:
         """
     )
 
-st.markdown("""
+st.markdown(
+    """
 
 <div style="
     height: 3px;
@@ -59,21 +61,20 @@ st.markdown("""
     border-radius: 3px;
     margin: 20px 0;
 "></div>
-""", unsafe_allow_html=True)
-
-st.html(
-     '<p class="section-title">'
-     "Bienvenue sur TGVision, une plateforme interactive dédiée à l'analyse de la ponctualité des TGV en France."
-     '</p>'
- )
-
-st.html(
-    '<p class="main-label">'
-        "DÉCOUVRIR TGVISION"
-    '</p>'
+""",
+    unsafe_allow_html=True,
 )
 
-st.markdown("""
+st.html(
+    '<p class="section-title">'
+    "Bienvenue sur TGVision, une plateforme interactive dédiée à l'analyse de la ponctualité des TGV en France."
+    "</p>"
+)
+
+st.html('<p class="main-label">DÉCOUVRIR TGVISION</p>')
+
+st.markdown(
+    """
 <style>
 .st-key-story_expander [data-testid="stExpander"] summary p {
     font-size: 2rem;
@@ -85,15 +86,14 @@ st.markdown("""
     -webkit-background-clip: text;
 }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 with st.container(key="story_expander"):
-    with st.expander(
-        "Derrière chaque retard, il y a une histoire ?",
-        expanded=False
-    ):
+    with st.expander("Derrière chaque retard, il y a une histoire ?", expanded=False):
         st.html(
-    """
+            """
     <section class="story-section">
         <p class="story-text">
             Le train ne relie pas seulement des villes. Il rapproche les personnes et accompagne les moments importants de nos vies.
@@ -117,39 +117,26 @@ with st.container(key="story_expander"):
         </p>
     </section>
     """
-)
+        )
 
 st.header("Notre problématique")
 st.write("XXXXXXXXXXXXX")
 
-st.info(
-    "**I. XXX :** XXXXXXX\n\n"
-    "**II. XXX :** XXXXXX\n\n"
-    "**III. XXXXX :** XXXXX "
-)
+st.info("**I. XXX :** XXXXXXX\n\n**II. XXX :** XXXXXX\n\n**III. XXXXX :** XXXXX ")
 
 st.header("Notre problématique -- ")
 st.markdown("XXXX")
 
 col1, col2, col3 = st.columns(3)
 
-with col1:
-    with st.container(border=True):
-        st.subheader("🚆 XXXXXXX")
-        st.write(
-            "XXXXXXXX"
-        )
+with col1, st.container(border=True):
+    st.subheader("🚆 XXXXXXX")
+    st.write("XXXXXXXX")
 
-with col2:
-    with st.container(border=True):
-        st.subheader("🚉 XXXXXXXX")
-        st.write(
-            "XXXXXXX"
-        )
+with col2, st.container(border=True):
+    st.subheader("🚉 XXXXXXXX")
+    st.write("XXXXXXX")
 
-with col3:
-    with st.container(border=True):
-        st.subheader("🚅 XXXXXXXX")
-        st.write(
-            "XXXXXX"
-        )
+with col3, st.container(border=True):
+    st.subheader("🚅 XXXXXXXX")
+    st.write("XXXXXX")
