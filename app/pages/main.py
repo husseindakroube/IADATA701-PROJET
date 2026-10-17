@@ -2,16 +2,10 @@ import streamlit as st
 from pathlib import Path
 
 GLOBAL_Path = Path(__file__).resolve().parent
-IMAGES_PATH = GLOBAL_Path.parent / "images"
-CSS_FILE = GLOBAL_Path / "styles" / "style.css"
+IMAGES_PATH = GLOBAL_Path.parent.parent / "images"
+CSS_FILE = GLOBAL_Path.parent/ "styles" / "style.css"
 
 st.html(CSS_FILE)
-
-st.set_page_config(
-    page_title="RailInsight | SNCF TGV",
-    page_icon=str(IMAGES_PATH / "TGV_icon.png"),
-    layout="wide",
-)
 
 title_title, Logo_title = st.columns(
     [1, 1.4],

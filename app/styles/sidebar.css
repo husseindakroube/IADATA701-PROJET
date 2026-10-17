@@ -1,0 +1,90 @@
+
+[data-testid="stSidebar"] {
+    background: linear-gradient(
+        180deg,
+        #20252f 0%,
+        #1c2230 55%,
+        #17242d 100%
+    );
+    border-right: 1px solid #35424d;
+}
+
+.sidebar-brand {
+    padding: 18px 10px 26px;
+}
+
+.brand-name {
+    font-size: 27px;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+
+    background: linear-gradient(
+        90deg,
+        #43cfad,
+        #64cced,
+        #8da5ff
+    );
+
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.brand-subtitle {
+    font-size: 10px;
+    letter-spacing: 1.7px;
+    color: #8997ac;
+    margin-top: 9px;
+}
+
+[data-testid="stSidebar"]
+[data-testid="stPageLink"] a {
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin: 5px 0;
+
+    color: #b9c5d3;
+    border: 1px solid transparent;
+
+    transition: all 0.2s ease;
+}
+
+[data-testid="stSidebar"]
+[data-testid="stPageLink"] a:hover {
+    background: rgba(63, 180, 170, 0.12);
+    border-color: rgba(63, 180, 170, 0.25);
+    color: #ffffff;
+    transform: translateX(3px);
+}
+
+[data-testid="stSidebar"]
+[data-testid="stPageLink"]
+a[aria-current="page"] {
+    background: linear-gradient(
+        90deg,
+        rgba(44, 125, 103, 0.38),
+        rgba(62, 62, 201, 0.20)
+    );
+
+    border-left: 3px solid #45d6b3;
+    border-radius: 12px;
+    color: #ffffff;
+    font-weight: 650;
+}
+
+[data-testid="stSidebar"] .stCaption {
+    letter-spacing: 1px;
+}
+
+.siderbar-line {
+    margin: 0;
+    padding: 0 8px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.siderbar-offset {
+    display: block;
+    white-space: nowrap;
+    margin-left: 30px;
+}
