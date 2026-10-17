@@ -132,11 +132,21 @@ col1, col2, col3 = st.columns(3)
 with col1, st.container(border=True):
     st.subheader("🚆 XXXXXXX")
     st.write("XXXXXXXX")
+    st.page_link(
+        "pages/page1.py",
+        label="XXXXXXX →",
+    )
 
 with col2, st.container(border=True):
     st.subheader("🚉 XXXXXXXX")
     st.write("XXXXXXX")
+    st.page_link(
+        "pages/page2.py",
+        label="XXXXXXX →",
+    )
 
 with col3, st.container(border=True):
     st.subheader("🚅 XXXXXXXX")
     st.write("XXXXXX")
+    if st.button("Découvrir →", key="page3_button"):
+        st.switch_page("pages/page3.py")
