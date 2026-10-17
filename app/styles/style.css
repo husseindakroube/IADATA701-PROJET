@@ -33,7 +33,7 @@
 .main-description {
     font-size: 1.4rem;
     color: #e8edf5;
-    line-height: 1.8;
+    line-height: 1.6;
     max-width: 550px;
     margin-top: 25px;
 }
@@ -59,15 +59,17 @@
 }
 
 .story-section {
-    max-width: 900px;
+    width: 100%;
+    max-width: none;
     padding: 15px 0;
+    box-sizing: border-box;
 }
 
 .story-text {
     font-size: 1.15rem;
     font-weight: 400;
     color: #e8edf5;
-    line-height: 1.85;
+    line-height: 1.6;
     text-align: justify;
     text-wrap: pretty;
     hyphens: auto;

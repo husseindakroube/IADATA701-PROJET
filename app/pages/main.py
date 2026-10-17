@@ -8,6 +8,14 @@ CSS_FILE = GLOBAL_Path.parent / "styles" / "style.css"
 
 st.html(CSS_FILE)
 
+st.markdown("""
+<style>
+    .block-container {
+        padding-top: 0rem !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 title_title, Logo_title = st.columns(
     [1, 1.4],
     gap="large",
@@ -17,7 +25,7 @@ title_title, Logo_title = st.columns(
 with Logo_title:
     st.image(
         str(IMAGES_PATH / "TGV_title.png"),
-        width="stretch",
+        width="content",
     )
 
 with title_title:
@@ -91,7 +99,7 @@ st.markdown(
 )
 
 with st.container(key="story_expander"):
-    with st.expander("Derrière chaque retard, il y a une histoire ?", expanded=False):
+    with st.expander("Et si chaque retard racontait une histoire ?", expanded=False):
         st.html(
             """
     <section class="story-section">

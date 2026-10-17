@@ -31,42 +31,81 @@ pages = [
 
 pg = st.navigation(pages, position="hidden")
 
+st.markdown("""
+<style>
+    [data-testid="stLogoSpacer"] {
+        height: 0 !important;
+    }
+
+    [data-testid="stSidebarHeader"] {
+        height: 3rem !important;
+        margin-bottom: 0 !important;
+    }
+
+    [data-testid="stSidebarUserContent"] {
+        padding-top: 0 !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 with st.sidebar:
-    st.markdown(
-        '<h2 class="main-title">🚄 TGVision</h2>', 
-         unsafe_allow_html=True
-        )
-    st.caption("LE RAIL À TRAVERS LES DONNÉES")
-    st.divider()
-    st.html(
-        """
-           <p class = "main-label">
-              NAVIGATION
-           </p>
-        """
+
+    with st.container(key="sidebar_body"):
+
+        Logo_title, title_title = st.columns(
+           [1, 1.8],
+           gap=None,
+           vertical_alignment="center",
+         )
+
+        with Logo_title:
+           st.image(
+           str(IMAGES_PATH / "SNCF_logo.png"),
+           width="content",
     )
+        with title_title:
+            st.html("""
+            <h2 class="main-title" style="font-size: 2.4rem; margin: 0;">TGVision</h2>
+            """)
 
-    for page in pages:
-        st.page_link(page)
-
-    st.divider()
-    st.caption("SNCF TGV · Data Analytics")
-    with st.expander("🎬 Découvrez la SNCF", expanded=False):
-        st.video(VIDEO_PATH / "Le groupe SNCF en bref.mp4")
         st.html("""
-             <p class="siderbar-line">
-                Découvrez le groupe SNCF et son rôle
-                <span class= "siderbar-offset">
-                  dans la mobilité en France.
-                </span>
-             </p>
-             """)
+            <p class="main-label" style = "white-space: nowrap; margin : 0;">
+                LE RAIL SOUS UN NOUVEAU REGARD
+            </p>
+            """
+        )
 
-    st.audio(
-    AUDIT_PATH / "just keep tootin.mp3",
-    format="audio/mpeg",
-    autoplay=True,
-    loop=True
-)
+        st.divider()
+
+        st.html("""
+            <p class="section-title">
+                NAVIGATION
+            </p>
+        """)
+
+        for page in pages:
+            st.page_link(page)
+
+        st.divider()
+
+        with st.expander("🎬 Découvrez la SNCF", expanded=True):
+
+            st.video(VIDEO_PATH / "Le groupe SNCF en bref.mp4")
+
+            st.html("""
+                <p class="sidebar-line">
+                    Découvrez le groupe SNCF et son rôle
+                    <span class="sidebar-offset">
+                        dans la mobilité en France.
+                    </span>
+                </p>
+            """)
+
+        st.audio(
+            AUDIT_PATH / "just keep tootin.mp3",
+            format="audio/mpeg",
+            autoplay=True,
+            loop=True
+        )
 
 pg.run()
