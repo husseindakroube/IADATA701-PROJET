@@ -1,5 +1,5 @@
 
-.sidebar-body{
+section:has(.st-key-sidebar-body){
     background: linear-gradient(
         180deg,
         #20252f 0%,
@@ -9,39 +9,10 @@
     border-right: 1px solid #35424d;
 }
 
-.sidebar-brand {
-    padding: 18px 10px 26px;
-}
-
-.brand-name {
-    font-size: 27px;
-    font-weight: 800;
-    letter-spacing: -0.8px;
-
-    background: linear-gradient(
-        90deg,
-        #43cfad,
-        #64cced,
-        #8da5ff
-    );
-
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.brand-subtitle {
-    font-size: 10px;
-    letter-spacing: 1.7px;
-    color: #8997ac;
-    margin-top: 9px;
-}
-
-[data-testid="stSidebar"]
-[data-testid="stPageLink"] a {
-    border-radius: 12px;
+.st-key-sidebar-button a{
+    border-radius: 10px;
     padding: 12px 14px;
-    margin: 5px 0;
+    margin: 4px 0;
 
     color: #b9c5d3;
     border: 1px solid transparent;
@@ -49,17 +20,14 @@
     transition: all 0.2s ease;
 }
 
-[data-testid="stSidebar"]
-[data-testid="stPageLink"] a:hover {
+.st-key-sidebar-button a:hover {
     background: rgba(63, 180, 170, 0.12);
     border-color: rgba(63, 180, 170, 0.25);
     color: #ffffff;
     transform: translateX(3px);
 }
 
-[data-testid="stSidebar"]
-[data-testid="stPageLink"]
-a[aria-current="page"] {
+.st-key-sidebar-button .st-key-active-page a {
     background: linear-gradient(
         90deg,
         rgba(44, 125, 103, 0.38),
@@ -70,10 +38,6 @@ a[aria-current="page"] {
     border-radius: 12px;
     color: #ffffff;
     font-weight: 650;
-}
-
-[data-testid="stSidebar"] .stCaption {
-    letter-spacing: 1px;
 }
 
 .siderbar-line {

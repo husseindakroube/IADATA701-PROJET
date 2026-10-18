@@ -50,7 +50,7 @@ st.markdown("""
 
 with st.sidebar:
 
-    with st.container(key="sidebar_body"):
+    with st.container(key="sidebar-body"):
 
         Logo_title, title_title = st.columns(
            [1, 1.8],
@@ -83,8 +83,17 @@ with st.sidebar:
             </p>
         """)
 
-        for page in pages:
-            st.page_link(page)
+        # for page in pages:
+        #     st.page_link(page)
+
+        with st.container(key="sidebar-button"):
+             for page in pages:
+
+              if page.url_path == pg.url_path:
+                  with st.container(key="active-page"):
+                       st.page_link(page)
+              else:
+                  st.page_link(page)
 
         st.divider()
 

@@ -1,12 +1,14 @@
 from pathlib import Path
-
 import streamlit as st
+#from app.utils.styles import load_stylecss
+
 
 GLOBAL_Path = Path(__file__).resolve().parent
 IMAGES_PATH = GLOBAL_Path.parent.parent / "images"
 CSS_FILE = GLOBAL_Path.parent / "styles" / "style.css"
 
 st.html(CSS_FILE)
+#load_stylecss()
 
 st.markdown("""
 <style>
