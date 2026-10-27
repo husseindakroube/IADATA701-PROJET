@@ -5,9 +5,11 @@ import streamlit as st
 
 GLOBAL_Path = Path(__file__).resolve().parent
 IMAGES_PATH = GLOBAL_Path.parent.parent / "images"
-CSS_FILE = GLOBAL_Path.parent / "styles" / "style.css"
+Style_CSS_FILE = GLOBAL_Path.parent / "styles" / "style.css"
+Color_CSS_FILE = GLOBAL_Path.parent / "styles" / "colors.css"
 
-st.html(CSS_FILE)
+st.html(Color_CSS_FILE)
+st.html(Style_CSS_FILE)
 #load_stylecss()
 
 st.markdown("""

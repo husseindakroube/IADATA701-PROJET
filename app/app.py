@@ -5,13 +5,16 @@ BASE_PATH = Path(__file__).resolve().parent
 IMAGES_PATH = BASE_PATH.parent / "images"
 VIDEO_PATH = BASE_PATH.parent / "videos"
 AUDIT_PATH = BASE_PATH.parent / "audit"
-CSSSIDEBAR_FILE = BASE_PATH / "styles" / "sidebar.css"
+COLORSTYLE_FILE = BASE_PATH / "styles" / "colors.css"
 CSSSTYLE_FILE = BASE_PATH / "styles" / "style.css"
+CSSSIDEBAR_FILE = BASE_PATH / "styles" / "sidebar.css"
 
 css = (
-    CSSSIDEBAR_FILE.read_text(encoding="utf-8")
+    COLORSTYLE_FILE.read_text(encoding="utf-8")
     + "\n"
     + CSSSTYLE_FILE.read_text(encoding="utf-8")
+    + "\n"
+    + CSSSIDEBAR_FILE.read_text(encoding="utf-8")
 )
 
 st.html(f"<style>{css}</style>")
