@@ -5,20 +5,20 @@ import streamlit as st
 
 GLOBAL_Path = Path(__file__).resolve().parent
 IMAGES_PATH = GLOBAL_Path.parent.parent / "images"
-Style_CSS_FILE = GLOBAL_Path.parent / "styles" / "style.css"
-Color_CSS_FILE = GLOBAL_Path.parent / "styles" / "colors.css"
+# Style_CSS_FILE = GLOBAL_Path.parent / "styles" / "style.css"
+# Color_CSS_FILE = GLOBAL_Path.parent / "styles" / "colors.css"
 
-st.html(Color_CSS_FILE)
-st.html(Style_CSS_FILE)
+# st.html(Color_CSS_FILE)
+# st.html(Style_CSS_FILE)
 #load_stylecss()
 
-st.markdown("""
-<style>
-    .block-container {
-        padding-top: 0rem !important;
-    }
-</style>
-""", unsafe_allow_html=True)
+# st.markdown("""
+# <style>
+#     .block-container {
+#         padding-top: 0rem !important;
+#     }
+# </style>
+# """, unsafe_allow_html=True)
 
 title_title, Logo_title = st.columns(
     [1, 1.4],

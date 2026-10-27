@@ -1,6 +1,4 @@
 
-
-
 .main {
     padding: 15px 0;
 }
@@ -52,7 +50,7 @@
     margin-left: 160px;
 }
 
-/* Mobile responsive */
+
 @media (max-width: 768px) {
     .slogan-line,
     .slogan-offset {
