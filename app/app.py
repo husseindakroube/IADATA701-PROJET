@@ -1,16 +1,12 @@
 from pathlib import Path
 import streamlit as st
-
+from utils.styles import load_css
 
 BASE_PATH = Path(__file__).resolve().parent
-
 IMAGES_PATH = BASE_PATH.parent / "images"
 AUDIT_PATH = BASE_PATH.parent / "audit"
 
-COLORSTYLE_FILE = BASE_PATH / "styles" / "colors.css"
-CSSSTYLE_FILE = BASE_PATH / "styles" / "style.css"
-CSSNAVBAR_FILE = BASE_PATH / "styles" / "navbar.css"
-
+load_css()
 
 st.set_page_config(
     page_title="RailInsight | SNCF TGV",
@@ -18,17 +14,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
 )
-
-
-css = (
-    COLORSTYLE_FILE.read_text(encoding="utf-8")
-    + "\n"
-    + CSSSTYLE_FILE.read_text(encoding="utf-8")
-    + "\n"
-    + CSSNAVBAR_FILE.read_text(encoding="utf-8")
-)
-
-st.html(f"<style>{css}</style>")
 
 pages = [
     st.Page(
