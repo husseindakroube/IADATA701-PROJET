@@ -1,8 +1,8 @@
 .st-key-top-navbar {
     background: var(--fond-barre-navigation);
     border-radius: 999px;
-    padding: 12px 24px;
-    margin-bottom: 20px;
+    padding: 6px 12px;
+    margin-bottom: 10px;
 }
 
 
@@ -22,7 +22,6 @@
     margin: 4px 0 0;
     white-space: nowrap;
 }
-
 
 .st-key-top-navbar a {
     display: flex;

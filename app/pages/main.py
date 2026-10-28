@@ -72,7 +72,7 @@ st.html(
 
 st.html('<p class="etiquette-principale">DÉCOUVRIR TGVISION</p>')
 
-with st.container(key="story_expander"):
+with st.container(key="histoire_deroulante"):
     with st.expander("Et si chaque retard racontait une histoire ?", expanded=False):
         st.html(
             """
