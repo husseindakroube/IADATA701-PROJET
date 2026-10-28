@@ -22,23 +22,23 @@ with Logo_title:
 with title_title:
     st.html(
         """
-        <section class="main">
-            <p class="main-label">
+        <section class="Principal">
+            <p class="etiquette-principale">
                 LE RAIL À TRAVERS LES DONNÉES
             </p>
 
-            <h1 class="main-title">TGVision</h1>
+            <h1 class="titre-principal">TGVision</h1>
 
-            <h2 class="main-slogan">
-                <span class="slogan-line">
+            <h2 class="slogan-principal">
+                <span class="ligne-slogan">
                   Au-delà des horaires,
                 </span>
-                <span class="slogan-line slogan-offset">
+                <span class="ligne-slogan decalage-slogan">
                   la réalité des voyages.
                 </span>
             </h2>
 
-            <p class="main-description">
+            <p class="description-principale">
                 La ponctualité ferroviaire sous un nouvel angle
             </p>
 
@@ -65,35 +65,35 @@ st.markdown(
 )
 
 st.html(
-    '<p class="section-title">'
+    '<p class="titre-section">'
     "Bienvenue sur TGVision, une plateforme interactive dédiée à l'analyse de la ponctualité des TGV en France."
     "</p>"
 )
 
-st.html('<p class="main-label">DÉCOUVRIR TGVISION</p>')
+st.html('<p class="etiquette-principale">DÉCOUVRIR TGVISION</p>')
 
 with st.container(key="story_expander"):
     with st.expander("Et si chaque retard racontait une histoire ?", expanded=False):
         st.html(
             """
-    <section class="story-section">
-        <p class="story-text">
+    <section class="section-histoire">
+        <p class="texte-histoire">
             Le train ne relie pas seulement des villes. Il rapproche les personnes et accompagne les moments importants de nos vies.
-            <span class="story-text-line">
+            <span class="ligne-texte-histoire">
                 Chaque jour, des millions de voyageurs parcourent la France en train. Certains se rendent au travail, d’autres retrouvent leurs proches, rentrent chez eux ou partent vers de nouvelles opportunités. Derrière chaque trajet se cachent du temps, des projets et des attentes.
             </span>
         </p>
 
-        <p class="story-highlight">
+        <p class="histoire-mise-en-valeur">
             Pourtant, tout ne se passe pas toujours comme prévu.
         </p>
 
-        <p class="story-text">
+        <p class="texte-histoire">
             Un retard peut faire manquer un rendez-vous important. Un train supprimé peut bouleverser tout un programme. 
-            <span class = "story-highlight story-text-line">
+            <span class = "histoire-mise-en-valeur ligne-texte-histoire">
                 Une correspondance manquée peut transformer une journée ordinaire en une succession d’imprévus.
             </span>
-            <span class="story-text-line">
+            <span class="ligne-texte-histoire">
                 Ces perturbations ont des répercussions bien au-delà des voyageurs. Elles touchent aussi les entreprises et les territoires qui dépendent du réseau ferroviaire. La qualité du service ferroviaire ne se résume donc pas à de simples statistiques de ponctualité. Derrière ces chiffres se trouvent des réalités bien concrètes : du temps, des projets et des moments de vie qui comptent.
             </span>
         </p>

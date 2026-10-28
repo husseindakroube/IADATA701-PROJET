@@ -59,7 +59,7 @@ with st.container(key="top-navbar"):
     with nav_columns[1]:
         st.html("""
             <div class="navbar-brand">
-                <div class="main-title">
+                <div class="titre-principal">
                     TGVision
                 </div>
                 <p class="navbar-slogan">

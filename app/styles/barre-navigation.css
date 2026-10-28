@@ -1,12 +1,12 @@
 .st-key-top-navbar {
-    background: var(--navbar-bg);
+    background: var(--fond-barre-navigation);
     border-radius: 999px;
     padding: 12px 24px;
     margin-bottom: 20px;
 }
 
 
-.st-key-top-navbar .navbar-brand .main-title {
+.st-key-top-navbar .navbar-brand .titre-principal {
     font-size: clamp(1.4rem, 2.6vw, 2.2rem);
     font-weight: 800;
     line-height: 1.1;
@@ -15,7 +15,7 @@
 
 
 .st-key-top-navbar .navbar-slogan {
-    color: var(--navbar-muted);
+    color: var(--texte-attenue-navigation);
     font-size: 0.55rem;
     font-weight: 600;
     letter-spacing: 0.07em;
@@ -32,7 +32,7 @@
     width: 100%;
     padding: 10px 12px;
 
-    color: var(--navbar-text);
+    color: var(--texte-barre-navigation);
     font-size: 0.9rem;
     font-weight: 700;
     text-align: center;
@@ -48,14 +48,14 @@
 
 
 .st-key-top-navbar a:hover {
-    background: var(--navbar-hover-bg);
-    color: var(--navbar-hover-text);
+    background: var(--fond-survol-navigation);
+    color: var(--texte-survol-navigation);
 }
 
 
 .st-key-top-navbar .st-key-top-active a {
-    background: var(--navbar-active-bg);
-    color: var(--navbar-active-text);
+    background: var(--fond-navigation-active);
+    color: var(--texte-navigation-active);
     font-weight: 700;
 }
 

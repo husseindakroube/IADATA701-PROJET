@@ -1,11 +1,11 @@
 :root {
-    --color-text: #e8edf5;
-    --color-accent: #00BBFF;
+    --couleur-texte: #e8edf5;
+    --couleur-accent: #00BBFF;
 
-    --color-panel: #182333;
-    --color-border: #2d3b4d;
+    --couleur-panneau: #182333;
+    --couleur-bordure: #2d3b4d;
 
-    --gradient-title: linear-gradient(
+    --degrade-titre: linear-gradient(
         135deg,
         #c7e9fb,
         #a6defa,
@@ -14,7 +14,7 @@
         #35bef7
     );
 
-    --gradient-section: linear-gradient(
+    --degrade-section: linear-gradient(
         90deg,
         #2C7D67 0%,
         #3E3EC9 35%,
@@ -22,14 +22,14 @@
     );
 
 
-    --sidebar-bg: linear-gradient(
+    --fond-barre-superieure: linear-gradient(
         180deg,
         #20252f 0%,
         #1c2230 55%,
         #17242d 100%
     );
 
-    .st-key-story_expander [data-testid="stExpander"] summary p {
+    .st-key-histoire_deroulante [data-testid="stExpander"] summary p {
     font-size: 2rem;
     font-weight: 700;
     color: transparent;
@@ -41,19 +41,19 @@
     }
 
 
-    --navbar-bg: #050505;
-    --navbar-text: #ffffff;
-    --navbar-muted: #a8b5c5;
+    --fond-barre-navigation: #050505;
+    --texte-barre-navigation: #ffffff;
+    --texte-attenue-navigation: #a8b5c5;
 
-    --navbar-hover-bg: rgba(63, 180, 170, 0.15);
-    --navbar-hover-text: #45d6b3;
+    --fond-survol-navigation: rgba(63, 180, 170, 0.15);
+    --texte-survol-navigation: #45d6b3;
 
-    --navbar-active-bg: linear-gradient(
+    --fond-navigation-active: linear-gradient(
     90deg,
     rgba(44, 125, 103, 0.38),
     rgba(62, 62, 201, 0.20)
 );
 
---navbar-active-text: #45d6b3;
+--texte-navigation-active: #45d6b3;
 
 }

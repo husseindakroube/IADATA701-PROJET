@@ -1,5 +1,4 @@
 
-
 .hero-video {
     position: relative;
 
@@ -85,7 +84,7 @@
 
 
 .hero-video-label {
-    color: var(--color-accent);
+    color: var(--couleur-accent);
 
     font-size: 0.85rem;
     font-weight: 600;
