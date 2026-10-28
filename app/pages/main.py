@@ -6,13 +6,12 @@ IMAGES_PATH = GLOBAL_Path.parent.parent / "images"
 
 title_title, Logo_title = st.columns(
     [1, 1.5],
-    gap="large",
+    gap="medium",
     vertical_alignment="center",
 )
 
 with Logo_title:
     with st.container(
-        horizontal=True,
         horizontal_alignment="right"
     ):
       st.image(
@@ -73,23 +72,6 @@ st.html(
 
 st.html('<p class="main-label">DÉCOUVRIR TGVISION</p>')
 
-st.markdown(
-    """
-<style>
-.st-key-story_expander [data-testid="stExpander"] summary p {
-    font-size: 2rem;
-    font-weight: 700;
-    color: transparent;
-    line-height: 1.3;
-    background: linear-gradient(135deg, #c7e9fb, #a6defa, #80d4f9, #5bc9f8, #35bef7);
-    background-clip: text;
-    -webkit-background-clip: text;
-}
-</style>
-""",
-    unsafe_allow_html=True,
-)
-
 with st.container(key="story_expander"):
     with st.expander("Et si chaque retard racontait une histoire ?", expanded=False):
         st.html(
@@ -124,9 +106,6 @@ st.write("XXXXXXXXXXXXX")
 
 st.info("**I. XXX :** XXXXXXX\n\n**II. XXX :** XXXXXX\n\n**III. XXXXX :** XXXXX ")
 
-st.header("Notre problématique -- ")
-st.markdown("XXXX")
-
 col1, col2, col3 = st.columns(3)
 
 with col1, st.container(border=True):
@@ -150,3 +129,4 @@ with col3, st.container(border=True):
     st.write("XXXXXX")
     if st.button("Découvrir →", key="page3_button"):
         st.switch_page("pages/page3.py")
+
