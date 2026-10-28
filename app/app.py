@@ -59,7 +59,7 @@ with st.container(key="barre-navigation-haut"):
     with nav_columns[1]:
         st.html("""
             <div class="marque-navigation">
-                <div class="titre-principal">
+                <div class="titre-navigation">
                     TGVision
                 </div>
                 <p class="slogan-navigation">
