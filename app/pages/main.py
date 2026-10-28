@@ -1,32 +1,24 @@
 from pathlib import Path
-
 import streamlit as st
 
 GLOBAL_Path = Path(__file__).resolve().parent
 IMAGES_PATH = GLOBAL_Path.parent.parent / "images"
-CSS_FILE = GLOBAL_Path.parent / "styles" / "style.css"
-
-st.html(CSS_FILE)
-
-st.markdown("""
-<style>
-    .block-container {
-        padding-top: 0rem !important;
-    }
-</style>
-""", unsafe_allow_html=True)
 
 title_title, Logo_title = st.columns(
-    [1, 1.4],
+    [1, 1.5],
     gap="large",
     vertical_alignment="center",
 )
 
 with Logo_title:
-    st.image(
-        str(IMAGES_PATH / "TGV_title.png"),
-        width="content",
-    )
+    with st.container(
+        horizontal=True,
+        horizontal_alignment="right"
+    ):
+      st.image(
+         str(IMAGES_PATH / "TGV_title.gif"),
+         width="content",
+      )
 
 with title_title:
     st.html(
