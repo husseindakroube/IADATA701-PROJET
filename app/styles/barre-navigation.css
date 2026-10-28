@@ -1,20 +1,23 @@
-.st-key-top-navbar {
+
+.st-key-barre-navigation-haut {
     background: var(--fond-barre-navigation);
     border-radius: 999px;
     padding: 6px 12px;
     margin-bottom: 10px;
 }
 
+.marque-navigation {
+    margin: 0;
+}
 
-.st-key-top-navbar .navbar-brand .titre-principal {
+.titre-principal {
     font-size: clamp(1.4rem, 2.6vw, 2.2rem);
     font-weight: 800;
     line-height: 1.1;
     margin: 0;
 }
 
-
-.st-key-top-navbar .navbar-slogan {
+.slogan-navigation {
     color: var(--texte-attenue-navigation);
     font-size: 0.55rem;
     font-weight: 600;
@@ -23,11 +26,12 @@
     white-space: nowrap;
 }
 
-.st-key-top-navbar a {
+.lien-navigation {
     display: flex;
     align-items: center;
     justify-content: center;
 
+    box-sizing: border-box;
     width: 100%;
     padding: 10px 12px;
 
@@ -45,43 +49,41 @@
         color 0.2s ease;
 }
 
-
-.st-key-top-navbar a:hover {
+.lien-navigation:hover {
     background: var(--fond-survol-navigation);
     color: var(--texte-survol-navigation);
 }
 
-
-.st-key-top-navbar .st-key-top-active a {
+.lien-navigation-active {
     background: var(--fond-navigation-active);
     color: var(--texte-navigation-active);
     font-weight: 700;
 }
 
-
-.st-key-background-audio {
-    height: 0;
-    overflow: hidden;
+.lien-navigation-active:hover {
+    background: var(--fond-navigation-active);
+    color: var(--texte-navigation-active);
 }
 
-.st-key-background-audio [data-testid="stAudio"] {
+.st-key-audio-arriere-plan {
+    height: 0;
+    overflow: hidden;
     display: none !important;
 }
 
-
 @media (max-width: 768px) {
 
-    .st-key-top-navbar {
+    .st-key-barre-navigation-haut {
         border-radius: 20px;
         padding: 16px;
     }
 
-    .st-key-top-navbar .navbar-slogan {
+    .slogan-navigation {
         white-space: normal;
         font-size: 0.6rem;
     }
 
-    .st-key-top-navbar a {
+    .lien-navigation {
         padding: 10px;
         font-size: 0.85rem;
     }

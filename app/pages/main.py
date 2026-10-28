@@ -48,7 +48,6 @@ with title_title:
 
 st.markdown(
     """
-
 <div style="
     height: 3px;
     background: linear-gradient(
