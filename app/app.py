@@ -23,10 +23,34 @@ st.set_page_config(
 )
 
 pages = [
+<<<<<<< Updated upstream
     st.Page("pages/main.py", title="Accueil", icon=":material/home:", default=True),
     st.Page("pages/page1.py", title="XXXXXXXX", icon=":material/dashboard:"),
     st.Page("pages/page2.py", title="XXXXXXX", icon=":material/analytics:"),
     st.Page("pages/page3.py", title="XXXXXXXX", icon=":material/train:"),
+=======
+    st.Page(
+        "pages/main.py",
+        title="Accueil",
+        default=True
+    ),
+    st.Page(
+        "pages/page1.py",
+        title="XXXXXXXX",
+    ),
+    st.Page(
+        "pages/page2.py",
+        title="XXXXXXX",
+    ),
+    st.Page(
+        "pages/page3.py",
+        title="XXXXXXXX",
+    ),
+    st.Page(
+            "pages/page4.py",
+            title="XXXXXXXX",
+        ),
+>>>>>>> Stashed changes
 ]
 
 pg = st.navigation(pages, position="hidden")
@@ -42,6 +66,7 @@ st.markdown("""
         margin-bottom: 0 !important;
     }
 
+<<<<<<< Updated upstream
     [data-testid="stSidebarUserContent"] {
         padding-top: 0 !important;
     }
@@ -62,6 +87,12 @@ with st.sidebar:
            st.image(
            str(IMAGES_PATH / "SNCF_logo.png"),
            width="content",
+=======
+    nav_columns = st.columns(
+        [0.9, 2.4] + [1.2] * len(pages),
+        gap="small",
+        vertical_alignment="center"
+>>>>>>> Stashed changes
     )
         with title_title:
             st.html("""
