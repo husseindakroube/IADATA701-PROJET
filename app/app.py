@@ -19,33 +19,32 @@ pages = [
     st.Page(
         "pages/main.py",
         title="Accueil",
-        icon=":material/home:",
         default=True
     ),
     st.Page(
         "pages/page1.py",
-        title="XXXXXXXX",
-        icon=":material/dashboard:"
+        title="XXXXXXXX"
     ),
     st.Page(
         "pages/page2.py",
-        title="XXXXXXX",
-        icon=":material/analytics:"
+        title="XXXXXXX"
     ),
     st.Page(
         "pages/page3.py",
-        title="XXXXXXXX",
-        icon=":material/train:"
+        title="XXXXXXXX"
     ),
+    st.Page(
+            "pages/page4.py",
+            title="A PROPRE"
+        ),
 ]
 
 pg = st.navigation(pages, position="hidden")
 
-
 with st.container(key="top-navbar"):
 
     nav_columns = st.columns(
-        [0.9, 2.4, 1.2, 1.2, 1.2, 1.2],
+        [0.9, 2.4] + [1.2] * len(pages),
         gap="small",
         vertical_alignment="center"
     )
