@@ -3,7 +3,6 @@ import streamlit as st
 st.html("""
 <section class="hero-video">
 
-    <!-- Background video -->
     <video
         class="hero-video-media"
         autoplay
@@ -19,10 +18,8 @@ st.html("""
         >
     </video>
 
-    <!-- Background overlay -->
     <div class="hero-video-overlay"></div>
 
-    <!-- Text content -->
     <div class="hero-video-content">
 
         <p class="hero-video-label">
