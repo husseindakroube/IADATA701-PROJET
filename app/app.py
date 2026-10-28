@@ -9,7 +9,7 @@ AUDIT_PATH = BASE_PATH.parent / "audit"
 load_css()
 
 st.set_page_config(
-    page_title="RailInsight | SNCF TGV",
+    page_title="TGVISION | SNCF TGV",
     page_icon=str(IMAGES_PATH / "TGV_icon.png"),
     layout="wide",
     initial_sidebar_state="collapsed",
