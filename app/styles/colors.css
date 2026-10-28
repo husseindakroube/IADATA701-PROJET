@@ -22,12 +22,12 @@
     );
 
 
-    --fond-barre-superieure: linear-gradient(
+    /* --fond-barre-superieure: linear-gradient(
         180deg,
         #20252f 0%,
         #1c2230 55%,
         #17242d 100%
-    );
+    ); */
 
     .st-key-histoire_deroulante [data-testid="stExpander"] summary p {
     font-size: 2rem;

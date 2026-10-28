@@ -22,7 +22,7 @@ with Logo_title:
 with title_title:
     st.html(
         """
-        <section class="Principal">
+        <section class="principal">
             <p class="etiquette-principale">
                 LE RAIL À TRAVERS LES DONNÉES
             </p>

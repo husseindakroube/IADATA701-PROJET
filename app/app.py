@@ -42,7 +42,7 @@ pages = [
 
 pg = st.navigation(pages, position="hidden")
 
-with st.container(key="top-navbar"):
+with st.container(key="barre-navigation-haut"):
 
     nav_columns = st.columns(
         [0.9, 2.4] + [1.2] * len(pages),
