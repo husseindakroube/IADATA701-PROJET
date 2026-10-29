@@ -25,7 +25,7 @@ uv sync
 Depuis la racine du projet, exécuter :
 
 ```bash
-uv run python -m streamlit run app/main.py
+uv run python -m streamlit run app/app.py
 ```
 
 ### 4. Accéder à l'application
