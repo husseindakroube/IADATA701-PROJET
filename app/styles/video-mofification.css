@@ -2,26 +2,20 @@
 .hero-video {
     position: relative;
 
-    /* Same width as Navbar */
     width: calc(100% - 40px);
     max-width: 1280px;
 
-    /* Center horizontally */
     margin: 0 auto 24px;
 
-    /* Video height */
     height: 75svh;
     min-height: 450px;
     max-height: 850px;
 
-    /* Layout */
     box-sizing: border-box;
     overflow: hidden;
 
-    /* Rounded corners */
     border-radius: 20px;
 
-    /* Background */
     background: var(--hero-bg);
     isolation: isolate;
 }
