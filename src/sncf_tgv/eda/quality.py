@@ -120,9 +120,12 @@ def check_identifiers(data: pd.DataFrame) -> pd.DataFrame:
     # Contrôler les valeurs absentes ou composées d'espaces.
     missing_identifiers = {}
 
+    # service, gare_depart, gare_arrivee
     for column in columns[1:]:
+        # convertit les valeurs en string pour faciliter la vérification des valeurs manquantes
         values = data[column].astype("string")
 
+        # (values.isna() | values.str.strip().eq("")) pour détecter les valeurs manquantes (NaN, None) ou composées uniquement d'espaces
         missing_identifiers[f"{column}_manquant"] = (
             values.isna() | values.str.strip().eq("")
         ).fillna(True)
@@ -141,14 +144,15 @@ def check_identifiers(data: pd.DataFrame) -> pd.DataFrame:
     invalid_dates = parsed_dates.isna()
 
     # La clé métier est la combinaison des quatre colonnes.
+    # Détecte les lignes en doublon en comparant les 4 colonnes à la fois.
     duplicated_keys = data.duplicated(subset=columns)
 
     checks = {
         "date_invalide": invalid_dates,
-        **missing_identifiers,
+        **missing_identifiers,  # **missing_identifiers contient les colonnes service, gare_depart, gare_arrivee avec les valeurs manquantes
         "doublon_metier": duplicated_keys,
     }
-
+    # Retourne un DataFrame avec le nombre d'anomalies pour chaque règle.
     return pd.DataFrame(
         [
             {
@@ -167,13 +171,16 @@ def check_train_counts(data: pd.DataFrame) -> pd.DataFrame:
     les différents indicateurs de retard.
 
     Les verifications:
-    nb_train_prevu	        Nombre positif ou nul, entier
-    nb_annulation	        Nombre entre 0 et le nombre de trains prévus
-    nb_train_depart_retard	Nombre positif ou nul, ne dépassant pas les trains ayant circulé
-    nb_train_retard_arrivee	Même contrôle pour les retards à l'arrivée
-    nb_train_retard_sup_15	Nombre positif ou nul, ne dépassant pas les trains ayant circulé
-    nb_train_retard_sup_30	Ne dépasse pas le nombre de retards de plus de 15 minutes
-    nb_train_retard_sup_60	Ne dépasse pas le nombre de retards de plus de 30 minutes
+    comptage_manquant_ou_invalide        valeurs manquantes ou invalides (NaN, None, pd.NA)
+    comptage_negatif                     valeurs négatives
+    comptage_non_entier                  valeurs non entières
+    annulations_excessives               nombre d'annulations dépasse le nombre de trains prévus
+    retards_depart_excessifs             nombre de retards au départ dépasse les trains ayant circulé
+    retards_arrivee_excessifs            nombre de retards à l'arrivée dépasse les trains ayant circulé
+    retards_15_excessifs                 nombre de retards supérieurs à 15 minutes dépasse les trains ayant circulé
+    retards_30_excessifs                 nombre de retards supérieurs à 30 minutes dépasse les trains ayant circulé
+    retards_60_excessifs                 nombre de retards supérieurs à 60 minutes dépasse les trains ayant circulé
+    seuil_60_superieur_30                nombre de retards supérieurs à 60 minutes dépasse celui des retards supérieurs à 30 minutes
 
     Args:
         data: DataFrame contenant les observations SNCF.
@@ -212,20 +219,36 @@ def check_train_counts(data: pd.DataFrame) -> pd.DataFrame:
     trains_running = counts["nb_train_prevu"] - counts["nb_annulation"]
 
     checks = {
-        "comptage_manquant_ou_invalide": (counts.isna().any(axis=1)),
-        "comptage_negatif": (counts.lt(0).any(axis=1)),
-        "comptage_non_entier": (counts.notna() & counts.mod(1).ne(0)).any(axis=1),
-        "annulations_excessives": (counts["nb_annulation"] > counts["nb_train_prevu"]),
-        "retards_depart_excessifs": (counts["nb_train_depart_retard"] > trains_running),
+        "comptage_manquant_ou_invalide": (
+            counts.isna().any(axis=1)
+        ),  # True si au moinsune valeur est manquante ou invalide dans la ligne
+        "comptage_negatif": (
+            counts.lt(0).any(axis=1)
+        ),  # True si une valeur est négative dans la ligne
+        "comptage_non_entier": (counts.notna() & counts.mod(1).ne(0)).any(
+            axis=1
+        ),  # True si une valeur non nulle n'est pas un entier
+        "annulations_excessives": (
+            counts["nb_annulation"] > counts["nb_train_prevu"]
+        ),  # True si le nombre d'annulations dépasse le nombre de trains prévus
+        "retards_depart_excessifs": (
+            counts["nb_train_depart_retard"] > trains_running
+        ),  # True si le nombre de retards au départ dépasse les trains ayant circulé
         "retards_arrivee_excessifs": (
             counts["nb_train_retard_arrivee"] > trains_running
-        ),
-        "retards_15_excessifs": (counts["nb_train_retard_sup_15"] > trains_running),
-        "retards_30_excessifs": (counts["nb_train_retard_sup_30"] > trains_running),
-        "retards_60_excessifs": (counts["nb_train_retard_sup_60"] > trains_running),
+        ),  # True si le nombre de retards à l'arrivée dépasse les trains ayant circulé
+        "retards_15_excessifs": (
+            counts["nb_train_retard_sup_15"] > trains_running
+        ),  # True si le nombre de retards supérieurs à 15 minutes dépasse les trains ayant circulé
+        "retards_30_excessifs": (
+            counts["nb_train_retard_sup_30"] > trains_running
+        ),  # True si le nombre de retards supérieurs à 30 minutes dépasse les trains ayant circulé
+        "retards_60_excessifs": (
+            counts["nb_train_retard_sup_60"] > trains_running
+        ),  # True si le nombre de retards supérieurs à 60 minutes dépasse les trains ayant circulé
         "seuil_60_superieur_30": (
             counts["nb_train_retard_sup_60"] > counts["nb_train_retard_sup_30"]
-        ),
+        ),  # True si le nombre de retards supérieurs à 60 minutes dépasse celui des retards supérieurs à 30 minutes
     }
 
     # Chaque masque contient True si la ligne
@@ -247,12 +270,11 @@ def check_durations(data: pd.DataFrame) -> pd.DataFrame:
     Vérifie les valeurs manquantes, les valeurs non numériques
     et certaines contraintes de cohérence sur les durées.
 
-    duree_moyenne	                    Durée du trajet strictement positive et entière
-    retard_moyen_depart	Retard          moyen des trains retardés au départ, non négatif
-    retard_moyen_tous_trains_depart	    Valeur numérique finie
-    retard_moyen_arrivee	            Retard moyen des trains retardés à l'arrivée, non négatif
-    retard_moyen_tous_trains_arrivee	Valeur numérique finie
-    retard_moyen_trains_retard_sup15	Valeur numérique finie, avec contrôle complémentaire à prévoir
+    duree_manquante_ou_non_numerique     valeurs manquantes ou non numériques (NaN, None, pd.NA, str, ...)
+    duree_infinie                        durée infinie (np.inf, -np.inf)
+    trajet_duree_invalide                durée positive
+    trajet_duree_non_entiere             durée non entière
+    moyenne_trains_retardes_negative     Au moins une moyenne des trains retardés est négative à l'arrivée ou au départ
 
     Args:
         data: DataFrame contenant les observations SNCF.
@@ -303,7 +325,9 @@ def check_durations(data: pd.DataFrame) -> pd.DataFrame:
 
     # Contrôler les moyennes des trains effectivement retardés.
     negative_delayed_average = (
-        durations[["retard_moyen_depart", "retard_moyen_arrivee"]].lt(0).any(axis=1)
+        durations[["retard_moyen_depart", "retard_moyen_arrivee"]]
+        .lt(0)
+        .any(axis=1)  # True si au moins une moyenne des trains retardés est négative
     )
 
     checks = {
