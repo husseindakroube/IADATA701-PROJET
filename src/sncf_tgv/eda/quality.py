@@ -79,3 +79,81 @@ def get_column_types(data: pd.DataFrame) -> pd.DataFrame:
             "dtype": data.dtypes.astype(str).to_numpy(),
         }
     )
+
+
+def check_identifiers(data: pd.DataFrame) -> pd.DataFrame:
+    """Contrôle les identifiants des observations SNCF.
+
+    Vérifie la présence des informations d'identification,
+    la validité des dates et l'unicité des observations.
+
+    Les vérifications:
+
+    date	        Date présente et interprétable
+    service	        Service renseigné, non vide
+    gare_depart	    Gare de départ renseignée
+    gare_arrivee	Gare d'arrivée renseignée
+
+    Args:
+        data: DataFrame contenant les observations SNCF.
+
+    Returns:
+        DataFrame récapitulant le nombre d'anomalies
+        détectées pour chaque règle.
+
+    Raises:
+        ValueError: Si une colonne obligatoire est absente.
+    """
+    columns = [
+        "date",
+        "service",
+        "gare_depart",
+        "gare_arrivee",
+    ]
+
+    missing_columns = sorted(set(columns) - set(data.columns))
+
+    if missing_columns:
+        raise ValueError(f"Colonnes manquantes : {missing_columns}")
+
+    # Contrôler les valeurs absentes ou composées d'espaces.
+    missing_identifiers = {}
+
+    for column in columns[1:]:
+        values = data[column].astype("string")
+
+        missing_identifiers[f"{column}_manquant"] = (
+            values.isna() | values.str.strip().eq("")
+        ).fillna(True)
+
+    # Les dates attendues sont exprimées au format AAAA-MM.
+    date_values = data["date"].astype("string")
+    # Vérifie avec une expression régulière que la date est au format AAAA-MM.
+    valid_format = date_values.str.fullmatch(r"\d{4}-(0[1-9]|1[0-2])").fillna(False)
+
+    parsed_dates = pd.to_datetime(
+        date_values.where(valid_format) + "-01",
+        format="%Y-%m-%d",
+        errors="coerce",  # coerce signifie que les dates invalides seront converties en NaT (Not a Time)
+    )
+
+    invalid_dates = parsed_dates.isna()
+
+    # La clé métier est la combinaison des quatre colonnes.
+    duplicated_keys = data.duplicated(subset=columns)
+
+    checks = {
+        "date_invalide": invalid_dates,
+        **missing_identifiers,
+        "doublon_metier": duplicated_keys,
+    }
+
+    return pd.DataFrame(
+        [
+            {
+                "regle": rule,
+                "nombre_anomalies": int(mask.sum()),
+            }
+            for rule, mask in checks.items()
+        ]
+    )
