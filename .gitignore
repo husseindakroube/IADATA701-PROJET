@@ -1,0 +1,28 @@
+
+#python virtual environment
+.venv/
+
+#python cache
+__pycache__/
+*.py[cod]
+
+#jupyter
+.ipynb_checkpoints/
+
+#tests
+.pytest_cache/
+.coverage
+htmlcov/
+
+#ruff
+.ruff_cache/
+
+#sphinx
+docs/_build/
+
+#fichiers environnement (secrets)
+.env
+.env.*
+
+# Local editor files
+.vscode/
