@@ -11,6 +11,8 @@ from sncf_tgv.eda.quality import (
     get_dataset_overview,
     get_missing_values,
     check_durations,
+    check_percentages,
+    check_comments,
 )
 
 
@@ -263,3 +265,111 @@ def test_durations_missing_column() -> None:
 
     with pytest.raises(ValueError, match="Colonnes manquantes"):
         check_durations(data)
+
+
+def test_percentages_valid() -> None:
+    """Vérifie une répartition valide des causes de retard."""
+    data = pd.DataFrame(
+        {
+            "prct_cause_externe": [30.0],
+            "prct_cause_infra": [25.0],
+            "prct_cause_gestion_trafic": [15.0],
+            "prct_cause_materiel_roulant": [20.0],
+            "prct_cause_gestion_gare": [5.0],
+            "prct_cause_prise_en_charge_voyageurs": [5.0],
+        }
+    )
+
+    result = check_percentages(data)
+
+    assert result["nombre_anomalies"].sum() == 0
+
+
+def test_percentages_invalid_bounds() -> None:
+    """Détecte les pourcentages hors des bornes autorisées."""
+    data = pd.DataFrame(
+        {
+            "prct_cause_externe": [-10.0],
+            "prct_cause_infra": [110.0],
+            "prct_cause_gestion_trafic": [0.0],
+            "prct_cause_materiel_roulant": [0.0],
+            "prct_cause_gestion_gare": [0.0],
+            "prct_cause_prise_en_charge_voyageurs": [0.0],
+        }
+    )
+
+    result = check_percentages(data)
+    anomalies = result.set_index("regle")["nombre_anomalies"]
+
+    assert anomalies["pourcentage_negatif"] == 1
+    assert anomalies["pourcentage_superieur_100"] == 1
+
+
+def test_percentages_invalid_sum() -> None:
+    """Détecte une somme des causes éloignée de 100 %."""
+    data = pd.DataFrame(
+        {
+            "prct_cause_externe": [20.0],
+            "prct_cause_infra": [20.0],
+            "prct_cause_gestion_trafic": [10.0],
+            "prct_cause_materiel_roulant": [10.0],
+            "prct_cause_gestion_gare": [5.0],
+            "prct_cause_prise_en_charge_voyageurs": [5.0],
+        }
+    )
+
+    result = check_percentages(data)
+    anomalies = result.set_index("regle")["nombre_anomalies"]
+
+    assert anomalies["somme_causes_differente_100"] == 1
+
+
+def test_percentages_missing_column() -> None:
+    """Vérifie la détection d'une colonne obligatoire absente."""
+    data = pd.DataFrame({"prct_cause_externe": [30.0]})
+
+    with pytest.raises(ValueError, match="Colonnes manquantes"):
+        check_percentages(data)
+
+
+def test_comments_valid() -> None:
+    """Vérifie le comptage des commentaires renseignés."""
+    data = pd.DataFrame(
+        {
+            "commentaire_annulation": ["Grève", "Travaux"],
+            "commentaire_retards_depart": ["Incident", "Météo"],
+            "commentaires_retard_arrivee": ["Panne", "Signalisation"],
+        }
+    )
+
+    result = check_comments(data)
+
+    assert result["nb_renseignes"].tolist() == [2, 2, 2]
+    assert result["nb_manquants"].sum() == 0
+    assert result["nb_vides"].sum() == 0
+
+
+def test_comments_missing_and_empty() -> None:
+    """Distingue les commentaires manquants et les textes vides."""
+    data = pd.DataFrame(
+        {
+            "commentaire_annulation": [None, "", "  ", "Grève"],
+            "commentaire_retards_depart": ["Météo", None, None, None],
+            "commentaires_retard_arrivee": [None, "Panne", "", "Signalisation"],
+        }
+    )
+
+    result = check_comments(data).set_index("colonne")
+
+    assert result.loc["commentaire_annulation", "nb_manquants"] == 1
+    assert result.loc["commentaire_annulation", "nb_vides"] == 2
+    assert result.loc["commentaire_annulation", "nb_renseignes"] == 1
+    assert result.loc["commentaire_annulation", "pourcentage_renseignes"] == 25.0
+
+
+def test_comments_missing_column() -> None:
+    """Vérifie qu'une colonne de commentaires absente est signalée."""
+    data = pd.DataFrame({"commentaire_annulation": ["Grève"]})
+
+    with pytest.raises(ValueError, match="Colonnes manquantes"):
+        check_comments(data)
