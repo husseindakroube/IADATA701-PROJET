@@ -4,11 +4,13 @@ import pandas as pd
 import pytest
 
 from sncf_tgv.eda.quality import (
+    check_train_counts,
     check_identifiers,
     count_duplicates,
     get_column_types,
     get_dataset_overview,
     get_missing_values,
+    check_durations,
 )
 
 
@@ -146,3 +148,118 @@ def test_identifiers_duplicate_key() -> None:
     anomalies = result.set_index("regle")["nombre_anomalies"]
 
     assert anomalies["doublon_metier"] == 1
+
+
+def test_train_counts_valid() -> None:
+    """Vérifie qu'une observation cohérente ne génère aucune anomalie."""
+    data = pd.DataFrame(
+        {
+            "nb_train_prevu": [100],
+            "nb_annulation": [5],
+            "nb_train_depart_retard": [10],
+            "nb_train_retard_arrivee": [20],
+            "nb_train_retard_sup_15": [15],
+            "nb_train_retard_sup_30": [8],
+            "nb_train_retard_sup_60": [3],
+        }
+    )
+
+    result = check_train_counts(data)
+
+    assert result["nombre_anomalies"].sum() == 0
+
+
+def test_train_counts_invalid() -> None:
+    """Détecte des annulations et des comptages incohérents."""
+    data = pd.DataFrame(
+        {
+            "nb_train_prevu": [100],
+            "nb_annulation": [120],
+            "nb_train_depart_retard": [-2],
+            "nb_train_retard_arrivee": [110],
+            "nb_train_retard_sup_15": [15],
+            "nb_train_retard_sup_30": [8],
+            "nb_train_retard_sup_60": [12],
+        }
+    )
+
+    result = check_train_counts(data)
+    anomalies = result.set_index("regle")["nombre_anomalies"]
+
+    assert anomalies["annulations_excessives"] == 1
+    assert anomalies["comptage_negatif"] == 1
+    assert anomalies["seuil_60_superieur_30"] == 1
+
+
+def test_train_counts_decimal_values() -> None:
+    """Détecte un comptage contenant une valeur décimale."""
+    data = pd.DataFrame(
+        {
+            "nb_train_prevu": [100.5],
+            "nb_annulation": [5],
+            "nb_train_depart_retard": [10],
+            "nb_train_retard_arrivee": [20],
+            "nb_train_retard_sup_15": [15],
+            "nb_train_retard_sup_30": [8],
+            "nb_train_retard_sup_60": [3],
+        }
+    )
+
+    result = check_train_counts(data)
+    anomalies = result.set_index("regle")["nombre_anomalies"]
+
+    assert anomalies["comptage_non_entier"] == 1
+
+
+def test_train_counts_missing_column() -> None:
+    """Vérifie la détection d'une colonne obligatoire absente."""
+    data = pd.DataFrame({"nb_train_prevu": [100]})
+
+    with pytest.raises(ValueError, match="Colonnes manquantes"):
+        check_train_counts(data)
+
+
+def test_durations_valid() -> None:
+    """Vérifie des durées et retards moyens cohérents."""
+    data = pd.DataFrame(
+        {
+            "duree_moyenne": [150],
+            "retard_moyen_depart": [12.5],
+            "retard_moyen_tous_trains_depart": [3.2],
+            "retard_moyen_arrivee": [25.0],
+            "retard_moyen_tous_trains_arrivee": [6.1],
+            "retard_moyen_trains_retard_sup15": [32.0],
+        }
+    )
+
+    result = check_durations(data)
+
+    assert result["nombre_anomalies"].sum() == 0
+
+
+def test_durations_invalid() -> None:
+    """Détecte une durée de trajet invalide et un retard négatif."""
+    data = pd.DataFrame(
+        {
+            "duree_moyenne": [-10],
+            "retard_moyen_depart": [-5.0],
+            "retard_moyen_tous_trains_depart": [2.0],
+            "retard_moyen_arrivee": [20.0],
+            "retard_moyen_tous_trains_arrivee": [4.0],
+            "retard_moyen_trains_retard_sup15": [25.0],
+        }
+    )
+
+    result = check_durations(data)
+    anomalies = result.set_index("regle")["nombre_anomalies"]
+
+    assert anomalies["trajet_duree_invalide"] == 1
+    assert anomalies["moyenne_trains_retardes_negative"] == 1
+
+
+def test_durations_missing_column() -> None:
+    """Vérifie la détection d'une colonne obligatoire absente."""
+    data = pd.DataFrame({"duree_moyenne": [120]})
+
+    with pytest.raises(ValueError, match="Colonnes manquantes"):
+        check_durations(data)
