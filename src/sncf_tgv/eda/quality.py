@@ -1,6 +1,7 @@
 """Fonctions de contrôle qualité des données de régularité TGV."""
 
 import pandas as pd
+import numpy as np
 
 
 def get_dataset_overview(data: pd.DataFrame) -> dict[str, int]:
@@ -146,6 +147,171 @@ def check_identifiers(data: pd.DataFrame) -> pd.DataFrame:
         "date_invalide": invalid_dates,
         **missing_identifiers,
         "doublon_metier": duplicated_keys,
+    }
+
+    return pd.DataFrame(
+        [
+            {
+                "regle": rule,
+                "nombre_anomalies": int(mask.sum()),
+            }
+            for rule, mask in checks.items()
+        ]
+    )
+
+
+def check_train_counts(data: pd.DataFrame) -> pd.DataFrame:
+    """Contrôle la cohérence des comptages de trains SNCF.
+
+    Vérifie les nombres de trains, les annulations et
+    les différents indicateurs de retard.
+
+    Les verifications:
+    nb_train_prevu	        Nombre positif ou nul, entier
+    nb_annulation	        Nombre entre 0 et le nombre de trains prévus
+    nb_train_depart_retard	Nombre positif ou nul, ne dépassant pas les trains ayant circulé
+    nb_train_retard_arrivee	Même contrôle pour les retards à l'arrivée
+    nb_train_retard_sup_15	Nombre positif ou nul, ne dépassant pas les trains ayant circulé
+    nb_train_retard_sup_30	Ne dépasse pas le nombre de retards de plus de 15 minutes
+    nb_train_retard_sup_60	Ne dépasse pas le nombre de retards de plus de 30 minutes
+
+    Args:
+        data: DataFrame contenant les observations SNCF.
+
+    Returns:
+        DataFrame présentant le nombre d'anomalies
+        détectées pour chaque règle.
+
+    Raises:
+        ValueError: Si une colonne obligatoire est absente.
+    """
+    columns = [
+        "nb_train_prevu",
+        "nb_annulation",
+        "nb_train_depart_retard",
+        "nb_train_retard_arrivee",
+        "nb_train_retard_sup_15",
+        "nb_train_retard_sup_30",
+        "nb_train_retard_sup_60",
+    ]
+
+    missing_columns = sorted(set(columns) - set(data.columns))
+
+    if missing_columns:
+        raise ValueError(f"Colonnes manquantes : {missing_columns}")
+
+    # Convertir les valeurs en nombres pour effectuer
+    # les comparaisons et identifier les valeurs invalides.
+    counts = data[columns].apply(
+        pd.to_numeric,
+        errors="coerce",
+    )
+
+    # Les trains ayant circulé correspondent aux
+    # circulations prévues moins les annulations.
+    trains_running = counts["nb_train_prevu"] - counts["nb_annulation"]
+
+    checks = {
+        "comptage_manquant_ou_invalide": (counts.isna().any(axis=1)),
+        "comptage_negatif": (counts.lt(0).any(axis=1)),
+        "comptage_non_entier": (counts.notna() & counts.mod(1).ne(0)).any(axis=1),
+        "annulations_excessives": (counts["nb_annulation"] > counts["nb_train_prevu"]),
+        "retards_depart_excessifs": (counts["nb_train_depart_retard"] > trains_running),
+        "retards_arrivee_excessifs": (
+            counts["nb_train_retard_arrivee"] > trains_running
+        ),
+        "retards_15_excessifs": (counts["nb_train_retard_sup_15"] > trains_running),
+        "retards_30_excessifs": (counts["nb_train_retard_sup_30"] > trains_running),
+        "retards_60_excessifs": (counts["nb_train_retard_sup_60"] > trains_running),
+        "seuil_60_superieur_30": (
+            counts["nb_train_retard_sup_60"] > counts["nb_train_retard_sup_30"]
+        ),
+    }
+
+    # Chaque masque contient True si la ligne
+    # ne respecte pas la règle correspondante.
+    return pd.DataFrame(
+        [
+            {
+                "regle": rule,
+                "nombre_anomalies": int(mask.sum()),
+            }
+            for rule, mask in checks.items()
+        ]
+    )
+
+
+def check_durations(data: pd.DataFrame) -> pd.DataFrame:
+    """Contrôle les durées et retards moyens des données SNCF.
+
+    Vérifie les valeurs manquantes, les valeurs non numériques
+    et certaines contraintes de cohérence sur les durées.
+
+    duree_moyenne	                    Durée du trajet strictement positive et entière
+    retard_moyen_depart	Retard          moyen des trains retardés au départ, non négatif
+    retard_moyen_tous_trains_depart	    Valeur numérique finie
+    retard_moyen_arrivee	            Retard moyen des trains retardés à l'arrivée, non négatif
+    retard_moyen_tous_trains_arrivee	Valeur numérique finie
+    retard_moyen_trains_retard_sup15	Valeur numérique finie, avec contrôle complémentaire à prévoir
+
+    Args:
+        data: DataFrame contenant les observations SNCF.
+
+    Returns:
+        DataFrame contenant le nombre d'anomalies détectées
+        pour chaque règle de contrôle.
+
+    Raises:
+        ValueError: Si une colonne obligatoire est absente.
+    """
+    columns = [
+        "duree_moyenne",
+        "retard_moyen_depart",
+        "retard_moyen_tous_trains_depart",
+        "retard_moyen_arrivee",
+        "retard_moyen_tous_trains_arrivee",
+        "retard_moyen_trains_retard_sup15",
+    ]
+
+    missing_columns = sorted(set(columns) - set(data.columns))
+
+    if missing_columns:
+        raise ValueError(f"Colonnes manquantes : {missing_columns}")
+
+    # Convertir les valeurs en nombres.
+    durations = data[columns].apply(
+        pd.to_numeric,
+        errors="coerce",
+    )
+
+    # Repérer les valeurs non numériques ou manquantes.
+    missing_values = durations.isna().any(axis=1)
+
+    # Repérer les valeurs infinies.
+    infinite_values = pd.Series(
+        np.isinf(durations.to_numpy(dtype=float)).any(axis=1),
+        index=data.index,
+    )
+
+    # La durée prévue d'un trajet doit être positive.
+    invalid_trip_duration = durations["duree_moyenne"] <= 0
+
+    # La durée moyenne prévue est définie comme un entier.
+    non_integer_trip_duration = durations["duree_moyenne"].notna() & durations[
+        "duree_moyenne"
+    ].mod(1).ne(0)
+
+    # Contrôler les moyennes des trains effectivement retardés.
+    negative_delayed_average = (
+        durations[["retard_moyen_depart", "retard_moyen_arrivee"]].lt(0).any(axis=1)
+    )
+
+    checks = {
+        "duree_manquante_ou_non_numerique": missing_values,
+        "duree_infinie": infinite_values,
+        "trajet_duree_invalide": invalid_trip_duration,
+        "trajet_duree_non_entiere": non_integer_trip_duration,
+        "moyenne_trains_retardes_negative": negative_delayed_average,
     }
 
     return pd.DataFrame(
