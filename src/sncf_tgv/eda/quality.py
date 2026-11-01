@@ -323,3 +323,154 @@ def check_durations(data: pd.DataFrame) -> pd.DataFrame:
             for rule, mask in checks.items()
         ]
     )
+
+
+def check_percentages(
+    data: pd.DataFrame,
+    tolerance: float = 0.1,
+) -> pd.DataFrame:
+    """Contrôle les pourcentages des causes de retard SNCF.
+
+    Vérifie les valeurs manquantes, non numériques,
+    les bornes des pourcentages et leur somme.
+
+    Valeurs manquantes	    Détecter NaN
+    Valeurs non numériques	Détecter les conversions impossibles
+    Pourcentages négatifs	Valeur inférieure à 0
+    Pourcentages excessifs	Valeur supérieure à 100
+    Somme des causes	    Vérifier si la somme vaut environ 100 %
+
+    Args:
+        data: DataFrame contenant les données SNCF.
+        tolerance: Écart maximal accepté autour de 100
+            pour la somme des pourcentages, en points.
+
+    Returns:
+        DataFrame contenant le nombre d'observations
+        signalées pour chaque règle.
+
+    Raises:
+        ValueError: Si une colonne obligatoire est absente
+            ou si la tolérance est négative.
+    """
+    columns = [
+        "prct_cause_externe",
+        "prct_cause_infra",
+        "prct_cause_gestion_trafic",
+        "prct_cause_materiel_roulant",
+        "prct_cause_gestion_gare",
+        "prct_cause_prise_en_charge_voyageurs",
+    ]
+
+    missing_columns = sorted(set(columns) - set(data.columns))
+
+    if missing_columns:
+        raise ValueError(f"Colonnes manquantes : {missing_columns}")
+
+    if tolerance < 0:
+        raise ValueError("La tolérance doit être positive ou nulle.")
+
+    # Convertir les valeurs en nombres.
+    percentages = data[columns].apply(
+        pd.to_numeric,
+        errors="coerce",
+    )
+
+    # Distinguer les valeurs réellement absentes
+    # des valeurs impossibles à convertir.
+    missing_values = data[columns].isna().any(axis=1)
+
+    invalid_numeric = (percentages.isna() & data[columns].notna()).any(axis=1)
+
+    # Vérifier les bornes autorisées des pourcentages.
+    negative_values = percentages.lt(0).any(axis=1)
+    excessive_values = percentages.gt(100).any(axis=1)
+
+    # Ne calculer une somme complète que si les
+    # six pourcentages sont numériques et valides.
+    complete_rows = percentages.notna().all(axis=1)
+
+    valid_bounds = percentages.ge(0).all(axis=1) & (percentages.le(100).all(axis=1))
+
+    valid_rows = complete_rows & valid_bounds
+
+    # Utiliser min_count pour éviter de traiter
+    # des valeurs manquantes comme des zéros.
+    total = percentages.sum(axis=1, min_count=len(columns))
+
+    invalid_total = valid_rows & (total - 100).abs().gt(tolerance)
+
+    checks = {
+        "pourcentage_manquant": missing_values,
+        "pourcentage_non_numerique": invalid_numeric,
+        "pourcentage_negatif": negative_values,
+        "pourcentage_superieur_100": excessive_values,
+        "somme_causes_differente_100": invalid_total,
+    }
+
+    return pd.DataFrame(
+        [
+            {
+                "regle": rule,
+                "nombre_anomalies": int(mask.sum()),
+            }
+            for rule, mask in checks.items()
+        ]
+    )
+
+
+def check_comments(data: pd.DataFrame) -> pd.DataFrame:
+    """Analyse la complétude des commentaires SNCF.
+
+    Distingue les commentaires manquants, les textes vides
+    et les commentaires réellement renseignés.
+
+    commentaire_annulation	    Nombre de commentaires présents, absents ou vides
+    commentaire_retards_depart	Même contrôle pour les retards au départ
+    commentaires_retard_arrivee	Même contrôle pour les retards à l'arrivée
+
+    Args:
+        data: DataFrame contenant les observations SNCF.
+
+    Returns:
+        DataFrame récapitulant, pour chaque colonne,
+        les commentaires manquants, vides et renseignés.
+
+    Raises:
+        ValueError: Si une colonne attendue est absente.
+    """
+    columns = [
+        "commentaire_annulation",
+        "commentaire_retards_depart",
+        "commentaires_retard_arrivee",
+    ]
+
+    missing_columns = sorted(set(columns) - set(data.columns))
+
+    if missing_columns:
+        raise ValueError(f"Colonnes manquantes : {missing_columns}")
+
+    results = []
+
+    for column in columns:
+        # Convertir en chaîne tout en conservant les valeurs manquantes.
+        values = data[column].astype("string")
+
+        # Identifier les trois catégories de commentaires.
+        missing = values.isna()
+        empty = values.notna() & values.str.strip().eq("").fillna(False)
+        present = values.notna() & ~empty
+
+        results.append(
+            {
+                "colonne": column,
+                "nb_manquants": int(missing.sum()),
+                "nb_vides": int(empty.sum()),
+                "nb_renseignes": int(present.sum()),
+                "pourcentage_renseignes": (
+                    round(present.sum() / len(data) * 100, 2) if len(data) > 0 else 0.0
+                ),
+            }
+        )
+
+    return pd.DataFrame(results)
