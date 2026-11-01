@@ -4,6 +4,7 @@ import pandas as pd
 import pytest
 
 from sncf_tgv.eda.quality import (
+    check_identifiers,
     count_duplicates,
     get_column_types,
     get_dataset_overview,
@@ -94,3 +95,54 @@ def test_column_types() -> None:
     assert result.loc[0, "dtype"] == "int64"
     assert result.loc[1, "column"] == "retard"
     assert result.loc[1, "dtype"] == "float64"
+
+
+def test_identifiers_valid_data() -> None:
+    """Vérifie que des identifiants valides ne produisent aucune anomalie."""
+    data = pd.DataFrame(
+        {
+            "date": ["2026-01", "2026-02"],
+            "service": ["National", "National"],
+            "gare_depart": ["PARIS", "SEOUL"],
+            "gare_arrivee": ["LYON", "BUSAN"],
+        }
+    )
+
+    result = check_identifiers(data)
+
+    assert result["nombre_anomalies"].sum() == 0
+
+
+def test_identifiers_invalid_values() -> None:
+    """Détecte une date invalide et un nom de gare vide."""
+    data = pd.DataFrame(
+        {
+            "date": ["2026-13"],
+            "service": ["National"],
+            "gare_depart": ["   "],
+            "gare_arrivee": ["LYON"],
+        }
+    )
+
+    result = check_identifiers(data)
+    anomalies = result.set_index("regle")["nombre_anomalies"]
+
+    assert anomalies["date_invalide"] == 1
+    assert anomalies["gare_depart_manquant"] == 1
+
+
+def test_identifiers_duplicate_key() -> None:
+    """Détecte deux observations portant la même clé métier."""
+    data = pd.DataFrame(
+        {
+            "date": ["2026-01", "2026-01"],
+            "service": ["National", "National"],
+            "gare_depart": ["PARIS", "PARIS"],
+            "gare_arrivee": ["LYON", "LYON"],
+        }
+    )
+
+    result = check_identifiers(data)
+    anomalies = result.set_index("regle")["nombre_anomalies"]
+
+    assert anomalies["doublon_metier"] == 1
