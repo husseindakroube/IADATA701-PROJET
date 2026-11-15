@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [Test_Shihao, main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Python checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v9
+        with:
+          enable-cache: true
+
+      - name: Install Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync --locked --dev
+
+      - name: Check critical Python errors
+        run: uv run --locked ruff check app src --select E9,F63,F7,F82
+
+      - name: Check Python syntax
+        run: uv run --locked python -m compileall -q app src
