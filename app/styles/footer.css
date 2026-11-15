@@ -1,0 +1,120 @@
+.pied-de-page {
+    margin-top: 40px;
+    padding: clamp(24px, 4vw, 56px);
+    border-radius: 24px;
+    background: #0d253f;
+    color: #c2d0df;
+    font-family: 'Nunito', sans-serif;
+}
+
+.grille-pied-de-page {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 1.2fr;
+    gap: 40px;
+}
+
+.grille-pied-de-page > * {
+    min-width: 0;
+}
+
+.pied-de-page a {
+    text-decoration: none;
+}
+
+.pied-de-page .logo-pied-de-page {
+    color: #f8fafc;
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(2rem, 3vw, 3rem);
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.logo-pied-de-page span {
+    color: #45d6b3;
+}
+
+.pied-de-page p {
+    color: #c2d0df;
+    line-height: 1.7;
+    margin: 16px 0;
+}
+
+.pied-de-page .slogan-pied-de-page {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    margin-top: 12px;
+}
+
+.pied-de-page h2 {
+    color: #f8fafc;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 18px;
+    padding: 0;
+}
+
+.liens-pied-de-page {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.liens-pied-de-page h2 {
+    margin-bottom: 6px;
+}
+
+.liens-pied-de-page a {
+    color: #e2eaf3;
+    line-height: 1.6;
+}
+
+.liens-pied-de-page a:hover {
+    color: #45d6b3;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.pied-de-page .bouton-pied-de-page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    background: #edf5f8;
+    color: #0d253f;
+    font-weight: 700;
+}
+
+.bouton-pied-de-page:hover {
+    background: #bfeee3;
+}
+
+.pied-de-page a:focus-visible {
+    outline: 2px solid #45d6b3;
+    outline-offset: 5px;
+}
+
+.mentions-pied-de-page {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 24px;
+    border-top: 1px solid #35506b;
+    margin-top: 36px;
+    padding-top: 20px;
+    font-size: 0.85rem;
+    color: #b3c5d8;
+}
+
+@media (max-width: 900px) {
+    .grille-pied-de-page {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .mentions-pied-de-page {
+        flex-direction: column;
+    }
+}

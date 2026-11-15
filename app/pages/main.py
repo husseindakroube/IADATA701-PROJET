@@ -101,31 +101,25 @@ with st.container(key="histoire_deroulante"):
         )
 
 st.header("Notre problématique")
-st.write("XXXXXXXXXXXXX")
-
-st.info("**I. XXX :** XXXXXXX\n\n**II. XXX :** XXXXXX\n\n**III. XXXXX :** XXXXX ")
+st.write("Dans quelle mesure la structure du réseau TGV est-elle associée à la régularité des liaisons, et peut-on exploiter cette structure pour améliorer la prédiction des retards ?")
 
 col1, col2, col3 = st.columns(3)
 
 with col1, st.container(border=True):
-    st.subheader("🚆 XXXXXXX")
-    st.write("XXXXXXXX")
-    st.page_link(
-        "pages/page1.py",
-        label="XXXXXXX →",
-    )
+    st.subheader("🚆 Exploration des données")
+    st.write("Analyse de la régularité des liaisons TGV et identification des principaux facteurs associés aux retards")
+    if st.button("Découvrir →", key="page1_button"):
+            st.switch_page("pages/page1.py")
 
 with col2, st.container(border=True):
-    st.subheader("🚉 XXXXXXXX")
-    st.write("XXXXXXX")
-    st.page_link(
-        "pages/page2.py",
-        label="XXXXXXX →",
-    )
+    st.subheader("🚉 Analyse du réseau TGV")
+    st.write("Étude de la structure du réseau ferroviaire et de ses relations avec la régularité des liaisons")
+    if st.button("Découvrir →", key="page2_button"):
+            st.switch_page("pages/page2.py")
 
 with col3, st.container(border=True):
-    st.subheader("🚅 XXXXXXXX")
-    st.write("XXXXXX")
+    st.subheader("🚅 Prédiction des retards")
+    st.write("Comparaison des modèles de machine learning avec et sans caractéristiques du graphe pour évaluer leur apport prédictif")
     if st.button("Découvrir →", key="page3_button"):
         st.switch_page("pages/page3.py")
 

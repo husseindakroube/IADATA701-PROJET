@@ -1,17 +1,17 @@
 :root {
-    --couleur-texte: #e8edf5;
-    --couleur-accent: #00BBFF;
+    --couleur-texte: #374151;
+    --couleur-accent: #087F8C;
+    --couleur-slogan: #25364A;
+    --couleur-description: #64748B;
 
-    --couleur-panneau: #182333;
-    --couleur-bordure: #2d3b4d;
+    --couleur-panneau: #F3F6F8;
+    --couleur-bordure: #D8E1E8;
 
     --degrade-titre: linear-gradient(
-        135deg,
-        #c7e9fb,
-        #a6defa,
-        #80d4f9,
-        #5bc9f8,
-        #35bef7
+        120deg,
+        #16324F 0%,
+        #155E75 55%,
+        #087F8C 100%
     );
 
     --degrade-section: linear-gradient(

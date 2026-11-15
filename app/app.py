@@ -1,5 +1,7 @@
-from pathlib import Path
+from base64 import b64encode
 from html import escape
+from pathlib import Path
+
 import streamlit as st
 from utils.styles import load_css
 
@@ -24,15 +26,15 @@ pages = [
     ),
     st.Page(
         "pages/page1.py",
-        title="XXXXXXXX"
+        title="Exploration des données"
     ),
     st.Page(
         "pages/page2.py",
-        title="XXXXXXX"
+        title="Analyse du réseau TGV"
     ),
     st.Page(
         "pages/page3.py",
-        title="XXXXXXXX"
+        title="Prédiction des retards"
     ),
     st.Page(
         "pages/page4.py",
@@ -42,10 +44,38 @@ pages = [
 
 pg = st.navigation(pages, position="hidden")
 
+liens_navigation_mobile = []
+for page in pages:
+    page_active = page.url_path == pg.url_path
+    classe_lien = "lien-navigation"
+    if page_active:
+        classe_lien += " lien-navigation-active"
+    attribut_page_courante = ' aria-current="page"' if page_active else ""
+    adresse_page = f"./{page.url_path}" if page.url_path else "./"
+    liens_navigation_mobile.append(
+        f'<a class="{classe_lien}" href="{escape(adresse_page, quote=True)}"{attribut_page_courante}>'
+        f'{escape(page.title)}</a>'
+    )
+
+logo_mobile = b64encode((IMAGES_PATH / "SNCF_logo.png").read_bytes()).decode("ascii")
+with st.container(key="barre-navigation-mobile"):
+    st.html(f"""
+        <nav class="barre-navigation-mobile" aria-label="Navigation principale">
+            <a class="marque-navigation-mobile" href="./" aria-label="TGVision — Accueil">
+                <img src="data:image/png;base64,{logo_mobile}" alt="SNCF" />
+                <span>TGVision</span>
+            </a>
+            <details class="menu-navigation-mobile">
+                <summary>Menu</summary>
+                <div class="liens-navigation-mobile">{''.join(liens_navigation_mobile)}</div>
+            </details>
+        </nav>
+    """)
+
 with st.container(key="barre-navigation-haut"):
 
     nav_columns = st.columns(
-        [0.9, 2.4] + [1.2] * len(pages),
+        [0.9, 2.4] + [max(0.9, len(page.title) / 10) for page in pages],
         gap="small",
         vertical_alignment="center"
     )

@@ -27,14 +27,14 @@
 .slogan-principal {
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--couleur-texte);
+    color: var(--couleur-slogan);
     line-height: 1.3;
     font-family: 'Inter', sans-serif;
 }
 
 .description-principale {
     font-size: 1.4rem;
-    color: var(--couleur-texte);
+    color: var(--couleur-description);
     line-height: 1.6;
     max-width: 550px;
     margin-top: 25px;
