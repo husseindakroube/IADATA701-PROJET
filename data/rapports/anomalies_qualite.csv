@@ -1,0 +1,637 @@
+﻿index_source;date;service;gare_depart;gare_arrivee;nb_train_prevu;nb_annulation;duree_moyenne;nb_train_retard_arrivee;nb_train_retard_sup_30;nb_train_retard_sup_60;duree_nulle;annulations_excessives;seuils_incoherents;comptage_30_negatif;somme_causes;causes_somme_nulle;causes_autre_ecart;anomalie_detectee
+318;2018-03;National;MARSEILLE ST CHARLES;TOURCOING;31;0;302;0;0;0;False;False;False;False;0.0;True;False;True
+389;2018-03;International;MARSEILLE ST CHARLES;MADRID;31;1;464;1;1;1;False;False;False;False;0.0;True;False;True
+421;2018-04;National;MARSEILLE ST CHARLES;TOURCOING;25;7;301;0;0;0;False;False;False;False;0.0;True;False;True
+495;2018-04;International;MARSEILLE ST CHARLES;MADRID;23;16;464;0;0;0;False;False;False;False;0.0;True;False;True
+508;2018-04;National;RENNES;PARIS VAUGIRARD;20;0;111;0;0;0;False;False;False;False;0.0;True;False;True
+536;2018-05;National;BELLEGARDE (AIN);PARIS LYON;234;63;163;45;29;5;False;False;False;False;0.0;True;False;True
+546;2018-05;International;PARIS LYON;ITALIE;89;20;259;13;6;1;False;False;False;False;0.0;True;False;True
+547;2018-05;International;LAUSANNE;PARIS LYON;135;27;182;25;15;4;False;False;False;False;0.0;True;False;True
+548;2018-05;International;PARIS LYON;ZURICH;134;21;179;35;10;2;False;False;False;False;0.0;True;False;True
+571;2018-05;International;PARIS EST;FRANCFORT;163;0;114;11;5;1;False;False;False;False;0.0;True;False;True
+572;2018-05;International;PARIS EST;STUTTGART;147;0;125;17;5;2;False;False;False;False;0.0;True;False;True
+573;2018-05;International;MADRID;MARSEILLE ST CHARLES;30;17;205;3;3;1;False;False;False;False;0.0;True;False;True
+600;2018-05;International;FRANCFORT;PARIS EST;167;3;111;38;8;2;False;False;False;False;0.0;True;False;True
+601;2018-05;International;PARIS LYON;GENEVE;193;52;179;48;35;7;False;False;False;False;0.0;True;False;True
+602;2018-05;International;GENEVE;PARIS LYON;217;59;180;43;29;5;False;False;False;False;0.0;True;False;True
+603;2018-05;International;ITALIE;PARIS LYON;82;19;286;22;8;1;False;False;False;False;0.0;True;False;True
+604;2018-05;International;MARSEILLE ST CHARLES;MADRID;25;14;202;3;1;0;False;False;False;False;0.0;True;False;True
+612;2018-05;National;TOURCOING;MARSEILLE ST CHARLES;19;3;309;0;0;0;False;False;False;False;0.0;True;False;True
+620;2018-05;International;STUTTGART;PARIS EST;145;1;122;27;7;1;False;False;False;False;0.0;True;False;True
+621;2018-05;International;PARIS LYON;LAUSANNE;142;34;180;13;5;2;False;False;False;False;0.0;True;False;True
+622;2018-05;International;ZURICH;PARIS LYON;133;17;176;27;6;3;False;False;False;False;0.0;True;False;True
+623;2018-05;International;BARCELONA;PARIS LYON;74;12;295;12;6;0;False;False;False;False;0.0;True;False;True
+624;2018-05;International;PARIS LYON;BARCELONA;56;0;310;10;6;4;False;False;False;False;0.0;True;False;True
+681;2018-06;International;PARIS EST;FRANCFORT;155;1;108;16;5;4;False;False;False;False;0.0;True;False;True
+682;2018-06;International;GENEVE;PARIS LYON;218;45;180;116;51;15;False;False;False;False;0.0;True;False;True
+683;2018-06;International;PARIS LYON;LAUSANNE;136;14;179;29;11;3;False;False;False;False;0.0;True;False;True
+684;2018-06;International;MARSEILLE ST CHARLES;MADRID;30;18;202;1;1;1;False;False;False;False;0.0;True;False;True
+713;2018-06;International;STUTTGART;PARIS EST;145;0;121;33;8;3;False;False;False;False;0.0;True;False;True
+714;2018-06;International;ZURICH;PARIS LYON;144;5;176;24;5;2;False;False;False;False;0.0;True;False;True
+727;2018-06;International;PARIS EST;STUTTGART;144;2;117;15;10;4;False;False;False;False;0.0;True;False;True
+728;2018-06;International;LAUSANNE;PARIS LYON;141;10;182;36;19;6;False;False;False;False;0.0;True;False;True
+729;2018-06;International;MADRID;MARSEILLE ST CHARLES;30;18;205;5;1;0;False;False;False;False;0.0;True;False;True
+749;2018-06;International;BARCELONA;PARIS LYON;99;11;300;23;17;7;False;False;False;False;0.0;True;False;True
+750;2018-06;International;PARIS LYON;BARCELONA;97;11;303;23;12;3;False;False;False;False;0.0;True;False;True
+775;2018-06;International;FRANCFORT;PARIS EST;111;0;111;31;9;1;False;False;False;False;0.0;True;False;True
+776;2018-06;International;PARIS LYON;GENEVE;197;40;178;111;59;15;False;False;False;False;0.0;True;False;True
+777;2018-06;International;PARIS LYON;ITALIE;81;15;262;43;25;12;False;False;False;False;0.0;True;False;True
+778;2018-06;International;ITALIE;PARIS LYON;84;15;281;41;23;4;False;False;False;False;0.0;True;False;True
+779;2018-06;International;PARIS LYON;ZURICH;145;5;179;24;6;4;False;False;False;False;0.0;True;False;True
+800;2018-07;International;PARIS LYON;GENEVE;183;5;178;74;29;13;False;False;False;False;0.0;True;False;True
+801;2018-07;International;ITALIE;PARIS LYON;88;2;273;58;29;5;False;False;False;False;0.0;True;False;True
+802;2018-07;International;PARIS LYON;BARCELONA;124;0;312;49;36;8;False;False;False;False;0.0;True;False;True
+825;2018-07;International;FRANCFORT;PARIS EST;141;3;111;48;19;4;False;False;False;False;0.0;True;False;True
+826;2018-07;International;PARIS EST;STUTTGART;150;0;117;12;4;1;False;False;False;False;0.0;True;False;True
+827;2018-07;International;GENEVE;PARIS LYON;203;6;179;91;34;13;False;False;False;False;0.0;True;False;True
+828;2018-07;International;LAUSANNE;PARIS LYON;145;3;182;37;17;8;False;False;False;False;0.0;True;False;True
+829;2018-07;International;BARCELONA;PARIS LYON;124;0;316;37;16;10;False;False;False;False;0.0;True;False;True
+854;2018-07;International;STUTTGART;PARIS EST;149;1;121;43;3;1;False;False;False;False;0.0;True;False;True
+855;2018-07;International;MADRID;MARSEILLE ST CHARLES;31;3;199;4;3;2;False;False;False;False;0.0;True;False;True
+881;2018-07;International;PARIS EST;FRANCFORT;170;2;108;19;5;3;False;False;False;False;0.0;True;False;True
+882;2018-07;International;PARIS LYON;ITALIE;78;4;292;26;8;2;False;False;False;False;0.0;True;False;True
+883;2018-07;International;PARIS LYON;LAUSANNE;149;3;179;49;16;3;False;False;False;False;0.0;True;False;True
+907;2018-07;International;PARIS LYON;ZURICH;150;4;177;37;19;7;False;False;False;False;0.0;True;False;True
+908;2018-07;International;ZURICH;PARIS LYON;150;4;176;34;5;1;False;False;False;False;0.0;True;False;True
+909;2018-07;International;MARSEILLE ST CHARLES;MADRID;31;3;199;2;1;1;False;False;False;False;0.0;True;False;True
+925;2018-08;International;PARIS EST;STUTTGART;145;0;117;13;4;1;False;False;False;False;0.0;True;False;True
+926;2018-08;International;STUTTGART;PARIS EST;150;1;120;39;8;4;False;False;False;False;0.0;True;False;True
+951;2018-08;International;FRANCFORT;PARIS EST;178;4;109;56;15;6;False;False;False;False;0.0;True;False;True
+952;2018-08;International;PARIS LYON;ITALIE;85;0;297;7;4;2;False;False;False;False;0.0;True;False;True
+953;2018-08;International;ZURICH;PARIS LYON;148;0;180;14;8;5;False;False;False;False;0.0;True;False;True
+954;2018-08;International;BARCELONA;PARIS LYON;115;1;315;23;14;7;False;False;False;False;0.0;True;False;True
+978;2018-08;International;PARIS EST;FRANCFORT;172;0;108;15;5;2;False;False;False;False;0.0;True;False;True
+979;2018-08;International;ITALIE;PARIS LYON;83;0;278;44;12;4;False;False;False;False;0.0;True;False;True
+980;2018-08;International;PARIS LYON;ZURICH;148;0;177;26;12;4;False;False;False;False;0.0;True;False;True
+981;2018-08;International;MARSEILLE ST CHARLES;MADRID;30;0;198;1;0;0;False;False;False;False;0.0;True;False;True
+982;2018-08;International;PARIS LYON;BARCELONA;113;0;312;32;20;15;False;False;False;False;0.0;True;False;True
+1007;2018-08;International;PARIS LYON;GENEVE;157;0;176;28;14;4;False;False;False;False;0.0;True;False;True
+1008;2018-08;International;LAUSANNE;PARIS LYON;142;1;183;16;8;3;False;False;False;False;0.0;True;False;True
+1009;2018-08;International;MADRID;MARSEILLE ST CHARLES;30;0;198;7;7;3;False;False;False;False;0.0;True;False;True
+1038;2018-08;International;GENEVE;PARIS LYON;181;1;178;14;7;4;False;False;False;False;0.0;True;False;True
+1039;2018-08;International;PARIS LYON;LAUSANNE;146;0;179;27;13;1;False;False;False;False;0.0;True;False;True
+1103;2018-09;National;RENNES;PARIS VAUGIRARD;27;0;116;0;0;0;False;False;False;False;0.0;True;False;True
+1284;2018-10;National;TOURCOING;MARSEILLE ST CHARLES;28;0;305;0;0;0;False;False;False;False;0.0;True;False;True
+1466;2018-12;National;TOURCOING;MARSEILLE ST CHARLES;7;0;304;0;0;0;False;False;False;False;0.0;True;False;True
+1983;2019-04;International;MARSEILLE ST CHARLES;MADRID;1;0;461;0;0;0;False;False;False;False;0.0;True;False;True
+2066;2019-05;National;MARSEILLE ST CHARLES;TOURCOING;8;0;303;0;0;0;False;False;False;False;0.0;True;False;True
+2333;2019-07;National;TOURCOING;BORDEAUX ST JEAN;12;0;289;0;0;0;False;False;False;False;0.0;True;False;True
+2531;2019-08;National;BORDEAUX ST JEAN;TOURCOING;5;0;299;0;0;0;False;False;False;False;0.0;True;False;True
+2649;2019-09;National;BORDEAUX ST JEAN;TOURCOING;20;0;301;20;0;0;False;False;False;False;0.0;True;False;True
+2836;2019-11;International;PARIS LYON;BARCELONA;25;2;241;4;0;0;False;False;False;False;0.0;True;False;True
+2886;2019-11;International;MARSEILLE ST CHARLES;MADRID;7;1;196;0;0;0;False;False;False;False;0.0;True;False;True
+2998;2019-12;National;STRASBOURG;NANTES;10;4;786;0;0;0;False;False;False;False;0.0;True;False;True
+3004;2019-12;National;TOURCOING;BORDEAUX ST JEAN;8;1;292;0;0;0;False;False;False;False;0.0;True;False;True
+3316;2020-03;National;MARSEILLE ST CHARLES;TOURCOING;17;2;295;0;0;0;False;False;False;False;0.0;True;False;True
+3330;2020-03;International;MARSEILLE ST CHARLES;MADRID;11;1;190;0;0;0;False;False;False;False;0.0;True;False;True
+3406;2020-04;National;PARIS MONTPARNASSE;ST MALO;0;8;0;0;0;0;True;True;False;False;0.0;True;False;True
+3407;2020-04;National;PARIS MONTPARNASSE;TOURS;0;9;0;0;0;0;True;True;False;False;0.0;True;False;True
+3409;2020-04;National;NANTES;STRASBOURG;0;2;0;0;0;0;True;True;False;False;0.0;True;False;True
+3411;2020-04;National;PARIS NORD;DOUAI;0;12;0;0;0;0;True;True;False;False;0.0;True;False;True
+3412;2020-04;National;DUNKERQUE;PARIS NORD;0;15;0;0;0;0;True;True;False;False;0.0;True;False;True
+3414;2020-04;National;MARSEILLE ST CHARLES;TOURCOING;0;1;0;0;0;0;True;True;False;False;0.0;True;False;True
+3415;2020-04;National;LYON PART DIEU;MARNE LA VALLEE;0;19;0;0;0;0;True;True;False;False;0.0;True;False;True
+3416;2020-04;National;MARNE LA VALLEE;MARSEILLE ST CHARLES;0;14;0;0;0;0;True;True;False;False;0.0;True;False;True
+3417;2020-04;National;MARSEILLE ST CHARLES;MARNE LA VALLEE;0;13;0;0;0;0;True;True;False;False;0.0;True;False;True
+3418;2020-04;National;PARIS LYON;AIX EN PROVENCE TGV;0;17;0;0;0;0;True;True;False;False;0.0;True;False;True
+3419;2020-04;National;PARIS LYON;BELLEGARDE (AIN);0;15;0;0;0;0;True;True;False;False;0.0;True;False;True
+3421;2020-04;National;GRENOBLE;PARIS LYON;0;9;0;0;0;0;True;True;False;False;0.0;True;False;True
+3426;2020-04;National;MARSEILLE ST CHARLES;LYON PART DIEU;39;21;107;0;0;0;False;False;False;False;0.0;True;False;True
+3427;2020-04;International;PARIS EST;FRANCFORT;0;12;0;0;0;0;True;True;False;False;0.0;True;False;True
+3428;2020-04;International;FRANCFORT;PARIS EST;0;12;0;0;0;0;True;True;False;False;0.0;True;False;True
+3429;2020-04;International;PARIS LYON;GENEVE;0;9;0;0;0;0;True;True;False;False;0.0;True;False;True
+3435;2020-04;National;ST MALO;PARIS MONTPARNASSE;0;4;0;0;0;0;True;True;False;False;0.0;True;False;True
+3438;2020-04;National;PARIS NORD;DUNKERQUE;0;14;0;0;0;0;True;True;False;False;0.0;True;False;True
+3439;2020-04;National;ANNECY;PARIS LYON;0;7;0;0;0;0;True;True;False;False;0.0;True;False;True
+3442;2020-04;National;PARIS LYON;TOULON;0;13;0;0;0;0;True;True;False;False;0.0;True;False;True
+3451;2020-04;National;PARIS MONTPARNASSE;QUIMPER;35;17;248;0;0;0;False;False;False;False;0.0;True;False;True
+3453;2020-04;National;TOURS;PARIS MONTPARNASSE;0;11;0;0;0;0;True;True;False;False;0.0;True;False;True
+3456;2020-04;National;PARIS EST;NANCY;49;22;96;0;0;0;False;False;False;False;0.0;True;False;True
+3460;2020-04;National;BORDEAUX ST JEAN;TOURCOING;0;1;0;0;0;0;True;True;False;False;0.0;True;False;True
+3461;2020-04;National;MARNE LA VALLEE;LYON PART DIEU;0;21;0;0;0;0;True;True;False;False;0.0;True;False;True
+3463;2020-04;National;BELLEGARDE (AIN);PARIS LYON;0;14;0;0;0;0;True;True;False;False;0.0;True;False;True
+3466;2020-04;National;PARIS LYON;MACON LOCHE;36;12;111;1;0;0;False;False;False;False;0.0;True;False;True
+3471;2020-04;National;NICE VILLE;PARIS LYON;0;12;0;0;0;0;True;True;False;False;0.0;True;False;True
+3473;2020-04;National;PERPIGNAN;PARIS LYON;0;10;0;0;0;0;True;True;False;False;0.0;True;False;True
+3474;2020-04;National;TOULON;PARIS LYON;0;14;0;0;0;0;True;True;False;False;0.0;True;False;True
+3475;2020-04;National;PARIS LYON;VALENCE ALIXAN TGV;34;16;132;0;0;0;False;False;False;False;0.0;True;False;True
+3476;2020-04;International;ITALIE;PARIS LYON;0;3;0;0;0;0;True;True;False;False;0.0;True;False;True
+3477;2020-04;International;LAUSANNE;PARIS LYON;0;9;0;0;0;0;True;True;False;False;0.0;True;False;True
+3478;2020-04;International;BARCELONA;PARIS LYON;0;2;0;0;0;0;True;True;False;False;0.0;True;False;True
+3481;2020-04;National;PARIS MONTPARNASSE;LA ROCHELLE VILLE;0;15;0;0;0;0;True;True;False;False;0.0;True;False;True
+3483;2020-04;National;LYON PART DIEU;RENNES;0;4;0;0;0;0;True;True;False;False;0.0;True;False;True
+3486;2020-04;National;LILLE;MARSEILLE ST CHARLES;0;13;0;0;0;0;True;True;False;False;0.0;True;False;True
+3487;2020-04;National;TOURCOING;BORDEAUX ST JEAN;0;2;0;0;0;0;True;True;False;False;0.0;True;False;True
+3490;2020-04;National;PARIS LYON;CHAMBERY CHALLES LES EAUX;0;15;0;0;0;0;True;True;False;False;0.0;True;False;True
+3492;2020-04;National;PARIS LYON;PERPIGNAN;0;11;0;0;0;0;True;True;False;False;0.0;True;False;True
+3493;2020-04;National;MONTPELLIER;LYON PART DIEU;28;10;113;0;0;0;False;False;False;False;0.0;True;False;True
+3494;2020-04;International;PARIS EST;STUTTGART;10;6;143;0;0;0;False;False;False;False;0.0;True;False;True
+3495;2020-04;International;STUTTGART;PARIS EST;8;7;106;1;1;1;False;False;False;False;0.0;True;False;True
+3497;2020-04;International;MADRID;MARSEILLE ST CHARLES;0;1;0;0;0;0;True;True;False;False;0.0;True;False;True
+3498;2020-04;International;MARSEILLE ST CHARLES;MADRID;0;1;0;0;0;0;True;True;False;False;0.0;True;False;True
+3500;2020-04;National;LA ROCHELLE VILLE;PARIS MONTPARNASSE;0;13;0;0;0;0;True;True;False;False;0.0;True;False;True
+3507;2020-04;National;RENNES;LYON PART DIEU;0;4;0;0;0;0;True;True;False;False;0.0;True;False;True
+3508;2020-04;National;PARIS EST;METZ;46;23;83;0;0;0;False;False;False;False;0.0;True;False;True
+3509;2020-04;National;REIMS;PARIS EST;24;20;46;0;0;0;False;False;False;False;0.0;True;False;True
+3510;2020-04;National;PARIS EST;STRASBOURG;40;35;178;3;3;0;False;False;False;False;0.0;True;False;True
+3511;2020-04;National;STRASBOURG;NANTES;0;2;0;0;0;0;True;True;False;False;0.0;True;False;True
+3513;2020-04;National;MARSEILLE ST CHARLES;LILLE;0;11;0;0;0;0;True;True;False;False;0.0;True;False;True
+3515;2020-04;National;PARIS LYON;ANNECY;0;7;0;0;0;0;True;True;False;False;0.0;True;False;True
+3516;2020-04;National;CHAMBERY CHALLES LES EAUX;PARIS LYON;0;13;0;0;0;0;True;True;False;False;0.0;True;False;True
+3518;2020-04;National;PARIS LYON;GRENOBLE;0;10;0;0;0;0;True;True;False;False;0.0;True;False;True
+3519;2020-04;National;PARIS LYON;MARSEILLE ST CHARLES;41;23;190;0;0;0;False;False;False;False;0.0;True;False;True
+3520;2020-04;National;PARIS LYON;NICE VILLE;0;9;0;0;0;0;True;True;False;False;0.0;True;False;True
+3521;2020-04;National;PARIS LYON;SAINT ETIENNE CHATEAUCREUX;0;4;0;0;0;0;True;True;False;False;0.0;True;False;True
+3522;2020-04;National;SAINT ETIENNE CHATEAUCREUX;PARIS LYON;0;4;0;0;0;0;True;True;False;False;0.0;True;False;True
+3524;2020-04;International;GENEVE;PARIS LYON;0;10;0;0;0;0;True;True;False;False;0.0;True;False;True
+3525;2020-04;International;PARIS LYON;ITALIE;0;4;0;0;0;0;True;True;False;False;0.0;True;False;True
+3526;2020-04;International;PARIS LYON;LAUSANNE;0;7;0;0;0;0;True;True;False;False;0.0;True;False;True
+3527;2020-04;International;PARIS LYON;BARCELONA;21;2;208;1;1;0;False;False;False;False;0.0;True;False;True
+3543;2020-05;National;PARIS LYON;ANNECY;31;7;226;0;0;0;False;False;False;False;0.0;True;False;True
+3553;2020-05;International;ZURICH;PARIS LYON;27;7;173;0;0;0;False;False;False;False;0.0;True;False;True
+3565;2020-05;National;ANNECY;PARIS LYON;17;7;224;0;0;0;False;False;False;False;0.0;True;False;True
+3574;2020-05;International;FRANCFORT;PARIS EST;29;9;175;0;0;0;False;False;False;False;0.0;True;False;True
+3575;2020-05;International;STUTTGART;PARIS EST;8;6;145;0;0;0;False;False;False;False;0.0;True;False;True
+3585;2020-05;National;STRASBOURG;NANTES;0;2;0;0;0;0;True;True;False;False;0.0;True;False;True
+3597;2020-05;National;SAINT ETIENNE CHATEAUCREUX;PARIS LYON;0;4;0;0;0;0;True;True;False;False;0.0;True;False;True
+3602;2020-05;International;MADRID;MARSEILLE ST CHARLES;0;1;0;0;0;0;True;True;False;False;0.0;True;False;True
+3615;2020-05;National;BORDEAUX ST JEAN;TOURCOING;0;1;0;0;0;0;True;True;False;False;0.0;True;False;True
+3616;2020-05;National;MARSEILLE ST CHARLES;TOURCOING;0;1;0;0;0;0;True;True;False;False;0.0;True;False;True
+3624;2020-05;National;PARIS LYON;SAINT ETIENNE CHATEAUCREUX;0;4;0;0;0;0;True;True;False;False;0.0;True;False;True
+3627;2020-05;International;MARSEILLE ST CHARLES;MADRID;0;1;0;0;0;0;True;True;False;False;0.0;True;False;True
+3639;2020-05;National;NANTES;STRASBOURG;0;2;0;0;0;0;True;True;False;False;0.0;True;False;True
+3640;2020-05;National;TOURCOING;BORDEAUX ST JEAN;0;1;0;0;0;0;True;True;False;False;0.0;True;False;True
+3649;2020-05;International;PARIS EST;STUTTGART;6;5;153;0;0;0;False;False;False;False;0.0;True;False;True
+3650;2020-05;International;PARIS LYON;ZURICH;27;7;232;0;0;0;False;False;False;False;0.0;True;False;True
+3656;2020-06;National;BORDEAUX ST JEAN;TOURCOING;8;1;315;0;0;0;False;False;False;False;0.0;True;False;True
+3698;2020-06;International;MADRID;MARSEILLE ST CHARLES;0;1;0;0;0;0;True;True;False;False;0.0;True;False;True
+3719;2020-06;International;STUTTGART;PARIS EST;0;2;0;0;0;0;True;True;False;False;0.0;True;False;True
+3721;2020-06;International;MARSEILLE ST CHARLES;MADRID;0;1;0;0;0;0;True;True;False;False;0.0;True;False;True
+3735;2020-06;National;ANNECY;PARIS LYON;79;5;236;12;5;0;False;False;False;False;0.0;True;False;True
+3744;2020-06;International;PARIS EST;STUTTGART;0;2;0;0;0;0;True;True;False;False;0.0;True;False;True
+3745;2020-06;International;PARIS LYON;BARCELONA;50;3;230;2;5;1;False;False;False;False;0.0;True;False;True
+3758;2020-06;National;NANTES;STRASBOURG;26;2;350;0;0;0;False;False;False;False;0.0;True;False;True
+3759;2020-06;National;DUNKERQUE;PARIS NORD;95;7;127;10;1;1;False;False;False;False;0.0;True;False;True
+3761;2020-06;National;TOURCOING;BORDEAUX ST JEAN;7;1;298;1;1;0;False;False;False;False;0.0;True;False;True
+3921;2020-08;International;MARSEILLE ST CHARLES;MADRID;0;0;0;0;0;0;True;False;False;False;0.0;True;False;True
+3979;2020-08;International;MADRID;MARSEILLE ST CHARLES;0;0;0;0;0;0;True;False;False;False;0.0;True;False;True
+4069;2020-09;International;MADRID;MARSEILLE ST CHARLES;0;0;0;0;0;0;True;False;False;False;0.0;True;False;True
+4071;2020-09;International;MARSEILLE ST CHARLES;MADRID;0;0;0;0;0;0;True;False;False;False;0.0;True;False;True
+4208;2020-10;International;MARSEILLE ST CHARLES;MADRID;0;0;0;0;0;0;True;False;False;False;0.0;True;False;True
+4243;2020-10;International;MADRID;MARSEILLE ST CHARLES;0;0;0;0;0;0;True;False;False;False;0.0;True;False;True
+4286;2020-11;National;BORDEAUX ST JEAN;TOURCOING;5;1;315;0;0;0;False;False;False;False;0.0;True;False;True
+4287;2020-11;National;TOURCOING;BORDEAUX ST JEAN;2;1;297;0;0;0;False;False;False;False;0.0;True;False;True
+4293;2020-11;International;PARIS LYON;LAUSANNE;10;5;210;0;0;0;False;False;False;False;0.0;True;False;True
+4295;2020-11;International;PARIS LYON;BARCELONA;26;0;317;0;0;0;False;False;False;False;0.0;True;False;True
+4314;2020-11;National;SAINT ETIENNE CHATEAUCREUX;PARIS LYON;10;4;185;0;0;0;False;False;False;False;0.0;True;False;True
+4342;2020-11;National;STRASBOURG;NANTES;8;2;337;0;0;0;False;False;False;False;0.0;True;False;True
+4343;2020-11;National;NANTES;STRASBOURG;10;2;302;0;0;0;False;False;False;False;0.0;True;False;True
+4364;2020-11;International;MADRID;MARSEILLE ST CHARLES;0;0;0;0;0;0;True;False;False;False;0.0;True;False;True
+4384;2020-11;International;STUTTGART;PARIS EST;41;3;170;0;0;0;False;False;False;False;0.0;True;False;True
+4388;2020-11;International;MARSEILLE ST CHARLES;MADRID;0;0;0;0;0;0;True;False;False;False;0.0;True;False;True
+4402;2020-12;National;TOURCOING;BORDEAUX ST JEAN;23;2;298;0;0;0;False;False;False;False;0.0;True;False;True
+4414;2020-12;International;MARSEILLE ST CHARLES;MADRID;0;0;0;0;0;0;True;False;False;False;0.0;True;False;True
+4463;2020-12;International;MADRID;MARSEILLE ST CHARLES;0;0;0;0;0;0;True;False;False;False;0.0;True;False;True
+4514;2021-01;International;PARIS LYON;BARCELONA;31;0;399;0;0;0;False;False;False;False;0.0;True;False;True
+4661;2021-02;International;PARIS LYON;BARCELONA;28;0;399;0;0;0;False;False;False;False;0.0;True;False;True
+4783;2021-03;International;PARIS LYON;BARCELONA;31;0;399;0;0;0;False;False;False;False;0.0;True;False;True
+4808;2021-03;National;NANTES;STRASBOURG;39;2;323;0;0;0;False;False;False;False;0.0;True;False;True
+4822;2021-03;National;STRASBOURG;NANTES;39;1;316;0;0;0;False;False;False;False;0.0;True;False;True
+4908;2021-04;National;SAINT ETIENNE CHATEAUCREUX;PARIS LYON;89;35;167;0;0;0;False;False;False;False;0.0;True;False;True
+4941;2021-04;International;PARIS LYON;BARCELONA;30;0;399;0;0;0;False;False;False;False;0.0;True;False;True
+4944;2021-04;International;ZURICH;PARIS LYON;86;46;244;0;0;0;False;False;False;False;0.0;True;False;True
+4980;2021-04;National;PARIS LYON;MACON LOCHE;185;91;96;0;0;0;False;False;False;False;0.0;True;False;True
+4999;2021-05;National;BORDEAUX ST JEAN;TOURCOING;31;9;315;0;0;0;False;False;False;False;0.0;True;False;True
+5018;2021-05;International;PARIS LYON;ZURICH;69;12;244;0;0;0;False;False;False;False;0.0;True;False;True
+5059;2021-05;International;PARIS LYON;BARCELONA;31;0;402;0;0;0;False;False;False;False;0.0;True;False;True
+5101;2021-05;National;NANTES;STRASBOURG;41;0;322;0;0;0;False;False;False;False;0.0;True;False;True
+5177;2021-06;International;PARIS EST;STUTTGART;81;0;203;0;0;0;False;False;False;False;0.0;True;False;True
+5178;2021-06;International;PARIS LYON;BARCELONA;29;0;399;0;0;0;False;False;False;False;0.0;True;False;True
+5204;2021-06;International;LAUSANNE;PARIS LYON;86;0;227;0;0;0;False;False;False;False;0.0;True;False;True
+5285;2021-07;International;PARIS EST;STUTTGART;144;2;199;0;0;0;False;False;False;False;0.0;True;False;True
+5331;2021-07;International;PARIS LYON;BARCELONA;61;1;397;0;0;0;False;False;False;False;0.0;True;False;True
+5432;2021-08;International;PARIS EST;STUTTGART;151;1;200;0;0;0;False;False;False;False;0.0;True;False;True
+5433;2021-08;International;PARIS LYON;BARCELONA;60;0;399;0;0;0;False;False;False;False;0.0;True;False;True
+5504;2021-09;International;PARIS LYON;BARCELONA;30;0;401;0;0;0;False;False;False;False;0.0;True;False;True
+5531;2021-09;National;TOURCOING;BORDEAUX ST JEAN;30;0;303;0;0;0;False;False;False;False;0.0;True;False;True
+5576;2021-09;International;PARIS EST;STUTTGART;146;2;199;0;0;0;False;False;False;False;0.0;True;False;True
+5670;2021-10;National;BORDEAUX ST JEAN;TOURCOING;31;3;315;0;0;0;False;False;False;False;0.0;True;False;True
+5700;2021-10;International;PARIS LYON;BARCELONA;31;0;401;0;0;0;False;False;False;False;0.0;True;False;True
+5812;2021-11;International;PARIS LYON;BARCELONA;25;1;401;0;0;0;False;False;False;False;0.0;True;False;True
+5841;2021-12;International;PARIS LYON;BARCELONA;31;0;400;0;0;0;False;False;False;False;0.0;True;False;True
+6056;2022-01;International;PARIS LYON;BARCELONA;31;0;400;0;0;0;False;False;False;False;0.0;True;False;True
+6113;2022-02;International;PARIS LYON;BARCELONA;28;0;400;0;0;0;False;False;False;False;0.0;True;False;True
+6207;2022-03;International;PARIS LYON;BARCELONA;51;0;402;0;0;0;False;False;False;False;0.0;True;False;True
+6353;2022-04;International;MARSEILLE ST CHARLES;MADRID;22;1;463;0;0;0;False;False;False;False;0.0;True;False;True
+6418;2022-04;International;PARIS LYON;BARCELONA;50;0;405;0;0;0;False;False;False;False;0.0;True;False;True
+6419;2022-04;International;PARIS LYON;LAUSANNE;93;1;233;0;0;0;False;False;False;False;0.0;True;False;True
+6507;2022-05;International;PARIS LYON;BARCELONA;28;0;404;0;0;0;False;False;False;False;0.0;True;False;True
+6524;2022-05;National;TOURCOING;BORDEAUX ST JEAN;27;0;314;0;0;0;False;False;False;False;0.0;True;False;True
+6546;2022-05;International;MARSEILLE ST CHARLES;MADRID;27;0;463;0;0;0;False;False;False;False;0.0;True;False;True
+6571;2022-06;International;MARSEILLE ST CHARLES;MADRID;30;0;463;0;0;0;False;False;False;False;0.0;True;False;True
+6724;2022-07;International;MARSEILLE ST CHARLES;MADRID;31;2;463;0;0;0;False;False;False;False;0.0;True;False;True
+6915;2022-08;National;TOURCOING;BORDEAUX ST JEAN;31;0;304;0;0;0;False;False;False;False;0.0;True;False;True
+6916;2022-08;National;TOURCOING;MARSEILLE ST CHARLES;2;0;289;0;0;0;False;False;False;False;0.0;True;False;True
+6918;2022-08;International;MARSEILLE ST CHARLES;MADRID;31;1;463;0;0;0;False;False;False;False;0.0;True;False;True
+7006;2022-09;International;MARSEILLE ST CHARLES;MADRID;29;1;463;0;0;0;False;False;False;False;0.0;True;False;True
+7103;2022-10;International;MARSEILLE ST CHARLES;MADRID;29;1;463;0;0;0;False;False;False;False;0.0;True;False;True
+7282;2022-11;International;MARSEILLE ST CHARLES;MADRID;28;0;463;0;0;0;False;False;False;False;0.0;True;False;True
+7305;2022-12;International;MADRID;MARSEILLE ST CHARLES;10;5;481;0;0;0;False;False;False;False;0.0;True;False;True
+7306;2022-12;International;MARSEILLE ST CHARLES;MADRID;10;1;463;0;0;0;False;False;False;False;0.0;True;False;True
+7478;2023-01;National;BORDEAUX ST JEAN;TOURCOING;31;2;332;0;0;0;False;False;False;False;0.0;True;False;True
+8009;2023-05;National;TOURCOING;BORDEAUX ST JEAN;27;0;305;0;0;0;False;False;False;False;0.0;True;False;True
+8426;2023-09;International;PARIS LYON;ITALIE;30;16;423;0;0;0;False;False;False;False;0.0;True;False;True
+8448;2023-09;International;ITALIE;PARIS LYON;30;17;430;1;0;0;False;False;False;False;0.0;True;False;True
+8586;2023-10;National;BORDEAUX ST JEAN;TOURCOING;31;1;333;0;0;0;False;False;False;False;0.0;True;False;True
+8875;2024-01;International;PARIS LYON;ITALIE;20;0;502;0;0;0;False;False;False;False;0.0;True;False;True
+9065;2024-02;International;PARIS LYON;ITALIE;29;0;502;0;0;0;False;False;False;False;0.0;True;False;True
+9134;2024-03;International;PARIS LYON;ITALIE;30;0;502;0;0;0;False;False;False;False;0.0;True;False;True
+9237;2024-04;International;PARIS LYON;BARCELONA;58;0;408;0;0;0;False;False;False;False;0.0;True;False;True
+9323;2024-04;International;PARIS LYON;ITALIE;28;0;502;0;0;0;False;False;False;False;0.0;True;False;True
+9381;2024-05;International;PARIS LYON;BARCELONA;64;0;409;0;0;0;False;False;False;False;0.0;True;False;True
+9427;2024-05;International;PARIS LYON;ITALIE;18;0;502;0;0;0;False;False;False;False;0.0;True;False;True
+9457;2024-05;National;STRASBOURG;NANTES;57;0;335;0;0;0;False;False;False;False;0.0;True;False;True
+9539;2024-06;International;PARIS LYON;BARCELONA;70;0;409;0;0;0;False;False;False;False;0.0;True;False;True
+9625;2024-07;International;PARIS LYON;ITALIE;26;1;502;0;0;0;False;False;False;False;0.0;True;False;True
+9741;2024-08;International;PARIS LYON;ITALIE;31;0;502;0;0;0;False;False;False;False;0.0;True;False;True
+9839;2024-08;National;TOURCOING;BORDEAUX ST JEAN;31;0;304;0;0;0;False;False;False;False;0.0;True;False;True
+9870;2024-09;International;PARIS LYON;ITALIE;30;0;502;0;0;0;False;False;False;False;0.0;True;False;True
+9985;2024-10;International;PARIS LYON;ITALIE;29;0;502;0;0;0;False;False;False;False;0.0;True;False;True
+10080;2024-10;National;TOURCOING;BORDEAUX ST JEAN;31;1;304;0;0;0;False;False;False;False;0.0;True;False;True
+10182;2024-11;International;PARIS LYON;ITALIE;26;0;502;0;0;0;False;False;False;False;0.0;True;False;True
+10205;2024-12;International;PARIS LYON;ITALIE;31;0;497;0;0;0;False;False;False;False;0.0;True;False;True
+10226;2024-12;National;TOURCOING;BORDEAUX ST JEAN;30;0;305;0;0;0;False;False;False;False;0.0;True;False;True
+10324;2025-01;International;FRANCFORT;PARIS EST;175;11;232;27;0;18;False;False;True;False;99.99999999;False;False;True
+10325;2025-01;International;GENEVE;PARIS LYON;238;1;193;19;0;13;False;False;True;False;100.0;False;False;True
+10326;2025-01;International;LAUSANNE;PARIS LYON;172;10;230;15;-4;9;False;False;True;True;100.0;False;False;True
+10327;2025-01;International;ZURICH;PARIS LYON;186;5;244;18;0;10;False;False;True;False;100.0;False;False;True
+10328;2025-01;National;ANGOULEME;PARIS MONTPARNASSE;333;1;131;44;0;10;False;False;True;False;100.00000001000001;False;False;True
+10329;2025-01;National;DIJON VILLE;PARIS LYON;426;4;98;60;-1;30;False;False;True;True;100.00000001000001;False;False;True
+10330;2025-01;National;DOUAI;PARIS NORD;167;2;76;43;-1;9;False;False;True;True;100.00000000000001;False;False;True
+10331;2025-01;National;DUNKERQUE;PARIS NORD;167;0;132;29;0;8;False;False;True;False;100.0;False;False;True
+10332;2025-01;National;GRENOBLE;PARIS LYON;238;0;181;35;0;12;False;False;True;False;100.00000001000001;False;False;True
+10333;2025-01;National;LAVAL;PARIS MONTPARNASSE;238;0;86;37;0;10;False;False;True;False;99.99999999999999;False;False;True
+10334;2025-01;National;LILLE;LYON PART DIEU;383;0;183;101;0;42;False;False;True;False;100.00000000980197;False;False;True
+10335;2025-01;National;MARNE LA VALLEE;MARSEILLE ST CHARLES;292;0;211;59;0;31;False;False;True;False;100.00000001000001;False;False;True
+10336;2025-01;National;MARSEILLE ST CHARLES;LILLE;224;1;285;41;0;13;False;False;True;False;100.0;False;False;True
+10337;2025-01;National;MARSEILLE ST CHARLES;LYON PART DIEU;484;0;104;53;0;18;False;False;True;False;100.0;False;False;True
+10338;2025-01;National;MARSEILLE ST CHARLES;PARIS LYON;517;0;196;58;0;28;False;False;True;False;100.00000001000001;False;False;True
+10339;2025-01;National;NANTES;PARIS MONTPARNASSE;632;22;135;103;1;50;False;False;True;False;100.00000001;False;False;True
+10340;2025-01;National;PARIS EST;NANCY;297;0;96;15;0;3;False;False;True;False;100.00000001;False;False;True
+10341;2025-01;National;PARIS LYON;BESANCON FRANCHE COMTE TGV;183;0;128;24;0;12;False;False;True;False;100.0;False;False;True
+10342;2025-01;National;PARIS LYON;LYON PART DIEU;712;1;119;59;0;24;False;False;True;False;100.00000001000001;False;False;True
+10343;2025-01;National;PARIS LYON;PERPIGNAN;178;0;312;21;0;11;False;False;True;False;99.99999998999999;False;False;True
+10344;2025-01;National;PARIS MONTPARNASSE;LA ROCHELLE VILLE;235;5;176;16;0;4;False;False;True;False;100.0;False;False;True
+10345;2025-01;National;PARIS MONTPARNASSE;LAVAL;228;0;78;35;0;9;False;False;True;False;99.99999999;False;False;True
+10346;2025-01;National;PARIS MONTPARNASSE;QUIMPER;270;35;224;15;0;8;False;False;True;False;100.0;False;False;True
+10347;2025-01;National;PARIS NORD;DOUAI;121;0;71;19;0;6;False;False;True;False;100.0;False;False;True
+10348;2025-01;National;REIMS;PARIS EST;229;0;46;14;0;2;False;False;True;False;100.00000001000001;False;False;True
+10349;2025-01;National;SAINT ETIENNE CHATEAUCREUX;PARIS LYON;119;1;168;14;0;2;False;False;True;False;100.0;False;False;True
+10350;2025-01;National;ST MALO;PARIS MONTPARNASSE;101;0;154;11;0;2;False;False;True;False;99.99999998999999;False;False;True
+10351;2025-01;National;TOULON;PARIS LYON;252;1;238;41;0;29;False;False;True;False;99.99999999;False;False;True
+10353;2025-01;International;ITALIE;PARIS LYON;30;0;535;5;0;1;False;False;True;False;100.0;False;False;True
+10354;2025-01;National;AIX EN PROVENCE TGV;PARIS LYON;472;1;184;60;0;31;False;False;True;False;99.99999999;False;False;True
+10355;2025-01;National;BORDEAUX ST JEAN;PARIS MONTPARNASSE;1029;0;145;180;0;69;False;False;True;False;99.99999999999999;False;False;True
+10356;2025-01;National;LA ROCHELLE VILLE;PARIS MONTPARNASSE;222;6;175;19;0;3;False;False;True;False;99.99999998999999;False;False;True
+10357;2025-01;National;LE MANS;PARIS MONTPARNASSE;472;5;61;123;-1;30;False;False;True;True;99.99999999;False;False;True
+10358;2025-01;National;MARSEILLE ST CHARLES;MARNE LA VALLEE;296;0;208;43;-2;17;False;False;True;True;99.99999999999999;False;False;True
+10359;2025-01;National;METZ;PARIS EST;317;0;87;32;0;7;False;False;True;False;99.99999999999997;False;False;True
+10360;2025-01;National;MULHOUSE VILLE;PARIS LYON;339;4;170;44;0;25;False;False;True;False;99.99999999;False;False;True
+10361;2025-01;National;NIMES;PARIS LYON;223;0;179;33;0;10;False;False;True;False;99.99999998999999;False;False;True
+10362;2025-01;National;PARIS LYON;CHAMBERY CHALLES LES EAUX;279;1;175;55;0;21;False;False;True;False;100.0;False;False;True
+10363;2025-01;National;PARIS LYON;DIJON VILLE;436;0;96;58;0;22;False;False;True;False;100.00000001000001;False;False;True
+10364;2025-01;National;PARIS LYON;LE CREUSOT MONTCEAU MONTCHANIN;224;0;80;17;0;9;False;False;True;False;99.99999999;False;False;True
+10365;2025-01;National;PARIS LYON;TOULON;267;2;236;37;0;20;False;False;True;False;100.0;False;False;True
+10366;2025-01;National;PARIS MONTPARNASSE;ST PIERRE DES CORPS;557;19;62;77;0;11;False;False;True;False;100.0;False;False;True
+10367;2025-01;National;PARIS NORD;ARRAS;502;1;49;65;0;18;False;False;True;False;100.00000001000001;False;False;True
+10368;2025-01;National;PARIS NORD;LILLE;668;6;68;110;0;20;False;False;True;False;100.00000000572729;False;False;True
+10369;2025-01;National;PERPIGNAN;PARIS LYON;186;0;313;23;0;13;False;False;True;False;100.0;False;False;True
+10370;2025-01;International;PARIS LYON;ITALIE;30;0;507;0;0;0;False;False;False;False;0.0;True;False;True
+10371;2025-01;International;PARIS LYON;LAUSANNE;176;12;228;31;0;10;False;False;True;False;99.99999999999999;False;False;True
+10372;2025-01;International;PARIS LYON;ZURICH;164;3;244;26;0;17;False;False;True;False;99.99999999;False;False;True
+10373;2025-01;International;STUTTGART;PARIS EST;149;2;198;22;0;9;False;False;True;False;100.00000001;False;False;True
+10374;2025-01;National;ARRAS;PARIS NORD;493;2;52;136;0;22;False;False;True;False;100.0;False;False;True
+10375;2025-01;National;BESANCON FRANCHE COMTE TGV;PARIS LYON;183;0;133;24;0;14;False;False;True;False;100.0;False;False;True
+10376;2025-01;National;BORDEAUX ST JEAN;TOURCOING;32;0;322;6;0;6;False;False;True;False;99.99999999999997;False;False;True
+10377;2025-01;National;LE CREUSOT MONTCEAU MONTCHANIN;PARIS LYON;250;0;82;24;0;8;False;False;True;False;100.00000001;False;False;True
+10378;2025-01;National;LILLE;MARSEILLE ST CHARLES;253;0;296;50;0;24;False;False;True;False;99.999999993;False;False;True
+10379;2025-01;National;LILLE;PARIS NORD;643;4;70;130;-1;18;False;False;True;True;100.00000000515386;False;False;True
+10380;2025-01;National;LYON PART DIEU;LILLE;352;0;188;75;-44;21;False;False;True;True;99.99999998846667;False;False;True
+10381;2025-01;National;LYON PART DIEU;MARNE LA VALLEE;360;0;107;70;-2;18;False;False;True;True;100.00000001000001;False;False;True
+10382;2025-01;National;LYON PART DIEU;PARIS LYON;732;3;119;64;-3;17;False;False;True;True;99.99999998999999;False;False;True
+10383;2025-01;National;MACON LOCHE;PARIS LYON;229;0;97;42;0;13;False;False;True;False;100.00000001000001;False;False;True
+10384;2025-01;National;MARNE LA VALLEE;LYON PART DIEU;421;0;106;116;0;45;False;False;True;False;100.0;False;False;True
+10385;2025-01;National;NANTES;STRASBOURG;57;1;314;10;0;3;False;False;True;False;100.0;False;False;True
+10386;2025-01;National;PARIS LYON;AIX EN PROVENCE TGV;498;0;182;52;0;25;False;False;True;False;99.99999998999999;False;False;True
+10387;2025-01;National;PARIS LYON;ANNECY;164;3;225;23;0;9;False;False;True;False;100.0;False;False;True
+10388;2025-01;National;PARIS LYON;MACON LOCHE;235;0;96;19;0;5;False;False;True;False;99.99999998999999;False;False;True
+10389;2025-01;National;PARIS MONTPARNASSE;ANGERS SAINT LAUD;547;10;89;88;0;12;False;False;True;False;100.00000001;False;False;True
+10390;2025-01;National;PARIS MONTPARNASSE;ST MALO;97;0;157;9;0;3;False;False;True;False;99.99999998999999;False;False;True
+10391;2025-01;National;PARIS MONTPARNASSE;TOURS;184;7;75;22;0;5;False;False;True;False;100.00000001;False;False;True
+10392;2025-01;National;QUIMPER;PARIS MONTPARNASSE;281;34;235;31;-1;14;False;False;True;True;100.0;False;False;True
+10393;2025-01;National;RENNES;PARIS MONTPARNASSE;823;15;102;116;0;38;False;False;True;False;99.99999999;False;False;True
+10394;2025-01;National;ST PIERRE DES CORPS;PARIS MONTPARNASSE;505;16;67;85;0;3;False;False;True;False;100.00000001000002;False;False;True
+10395;2025-01;National;STRASBOURG;NANTES;59;0;336;4;0;2;False;False;True;False;100.0;False;False;True
+10396;2025-01;National;STRASBOURG;PARIS EST;592;5;117;85;-1;30;False;False;True;True;100.00000000000001;False;False;True
+10397;2025-01;National;TOULOUSE MATABIAU;PARIS MONTPARNASSE;224;2;289;34;1;22;False;False;True;False;100.0;False;False;True
+10398;2025-01;International;BARCELONA;PARIS LYON;62;0;408;10;0;7;False;False;True;False;100.0;False;False;True
+10399;2025-01;International;PARIS EST;FRANCFORT;175;9;227;36;0;18;False;False;True;False;99.99999998999999;False;False;True
+10400;2025-01;International;PARIS EST;STUTTGART;150;2;189;23;0;13;False;False;True;False;99.99999999;False;False;True
+10401;2025-01;International;PARIS LYON;BARCELONA;62;0;407;7;0;2;False;False;True;False;100.00000001;False;False;True
+10402;2025-01;National;BREST;PARIS MONTPARNASSE;294;7;232;30;0;13;False;False;True;False;99.99999998999999;False;False;True
+10403;2025-01;National;LYON PART DIEU;RENNES;92;0;236;6;0;4;False;False;True;False;100.0;False;False;True
+10404;2025-01;National;MONTPELLIER;LYON PART DIEU;177;0;113;30;-1;10;False;False;True;True;100.0;False;False;True
+10405;2025-01;National;MONTPELLIER;PARIS LYON;223;0;208;23;0;10;False;False;True;False;100.0;False;False;True
+10406;2025-01;National;NICE VILLE;PARIS LYON;197;1;349;34;0;23;False;False;True;False;99.99999998999999;False;False;True
+10407;2025-01;National;PARIS LYON;MONTPELLIER;196;1;210;14;0;10;False;False;True;False;100.0;False;False;True
+10408;2025-01;National;PARIS LYON;NICE VILLE;200;0;352;37;0;23;False;False;True;False;100.00000001000001;False;False;True
+10409;2025-01;National;PARIS LYON;NIMES;193;1;181;10;0;5;False;False;True;False;100.0;False;False;True
+10410;2025-01;National;PARIS MONTPARNASSE;BREST;264;4;228;22;0;8;False;False;True;False;100.00000001000001;False;False;True
+10411;2025-01;National;PARIS MONTPARNASSE;LE MANS;455;8;54;52;0;13;False;False;True;False;100.0;False;False;True
+10412;2025-01;National;PARIS MONTPARNASSE;POITIERS;607;17;94;61;0;16;False;False;True;False;100.0;False;False;True
+10413;2025-01;National;PARIS MONTPARNASSE;RENNES;780;8;95;112;0;30;False;False;True;False;99.99999999;False;False;True
+10414;2025-01;National;PARIS MONTPARNASSE;TOULOUSE MATABIAU;220;2;279;28;0;19;False;False;True;False;100.0;False;False;True
+10415;2025-01;National;PARIS MONTPARNASSE;VANNES;293;39;154;31;0;10;False;False;True;False;100.00000001;False;False;True
+10416;2025-01;National;VALENCE ALIXAN TGV;PARIS LYON;391;0;132;57;1;22;False;False;True;False;100.00000001000001;False;False;True
+10417;2025-01;National;VANNES;PARIS MONTPARNASSE;302;38;168;38;-1;16;False;False;True;True;99.99999998999999;False;False;True
+10418;2025-01;International;PARIS LYON;GENEVE;242;0;191;39;0;13;False;False;True;False;100.0;False;False;True
+10419;2025-01;National;ANGERS SAINT LAUD;PARIS MONTPARNASSE;523;7;97;96;-12;28;False;False;True;True;100.00000000000001;False;False;True
+10420;2025-01;National;ANNECY;PARIS LYON;157;3;228;17;0;7;False;False;True;False;100.0;False;False;True
+10421;2025-01;National;AVIGNON TGV;PARIS LYON;469;1;161;65;-5;25;False;False;True;True;99.99999998999999;False;False;True
+10422;2025-01;National;BELLEGARDE (AIN);PARIS LYON;274;1;162;36;0;19;False;False;True;False;100.0;False;False;True
+10423;2025-01;National;CHAMBERY CHALLES LES EAUX;PARIS LYON;263;0;176;49;-1;17;False;False;True;True;100.0;False;False;True
+10424;2025-01;National;LYON PART DIEU;MARSEILLE ST CHARLES;502;0;104;90;-2;39;False;False;True;True;100.0;False;False;True
+10425;2025-01;National;LYON PART DIEU;MONTPELLIER;278;0;113;66;0;22;False;False;True;False;99.99999999999999;False;False;True
+10426;2025-01;National;MARSEILLE ST CHARLES;TOURCOING;32;0;293;5;0;3;False;False;True;False;100.0;False;False;True
+10427;2025-01;National;NANCY;PARIS EST;280;0;96;23;0;4;False;False;True;False;100.00000000000001;False;False;True
+10428;2025-01;National;PARIS EST;METZ;280;0;85;33;0;7;False;False;True;False;100.0;False;False;True
+10429;2025-01;National;PARIS EST;REIMS;228;0;46;18;0;2;False;False;True;False;100.0;False;False;True
+10430;2025-01;National;PARIS EST;STRASBOURG;594;4;114;57;1;16;False;False;True;False;100.0;False;False;True
+10431;2025-01;National;PARIS LYON;AVIGNON TGV;439;0;159;50;0;18;False;False;True;False;100.0;False;False;True
+10432;2025-01;National;PARIS LYON;BELLEGARDE (AIN);284;0;162;57;0;21;False;False;True;False;99.99999998999999;False;False;True
+10433;2025-01;National;PARIS LYON;GRENOBLE;244;1;181;24;0;13;False;False;True;False;100.0;False;False;True
+10434;2025-01;National;PARIS LYON;MARSEILLE ST CHARLES;589;0;195;52;0;26;False;False;True;False;99.99999999;False;False;True
+10435;2025-01;National;PARIS LYON;MULHOUSE VILLE;337;4;168;56;0;26;False;False;True;False;100.00000001000002;False;False;True
+10436;2025-01;National;PARIS LYON;SAINT ETIENNE CHATEAUCREUX;120;1;171;16;0;4;False;False;True;False;100.0;False;False;True
+10437;2025-01;National;PARIS LYON;VALENCE ALIXAN TGV;422;0;131;47;0;18;False;False;True;False;100.00000001000001;False;False;True
+10438;2025-01;National;PARIS MONTPARNASSE;ANGOULEME;315;2;124;47;0;15;False;False;True;False;99.99999999;False;False;True
+10439;2025-01;National;PARIS MONTPARNASSE;BORDEAUX ST JEAN;1020;1;140;162;0;55;False;False;True;False;100.0;False;False;True
+10440;2025-01;National;PARIS MONTPARNASSE;NANTES;607;19;128;90;0;24;False;False;True;False;99.99999998999999;False;False;True
+10441;2025-01;National;PARIS NORD;DUNKERQUE;162;1;129;25;0;10;False;False;True;False;100.0;False;False;True
+10442;2025-01;National;POITIERS;PARIS MONTPARNASSE;477;11;102;94;0;12;False;False;True;False;100.0;False;False;True
+10443;2025-01;National;RENNES;LYON PART DIEU;94;0;237;10;-2;3;False;False;True;True;99.99999998999999;False;False;True
+10445;2025-02;International;PARIS LYON;BARCELONA;56;0;407;3;0;2;False;False;True;False;99.99999998999999;False;False;True
+10446;2025-02;International;PARIS LYON;ITALIE;28;0;507;0;0;0;False;False;False;False;0.0;True;False;True
+10447;2025-02;International;PARIS LYON;ZURICH;144;4;244;19;0;8;False;False;True;False;100.00000000000001;False;False;True
+10448;2025-02;National;ARRAS;PARIS NORD;447;0;50;95;0;6;False;False;True;False;99.99999999;False;False;True
+10449;2025-02;National;BORDEAUX ST JEAN;TOURCOING;28;0;325;6;0;3;False;False;True;False;100.00000001;False;False;True
+10450;2025-02;National;LE CREUSOT MONTCEAU MONTCHANIN;PARIS LYON;213;1;82;23;0;5;False;False;True;False;99.99999999;False;False;True
+10451;2025-02;National;LE MANS;PARIS MONTPARNASSE;429;1;62;66;-3;10;False;False;True;True;99.99999998999999;False;False;True
+10452;2025-02;National;LYON PART DIEU;MONTPELLIER;241;0;113;41;-1;16;False;False;True;True;99.99999998999999;False;False;True
+10453;2025-02;National;MARSEILLE ST CHARLES;LILLE;195;0;286;37;0;15;False;False;True;False;99.9999999945946;False;False;True
+10454;2025-02;National;MARSEILLE ST CHARLES;MARNE LA VALLEE;260;0;208;39;0;22;False;False;True;False;100.0;False;False;True
+10455;2025-02;National;MULHOUSE VILLE;PARIS LYON;304;0;171;26;0;12;False;False;True;False;100.00000000999998;False;False;True
+10456;2025-02;National;PARIS EST;STRASBOURG;478;1;114;60;0;23;False;False;True;False;99.99999999999999;False;False;True
+10457;2025-02;National;PARIS LYON;ANNECY;148;1;228;17;0;8;False;False;True;False;100.00000000000001;False;False;True
+10458;2025-02;National;PARIS LYON;BESANCON FRANCHE COMTE TGV;165;0;128;9;0;6;False;False;True;False;99.99999999;False;False;True
+10459;2025-02;National;PARIS LYON;LYON PART DIEU;631;3;119;46;0;18;False;False;True;False;99.99999999;False;False;True
+10460;2025-02;National;PARIS LYON;PERPIGNAN;157;0;312;16;0;10;False;False;True;False;100.0;False;False;True
+10461;2025-02;National;PARIS MONTPARNASSE;ANGERS SAINT LAUD;496;1;89;35;0;11;False;False;True;False;100.00000001000001;False;False;True
+10462;2025-02;National;PARIS MONTPARNASSE;LAVAL;208;2;78;24;0;3;False;False;True;False;99.99999999;False;False;True
+10463;2025-02;National;PARIS NORD;DOUAI;108;0;72;17;0;2;False;False;True;False;100.0;False;False;True
+10464;2025-02;International;BARCELONA;PARIS LYON;56;1;409;6;0;2;False;False;True;False;100.0;False;False;True
+10465;2025-02;International;PARIS EST;FRANCFORT;147;9;227;25;0;7;False;False;True;False;100.00000001;False;False;True
+10466;2025-02;National;ANGOULEME;PARIS MONTPARNASSE;287;1;132;33;1;9;False;False;True;False;100.00000000999998;False;False;True
+10467;2025-02;National;ANNECY;PARIS LYON;142;0;228;26;0;14;False;False;True;False;100.0;False;False;True
+10468;2025-02;National;GRENOBLE;PARIS LYON;221;1;181;51;0;21;False;False;True;False;99.99999998999999;False;False;True
+10469;2025-02;National;LYON PART DIEU;PARIS LYON;646;2;119;53;-8;17;False;False;True;True;99.99999998999999;False;False;True
+10470;2025-02;National;LYON PART DIEU;RENNES;87;0;236;8;0;3;False;False;True;False;100.0;False;False;True
+10471;2025-02;National;MARNE LA VALLEE;LYON PART DIEU;374;1;106;88;0;25;False;False;True;False;100.00000001;False;False;True
+10472;2025-02;National;NICE VILLE;PARIS LYON;177;1;349;40;0;23;False;False;True;False;100.0;False;False;True
+10473;2025-02;National;NIMES;PARIS LYON;193;0;179;32;0;13;False;False;True;False;99.99999998999999;False;False;True
+10474;2025-02;National;PARIS LYON;BELLEGARDE (AIN);266;0;163;34;0;16;False;False;True;False;99.99999999;False;False;True
+10475;2025-02;National;PARIS LYON;MARSEILLE ST CHARLES;515;0;195;51;0;30;False;False;True;False;99.99999998999999;False;False;True
+10476;2025-02;National;PARIS LYON;MONTPELLIER;174;0;209;11;0;5;False;False;True;False;99.99999998999999;False;False;True
+10477;2025-02;National;PARIS LYON;VALENCE ALIXAN TGV;359;0;131;30;0;8;False;False;True;False;99.99999999999999;False;False;True
+10478;2025-02;National;PARIS MONTPARNASSE;ANGOULEME;278;0;123;26;0;10;False;False;True;False;100.00000001;False;False;True
+10479;2025-02;National;PARIS MONTPARNASSE;QUIMPER;242;40;222;40;0;24;False;False;True;False;100.0;False;False;True
+10480;2025-02;National;PARIS MONTPARNASSE;RENNES;716;34;95;69;0;8;False;False;True;False;99.99999999;False;False;True
+10481;2025-02;National;PARIS MONTPARNASSE;VANNES;262;40;153;68;0;30;False;False;True;False;100.0;False;False;True
+10482;2025-02;National;PARIS NORD;LILLE;622;2;68;67;0;12;False;False;True;False;100.00000000597014;False;False;True
+10483;2025-02;National;RENNES;LYON PART DIEU;91;0;237;10;0;4;False;False;True;False;100.0;False;False;True
+10484;2025-02;National;RENNES;PARIS MONTPARNASSE;748;28;103;92;-9;24;False;False;True;True;100.00000001000001;False;False;True
+10485;2025-02;National;SAINT ETIENNE CHATEAUCREUX;PARIS LYON;107;2;169;12;0;1;False;False;True;False;100.0;False;False;True
+10486;2025-02;National;STRASBOURG;PARIS EST;485;3;119;88;-5;20;False;False;True;True;99.99999999000002;False;False;True
+10487;2025-02;National;TOURS;PARIS MONTPARNASSE;174;0;81;22;0;3;False;False;True;False;100.00000001000001;False;False;True
+10488;2025-02;International;FRANCFORT;PARIS EST;147;9;232;22;0;8;False;False;True;False;100.0;False;False;True
+10489;2025-02;International;LAUSANNE;PARIS LYON;149;5;230;9;0;5;False;False;True;False;100.0;False;False;True
+10490;2025-02;International;PARIS LYON;LAUSANNE;152;4;228;8;0;4;False;False;True;False;100.0;False;False;True
+10491;2025-02;International;STUTTGART;PARIS EST;90;2;200;14;-1;5;False;False;True;True;99.99999998999999;False;False;True
+10492;2025-02;National;ANGERS SAINT LAUD;PARIS MONTPARNASSE;491;2;98;39;-18;13;False;False;True;True;100.00000001000001;False;False;True
+10493;2025-02;National;BREST;PARIS MONTPARNASSE;258;2;233;23;0;11;False;False;True;False;100.0;False;False;True
+10494;2025-02;National;DIJON VILLE;PARIS LYON;384;1;99;33;0;12;False;False;True;False;99.99999999;False;False;True
+10495;2025-02;National;DOUAI;PARIS NORD;146;0;74;24;0;3;False;False;True;False;100.0;False;False;True
+10496;2025-02;National;LA ROCHELLE VILLE;PARIS MONTPARNASSE;204;0;175;16;0;2;False;False;True;False;100.0;False;False;True
+10497;2025-02;National;LILLE;MARSEILLE ST CHARLES;227;0;296;51;0;21;False;False;True;False;99.99999998999999;False;False;True
+10498;2025-02;National;MARSEILLE ST CHARLES;LYON PART DIEU;437;0;104;48;0;16;False;False;True;False;100.00000001000001;False;False;True
+10499;2025-02;National;MARSEILLE ST CHARLES;TOURCOING;28;0;299;3;0;2;False;False;True;False;100.0;False;False;True
+10500;2025-02;National;METZ;PARIS EST;258;0;88;52;0;11;False;False;True;False;100.00000001;False;False;True
+10501;2025-02;National;PARIS EST;REIMS;196;0;46;20;0;5;False;False;True;False;100.0;False;False;True
+10502;2025-02;National;PARIS LYON;GRENOBLE;228;1;181;42;0;21;False;False;True;False;100.00000000000001;False;False;True
+10503;2025-02;National;PARIS LYON;MULHOUSE VILLE;305;0;168;40;0;20;False;False;True;False;100.0;False;False;True
+10504;2025-02;National;PARIS LYON;NICE VILLE;161;2;353;27;0;12;False;False;True;False;100.0;False;False;True
+10505;2025-02;National;PARIS LYON;NIMES;174;0;180;11;0;5;False;False;True;False;99.99999998999999;False;False;True
+10506;2025-02;National;PARIS LYON;TOULON;228;0;236;30;0;19;False;False;True;False;99.99999999999999;False;False;True
+10507;2025-02;National;PARIS MONTPARNASSE;BORDEAUX ST JEAN;894;0;140;83;0;28;False;False;True;False;100.0;False;False;True
+10508;2025-02;National;PARIS MONTPARNASSE;NANTES;548;1;128;32;0;12;False;False;True;False;100.0;False;False;True
+10510;2025-02;National;PARIS MONTPARNASSE;ST PIERRE DES CORPS;465;0;62;43;0;7;False;False;True;False;100.0;False;False;True
+10511;2025-02;National;PARIS MONTPARNASSE;TOULOUSE MATABIAU;196;0;279;17;0;9;False;False;True;False;99.99999999;False;False;True
+10512;2025-02;National;PARIS MONTPARNASSE;TOURS;168;0;74;13;0;4;False;False;True;False;100.0;False;False;True
+10513;2025-02;National;PARIS NORD;ARRAS;450;3;50;41;0;11;False;False;True;False;100.0;False;False;True
+10514;2025-02;National;STRASBOURG;NANTES;52;0;326;0;0;0;False;False;False;False;0.0;True;False;True
+10515;2025-02;National;TOULOUSE MATABIAU;PARIS MONTPARNASSE;200;0;292;20;0;9;False;False;True;False;100.0;False;False;True
+10516;2025-02;National;TOURCOING;BORDEAUX ST JEAN;28;1;290;2;-4;2;False;False;True;True;99.99999998999999;False;False;True
+10517;2025-02;National;VANNES;PARIS MONTPARNASSE;272;53;169;45;0;17;False;False;True;False;100.00000001000001;False;False;True
+10518;2025-02;International;GENEVE;PARIS LYON;228;0;193;16;0;10;False;False;True;False;100.00000001;False;False;True
+10519;2025-02;International;ITALIE;PARIS LYON;28;0;558;10;0;6;False;False;True;False;99.99999999;False;False;True
+10520;2025-02;International;PARIS EST;STUTTGART;87;1;190;22;0;10;False;False;True;False;100.0;False;False;True
+10521;2025-02;International;PARIS LYON;GENEVE;233;0;192;25;0;13;False;False;True;False;100.0;False;False;True
+10522;2025-02;National;BELLEGARDE (AIN);PARIS LYON;260;1;162;34;0;12;False;False;True;False;99.99999998999999;False;False;True
+10523;2025-02;National;BORDEAUX ST JEAN;PARIS MONTPARNASSE;917;0;146;107;0;27;False;False;True;False;100.00000000000001;False;False;True
+10524;2025-02;National;DUNKERQUE;PARIS NORD;152;0;131;21;0;3;False;False;True;False;100.00000000000001;False;False;True
+10525;2025-02;National;LILLE;LYON PART DIEU;343;0;184;71;0;23;False;False;True;False;99.99999999405634;False;False;True
+10526;2025-02;National;LILLE;PARIS NORD;592;3;69;87;0;6;False;False;True;False;99.99999999896549;False;False;True
+10527;2025-02;National;LYON PART DIEU;LILLE;310;0;189;67;0;19;False;False;True;False;99.99999999074626;False;False;True
+10528;2025-02;National;LYON PART DIEU;MARNE LA VALLEE;320;0;107;66;-2;19;False;False;True;True;100.0;False;False;True
+10529;2025-02;National;LYON PART DIEU;MARSEILLE ST CHARLES;450;0;104;93;0;26;False;False;True;False;100.00000000000001;False;False;True
+10530;2025-02;National;MARNE LA VALLEE;MARSEILLE ST CHARLES;259;0;211;59;0;25;False;False;True;False;99.99999999;False;False;True
+10531;2025-02;National;MARSEILLE ST CHARLES;PARIS LYON;460;0;196;54;-2;32;False;False;True;True;99.99999998999999;False;False;True
+10532;2025-02;National;MONTPELLIER;LYON PART DIEU;154;1;113;19;0;7;False;False;True;False;99.99999998;False;False;True
+10533;2025-02;National;NANCY;PARIS EST;229;0;96;26;0;8;False;False;True;False;99.99999999000002;False;False;True
+10534;2025-02;National;NANTES;PARIS MONTPARNASSE;579;2;136;45;0;21;False;False;True;False;100.00000001;False;False;True
+10535;2025-02;National;PARIS EST;METZ;229;0;85;39;0;12;False;False;True;False;100.0;False;False;True
+10536;2025-02;National;PARIS EST;NANCY;243;0;97;19;0;6;False;False;True;False;99.99999999;False;False;True
+10537;2025-02;National;PARIS LYON;AIX EN PROVENCE TGV;438;0;182;55;0;35;False;False;True;False;100.0;False;False;True
+10538;2025-02;National;PARIS LYON;AVIGNON TGV;389;0;159;47;0;27;False;False;True;False;100.00000001;False;False;True
+10539;2025-02;National;PARIS LYON;CHAMBERY CHALLES LES EAUX;308;3;180;54;0;14;False;False;True;False;99.99999998999999;False;False;True
+10540;2025-02;National;PARIS LYON;DIJON VILLE;395;0;96;25;0;13;False;False;True;False;100.0;False;False;True
+10541;2025-02;National;PARIS LYON;LE CREUSOT MONTCEAU MONTCHANIN;202;1;80;18;0;4;False;False;True;False;99.99999999999999;False;False;True
+10542;2025-02;National;PARIS MONTPARNASSE;LE MANS;408;2;54;45;0;7;False;False;True;False;99.99999999999999;False;False;True
+10543;2025-02;National;PARIS NORD;DUNKERQUE;136;1;129;10;0;3;False;False;True;False;100.0;False;False;True
+10544;2025-02;National;PERPIGNAN;PARIS LYON;166;0;313;25;0;12;False;False;True;False;100.0;False;False;True
+10545;2025-02;National;ST MALO;PARIS MONTPARNASSE;92;0;154;12;0;2;False;False;True;False;100.00000001;False;False;True
+10546;2025-02;National;VALENCE ALIXAN TGV;PARIS LYON;338;0;133;57;-2;20;False;False;True;True;99.99999999;False;False;True
+10547;2025-02;International;ZURICH;PARIS LYON;164;4;244;9;-8;6;False;False;True;True;99.99999998999999;False;False;True
+10548;2025-02;National;AIX EN PROVENCE TGV;PARIS LYON;417;0;184;52;0;33;False;False;True;False;100.00000001000001;False;False;True
+10549;2025-02;National;AVIGNON TGV;PARIS LYON;418;0;161;64;0;27;False;False;True;False;100.0;False;False;True
+10550;2025-02;National;BESANCON FRANCHE COMTE TGV;PARIS LYON;166;0;133;12;-9;5;False;False;True;True;99.99999998999999;False;False;True
+10551;2025-02;National;CHAMBERY CHALLES LES EAUX;PARIS LYON;276;3;178;82;-3;28;False;False;True;True;99.99999998999999;False;False;True
+10552;2025-02;National;LAVAL;PARIS MONTPARNASSE;216;5;87;26;-1;5;False;False;True;True;100.0;False;False;True
+10553;2025-02;National;MACON LOCHE;PARIS LYON;210;0;97;57;0;22;False;False;True;False;100.00000000000001;False;False;True
+10554;2025-02;National;MONTPELLIER;PARIS LYON;193;0;208;27;0;13;False;False;True;False;100.0;False;False;True
+10556;2025-02;National;PARIS LYON;MACON LOCHE;202;0;96;12;0;5;False;False;True;False;99.99999998999999;False;False;True
+10557;2025-02;National;PARIS LYON;SAINT ETIENNE CHATEAUCREUX;107;1;171;12;0;4;False;False;True;False;100.00000001;False;False;True
+10558;2025-02;National;PARIS MONTPARNASSE;BREST;236;1;229;12;0;5;False;False;True;False;99.99999999999999;False;False;True
+10559;2025-02;National;PARIS MONTPARNASSE;LA ROCHELLE VILLE;213;0;175;15;0;5;False;False;True;False;99.99999999;False;False;True
+10560;2025-02;National;PARIS MONTPARNASSE;POITIERS;531;0;93;45;0;12;False;False;True;False;100.00000001000001;False;False;True
+10561;2025-02;National;POITIERS;PARIS MONTPARNASSE;425;1;101;62;0;5;False;False;True;False;99.99999998999999;False;False;True
+10562;2025-02;National;QUIMPER;PARIS MONTPARNASSE;252;47;237;34;1;17;False;False;True;False;100.00000001000001;False;False;True
+10563;2025-02;National;REIMS;PARIS EST;193;1;47;21;0;7;False;False;True;False;100.0;False;False;True
+10564;2025-02;National;ST PIERRE DES CORPS;PARIS MONTPARNASSE;422;0;68;58;0;9;False;False;True;False;99.99999998999999;False;False;True
+10565;2025-02;National;TOULON;PARIS LYON;220;1;238;46;0;29;False;False;True;False;100.0;False;False;True
+10566;2025-03;International;STUTTGART;PARIS EST;112;3;199;18;0;9;False;False;True;False;100.00000001;False;False;True
+10567;2025-03;National;ANGERS SAINT LAUD;PARIS MONTPARNASSE;551;0;98;37;0;16;False;False;True;False;99.99999998999999;False;False;True
+10568;2025-03;National;ANGOULEME;PARIS MONTPARNASSE;293;1;131;22;1;7;False;False;True;False;99.99999999;False;False;True
+10569;2025-03;National;AVIGNON TGV;PARIS LYON;461;1;162;86;0;34;False;False;True;False;100.0;False;False;True
+10570;2025-03;National;BREST;PARIS MONTPARNASSE;286;2;233;17;-5;8;False;False;True;True;99.99999999;False;False;True
+10571;2025-03;National;LAVAL;PARIS MONTPARNASSE;242;0;89;20;0;6;False;False;True;False;99.99999998999999;False;False;True
+10572;2025-03;National;LE CREUSOT MONTCEAU MONTCHANIN;PARIS LYON;244;0;82;34;4;6;False;False;True;False;99.99999999999999;False;False;True
+10573;2025-03;National;LILLE;PARIS NORD;650;14;69;76;0;12;False;False;True;False;100.00000000407893;False;False;True
+10574;2025-03;National;LYON PART DIEU;LILLE;343;0;190;88;-11;40;False;False;True;True;100.0;False;False;True
+10575;2025-03;National;LYON PART DIEU;MARSEILLE ST CHARLES;507;1;105;77;0;32;False;False;True;False;100.0;False;False;True
+10576;2025-03;National;LYON PART DIEU;RENNES;88;0;251;7;0;5;False;False;True;False;100.00000002;False;False;True
+10577;2025-03;National;MARNE LA VALLEE;MARSEILLE ST CHARLES;290;2;213;32;0;17;False;False;True;False;100.0;False;False;True
+10578;2025-03;National;MARSEILLE ST CHARLES;TOURCOING;30;0;292;8;0;6;False;False;True;False;100.0;False;False;True
+10579;2025-03;National;MONTPELLIER;LYON PART DIEU;184;0;113;25;0;9;False;False;True;False;100.0;False;False;True
+10580;2025-03;National;MONTPELLIER;PARIS LYON;219;0;210;30;0;18;False;False;True;False;100.0;False;False;True
+10581;2025-03;National;PARIS LYON;BESANCON FRANCHE COMTE TGV;170;0;128;17;0;9;False;False;True;False;99.99999998999999;False;False;True
+10582;2025-03;National;PARIS LYON;GRENOBLE;253;0;180;30;0;13;False;False;True;False;99.99999999;False;False;True
+10583;2025-03;National;PARIS LYON;MACON LOCHE;234;0;95;20;0;8;False;False;True;False;100.0;False;False;True
+10584;2025-03;National;PARIS LYON;MARSEILLE ST CHARLES;582;0;195;41;0;22;False;False;True;False;99.99999999;False;False;True
+10585;2025-03;National;PARIS LYON;MULHOUSE VILLE;311;0;168;43;0;18;False;False;True;False;100.00000000000001;False;False;True
+10586;2025-03;National;PARIS LYON;NIMES;188;0;180;23;0;12;False;False;True;False;100.0;False;False;True
+10587;2025-03;National;PARIS LYON;PERPIGNAN;175;0;312;18;0;11;False;False;True;False;100.0;False;False;True
+10588;2025-03;National;PARIS LYON;VALENCE ALIXAN TGV;390;1;131;45;0;18;False;False;True;False;100.00000001;False;False;True
+10589;2025-03;National;PARIS MONTPARNASSE;ANGERS SAINT LAUD;547;0;89;32;0;4;False;False;True;False;100.0;False;False;True
+10590;2025-03;National;PARIS MONTPARNASSE;BORDEAUX ST JEAN;986;0;141;93;0;21;False;False;True;False;99.99999999;False;False;True
+10591;2025-03;National;PARIS MONTPARNASSE;BREST;256;3;230;21;0;7;False;False;True;False;99.99999999999999;False;False;True
+10592;2025-03;National;PARIS MONTPARNASSE;LE MANS;457;1;55;38;0;8;False;False;True;False;100.0;False;False;True
+10593;2025-03;National;PARIS NORD;DOUAI;118;2;74;11;2;4;False;False;True;False;100.0;False;False;True
+10594;2025-03;National;PERPIGNAN;PARIS LYON;187;0;314;22;0;16;False;False;True;False;100.0;False;False;True
+10595;2025-03;National;POITIERS;PARIS MONTPARNASSE;468;0;100;61;0;5;False;False;True;False;99.99999999;False;False;True
+10596;2025-03;National;RENNES;LYON PART DIEU;90;0;247;10;0;2;False;False;True;False;100.0;False;False;True
+10597;2025-03;National;TOURCOING;BORDEAUX ST JEAN;22;1;288;4;-21;2;False;False;True;True;100.0;False;False;True
+10598;2025-03;National;VALENCE ALIXAN TGV;PARIS LYON;382;0;133;66;0;28;False;False;True;False;100.00000001000001;False;False;True
+10599;2025-03;International;PARIS EST;STUTTGART;114;3;190;21;0;7;False;False;True;False;99.99999998;False;False;True
+10600;2025-03;International;ZURICH;PARIS LYON;156;1;250;15;0;10;False;False;True;False;100.0;False;False;True
+10601;2025-03;National;AIX EN PROVENCE TGV;PARIS LYON;451;1;184;65;0;37;False;False;True;False;100.0;False;False;True
+10602;2025-03;National;LA ROCHELLE VILLE;PARIS MONTPARNASSE;229;0;173;10;0;1;False;False;True;False;100.0;False;False;True
+10603;2025-03;National;LE MANS;PARIS MONTPARNASSE;485;0;63;35;-1;13;False;False;True;True;100.00000000000003;False;False;True
+10604;2025-03;National;MACON LOCHE;PARIS LYON;231;0;98;54;0;18;False;False;True;False;100.0;False;False;True
+10605;2025-03;National;MARNE LA VALLEE;LYON PART DIEU;417;1;107;58;0;14;False;False;True;False;99.99999998999999;False;False;True
+10606;2025-03;National;MARSEILLE ST CHARLES;LILLE;216;0;289;45;0;22;False;False;True;False;100.00000000000001;False;False;True
+10607;2025-03;National;MARSEILLE ST CHARLES;LYON PART DIEU;487;0;105;46;0;13;False;False;True;False;99.99999999;False;False;True
+10608;2025-03;National;MULHOUSE VILLE;PARIS LYON;311;0;173;34;0;13;False;False;True;False;100.00000000000001;False;False;True
+10609;2025-03;National;PARIS EST;NANCY;303;0;96;25;0;8;False;False;True;False;100.0;False;False;True
+10610;2025-03;National;PARIS MONTPARNASSE;LAVAL;235;1;81;32;0;8;False;False;True;False;100.00000001;False;False;True
+10611;2025-03;National;PARIS MONTPARNASSE;RENNES;779;1;97;87;0;23;False;False;True;False;100.00000001;False;False;True
+10612;2025-03;National;PARIS MONTPARNASSE;ST PIERRE DES CORPS;432;1;62;59;0;11;False;False;True;False;100.00000000000001;False;False;True
+10613;2025-03;National;PARIS MONTPARNASSE;TOURS;179;13;74;21;0;5;False;False;True;False;99.99999999;False;False;True
+10614;2025-03;National;PARIS NORD;DUNKERQUE;152;2;133;20;0;9;False;False;True;False;100.0;False;False;True
+10615;2025-03;National;ST PIERRE DES CORPS;PARIS MONTPARNASSE;392;2;68;53;0;6;False;False;True;False;100.00000001;False;False;True
+10616;2025-03;National;TOULOUSE MATABIAU;PARIS MONTPARNASSE;203;1;292;16;4;11;False;False;True;False;100.0;False;False;True
+10617;2025-03;International;FRANCFORT;PARIS EST;178;5;232;19;-5;8;False;False;True;True;100.0;False;False;True
+10618;2025-03;International;GENEVE;PARIS LYON;244;1;193;27;0;19;False;False;True;False;100.0;False;False;True
+10619;2025-03;International;PARIS EST;FRANCFORT;178;2;227;31;0;12;False;False;True;False;99.99999998999999;False;False;True
+10620;2025-03;International;PARIS LYON;BARCELONA;62;0;407;3;0;2;False;False;True;False;100.0;False;False;True
+10621;2025-03;International;PARIS LYON;GENEVE;248;0;191;26;0;15;False;False;True;False;99.99999998999999;False;False;True
+10622;2025-03;International;PARIS LYON;ITALIE;32;0;507;2;0;2;False;False;True;False;100.0;False;False;True
+10623;2025-03;National;ARRAS;PARIS NORD;493;15;50;91;0;13;False;False;True;False;100.0;False;False;True
+10624;2025-03;National;DOUAI;PARIS NORD;160;6;75;24;0;3;False;False;True;False;100.0;False;False;True
+10625;2025-03;National;LYON PART DIEU;MONTPELLIER;276;0;114;56;0;15;False;False;True;False;100.00000001000001;False;False;True
+10626;2025-03;National;MARSEILLE ST CHARLES;MARNE LA VALLEE;292;0;209;59;0;24;False;False;True;False;100.0;False;False;True
+10627;2025-03;National;METZ;PARIS EST;324;1;87;73;0;19;False;False;True;False;100.0;False;False;True
+10628;2025-03;National;NANTES;PARIS MONTPARNASSE;650;0;136;40;0;17;False;False;True;False;100.0;False;False;True
+10629;2025-03;National;PARIS EST;STRASBOURG;655;6;113;62;1;24;False;False;True;False;99.99999998999999;False;False;True
+10630;2025-03;National;PARIS LYON;AVIGNON TGV;437;0;159;43;0;20;False;False;True;False;100.00000000000001;False;False;True
+10631;2025-03;National;PARIS LYON;BELLEGARDE (AIN);291;0;163;41;0;20;False;False;True;False;100.0;False;False;True
+10632;2025-03;National;PARIS LYON;CHAMBERY CHALLES LES EAUX;290;0;175;30;0;15;False;False;True;False;100.00000001;False;False;True
+10633;2025-03;National;PARIS LYON;DIJON VILLE;396;0;96;47;0;22;False;False;True;False;100.0;False;False;True
+10634;2025-03;National;PARIS LYON;MONTPELLIER;188;0;210;21;0;13;False;False;True;False;100.0;False;False;True
+10635;2025-03;National;PARIS LYON;TOULON;251;1;236;19;0;11;False;False;True;False;99.99999998999999;False;False;True
+10636;2025-03;National;PARIS MONTPARNASSE;LA ROCHELLE VILLE;238;0;173;17;0;4;False;False;True;False;99.99999998;False;False;True
+10638;2025-03;International;PARIS LYON;LAUSANNE;176;5;229;13;0;4;False;False;True;False;100.0;False;False;True
+10639;2025-03;International;PARIS LYON;ZURICH;146;2;247;20;0;14;False;False;True;False;99.99999998;False;False;True
+10640;2025-03;National;BELLEGARDE (AIN);PARIS LYON;286;1;163;42;0;19;False;False;True;False;99.99999998999999;False;False;True
+10641;2025-03;National;BORDEAUX ST JEAN;TOURCOING;22;0;325;4;0;3;False;False;True;False;100.0;False;False;True
+10642;2025-03;National;DIJON VILLE;PARIS LYON;402;1;99;39;-1;12;False;False;True;True;100.0;False;False;True
+10643;2025-03;National;DUNKERQUE;PARIS NORD;167;7;131;17;0;5;False;False;True;False;100.0;False;False;True
+10644;2025-03;National;GRENOBLE;PARIS LYON;246;0;180;51;0;20;False;False;True;False;99.99999998999998;False;False;True
+10645;2025-03;National;LILLE;LYON PART DIEU;377;1;183;50;0;13;False;False;True;False;100.0000000008;False;False;True
+10646;2025-03;National;LILLE;MARSEILLE ST CHARLES;250;1;296;29;0;16;False;False;True;False;100.0;False;False;True
+10647;2025-03;National;LYON PART DIEU;MARNE LA VALLEE;357;0;107;98;0;31;False;False;True;False;99.99999998999999;False;False;True
+10648;2025-03;National;LYON PART DIEU;PARIS LYON;729;0;119;66;-1;27;False;False;True;True;100.00000001000001;False;False;True
+10649;2025-03;National;NICE VILLE;PARIS LYON;196;0;349;32;0;23;False;False;True;False;100.0;False;False;True
+10650;2025-03;National;PARIS EST;METZ;286;0;84;49;0;9;False;False;True;False;99.99999999;False;False;True
+10651;2025-03;National;PARIS EST;REIMS;235;0;46;13;0;5;False;False;True;False;99.99999998999999;False;False;True
+10652;2025-03;National;PARIS LYON;AIX EN PROVENCE TGV;491;0;182;39;0;18;False;False;True;False;100.0;False;False;True
+10653;2025-03;National;PARIS LYON;LYON PART DIEU;689;0;119;61;0;30;False;False;True;False;100.00000001;False;False;True
+10654;2025-03;National;PARIS LYON;NICE VILLE;175;1;352;13;0;8;False;False;True;False;99.99999999000002;False;False;True
+10655;2025-03;National;PARIS MONTPARNASSE;ANGOULEME;286;0;123;25;0;8;False;False;True;False;100.0;False;False;True
+10656;2025-03;National;PARIS MONTPARNASSE;POITIERS;576;0;92;69;0;11;False;False;True;False;99.99999999;False;False;True
+10657;2025-03;National;PARIS MONTPARNASSE;QUIMPER;262;3;225;21;0;9;False;False;True;False;99.99999999;False;False;True
+10658;2025-03;National;PARIS MONTPARNASSE;ST MALO;97;0;156;13;0;5;False;False;True;False;99.99999999;False;False;True
+10659;2025-03;National;PARIS MONTPARNASSE;TOULOUSE MATABIAU;196;1;280;15;0;9;False;False;True;False;99.99999998999999;False;False;True
+10660;2025-03;National;PARIS MONTPARNASSE;VANNES;287;1;155;35;0;12;False;False;True;False;100.00000000000001;False;False;True
+10661;2025-03;National;PARIS NORD;ARRAS;492;10;53;43;1;14;False;False;True;False;99.99999999;False;False;True
+10662;2025-03;National;QUIMPER;PARIS MONTPARNASSE;271;1;236;19;-1;10;False;False;True;True;100.00000000000001;False;False;True
+10663;2025-03;National;REIMS;PARIS EST;235;0;46;19;0;1;False;False;True;False;99.99999998999999;False;False;True
+10664;2025-03;National;RENNES;PARIS MONTPARNASSE;822;1;103;66;0;25;False;False;True;False;100.00000001;False;False;True
+10665;2025-03;National;SAINT ETIENNE CHATEAUCREUX;PARIS LYON;119;2;169;13;3;6;False;False;True;False;99.99999999;False;False;True
+10666;2025-03;National;STRASBOURG;PARIS EST;652;7;117;95;-3;25;False;False;True;True;100.0;False;False;True
+10668;2025-03;National;VANNES;PARIS MONTPARNASSE;293;0;168;30;0;13;False;False;True;False;100.00000001000001;False;False;True
+10669;2025-03;International;BARCELONA;PARIS LYON;62;0;412;7;0;6;False;False;True;False;100.00000001;False;False;True
+10670;2025-03;International;ITALIE;PARIS LYON;31;0;564;9;0;3;False;False;True;False;100.0;False;False;True
+10671;2025-03;International;LAUSANNE;PARIS LYON;176;5;234;10;1;4;False;False;True;False;100.0;False;False;True
+10672;2025-03;National;ANNECY;PARIS LYON;162;0;229;27;0;12;False;False;True;False;99.99999998999999;False;False;True
+10673;2025-03;National;BESANCON FRANCHE COMTE TGV;PARIS LYON;175;0;133;13;-3;5;False;False;True;True;100.00000000000001;False;False;True
+10674;2025-03;National;BORDEAUX ST JEAN;PARIS MONTPARNASSE;1011;2;145;82;0;38;False;False;True;False;100.00000001;False;False;True
+10675;2025-03;National;CHAMBERY CHALLES LES EAUX;PARIS LYON;309;0;178;63;0;22;False;False;True;False;100.0;False;False;True
+10676;2025-03;National;MARSEILLE ST CHARLES;PARIS LYON;518;1;196;59;0;38;False;False;True;False;99.99999999;False;False;True
+10677;2025-03;National;NANCY;PARIS EST;296;1;96;26;0;12;False;False;True;False;99.99999998999999;False;False;True
+10678;2025-03;National;NANTES;STRASBOURG;54;0;323;8;0;4;False;False;True;False;100.0;False;False;True
+10679;2025-03;National;NIMES;PARIS LYON;218;0;180;44;0;18;False;False;True;False;100.00000000000001;False;False;True
+10680;2025-03;National;PARIS LYON;ANNECY;167;0;225;17;0;10;False;False;True;False;99.99999999;False;False;True
+10681;2025-03;National;PARIS LYON;LE CREUSOT MONTCEAU MONTCHANIN;219;0;79;18;0;5;False;False;True;False;100.00000000000001;False;False;True
+10682;2025-03;National;PARIS LYON;SAINT ETIENNE CHATEAUCREUX;119;3;171;13;0;5;False;False;True;False;99.99999998999999;False;False;True
+10683;2025-03;National;PARIS MONTPARNASSE;NANTES;611;0;128;39;0;13;False;False;True;False;100.0;False;False;True
+10684;2025-03;National;ST MALO;PARIS MONTPARNASSE;104;0;154;8;0;2;False;False;True;False;100.0;False;False;True
+10685;2025-03;National;STRASBOURG;NANTES;54;0;330;4;0;2;False;False;True;False;100.0;False;False;True
+10686;2025-03;National;TOULON;PARIS LYON;246;0;239;47;0;30;False;False;True;False;99.99999999000002;False;False;True
+11333;2025-09;National;PARIS LYON;BELLEGARDE (AIN);4;0;165;0;0;0;False;False;False;False;0.0;True;False;True
+11483;2025-10;National;TOURCOING;BORDEAUX ST JEAN;22;0;312;0;0;0;False;False;False;False;0.0;True;False;True
+11492;2025-10;National;MARSEILLE ST CHARLES;TOURCOING;8;0;288;0;0;0;False;False;False;False;0.0;True;False;True
+12085;2026-03;National;BORDEAUX ST JEAN;TOURCOING;22;0;342;0;0;0;False;False;False;False;0.0;True;False;True
+12405;2026-05;National;BORDEAUX ST JEAN;TOURCOING;31;0;341;3;2;2;False;False;False;False;0.0;True;False;True
+12430;2026-06;National;LYON PART DIEU;LILLE;346;4;191;114;58;25;False;False;False;False;99.12280700614036;False;True;True
+12480;2026-06;National;MARSEILLE ST CHARLES;LILLE;199;5;294;62;37;17;False;False;False;False;98.38709677612903;False;True;True
+12487;2026-06;National;PARIS MONTPARNASSE;VANNES;275;17;156;56;31;13;False;False;False;False;87.500000019;False;True;True
+12512;2026-06;National;PARIS MONTPARNASSE;LAVAL;252;11;80;65;25;7;False;False;False;False;84.61538461515386;False;True;True
+12514;2026-06;National;PARIS MONTPARNASSE;QUIMPER;267;17;226;46;33;13;False;False;False;False;86.95652173043476;False;True;True
+12644;2026-07;International;PARIS LYON;ZURICH;52;5;261;2;1;0;False;False;False;False;0.0;True;False;True
+12672;2026-08;National;LILLE;LYON PART DIEU;388;1;185;41;9;3;False;False;False;False;97.5609756097561;False;True;True
+12692;2026-08;National;MARSEILLE ST CHARLES;LILLE;235;1;289;69;26;8;False;False;False;False;98.55072463768116;False;True;True
+12758;2026-08;National;PARIS MONTPARNASSE;ST PIERRE DES CORPS;421;4;67;73;17;11;False;False;False;False;98.63013698630137;False;True;True
+12807;2026-09;National;TOURCOING;BORDEAUX ST JEAN;27;0;307;4;2;0;False;False;False;False;0.0;True;False;True
+12814;2026-09;National;LILLE;LYON PART DIEU;371;8;187;66;32;7;False;False;False;False;98.4848484848485;False;True;True
+12886;2026-09;National;VALENCE ALIXAN TGV;PARIS LYON;362;1;134;49;10;5;False;False;False;False;97.9591836734694;False;True;True
