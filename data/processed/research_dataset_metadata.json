@@ -1,0 +1,163 @@
+{
+  "cancellation_rate_invalid_reasons": [
+    {
+      "cancellation_rate_invalid_reason": "planned_count_not_positive",
+      "len": 73
+    }
+  ],
+  "cancellation_rate_null_count": 73,
+  "cancellation_rate_valid_count": 12834,
+  "dataset_grain": [
+    "date",
+    "service",
+    "gare_depart",
+    "gare_arrivee"
+  ],
+  "date_coverage": {
+    "max": "2026-09",
+    "min": "2018-01"
+  },
+  "derived_variables": {
+    "arrival_delay_rate": "not calculated; denominator is not established",
+    "cancellation_rate": "nb_annulation / nb_train_prevu only when planned > 0 and 0 <= cancellations <= planned",
+    "cancellation_rate_invalid_reason": "Null when rate is valid; otherwise a reason code",
+    "cancellation_rate_valid": "Boolean validity of cancellation_rate denominator/numerator rule",
+    "flag_primary_arrival_delay_below_minus_15": "retard_moyen_tous_trains_arrivee < -15 minutes; original outcome is preserved"
+  },
+  "extreme_negative_primary_outcome_count": 11,
+  "input_artifacts": {
+    "edge_metrics": "data\\processed\\graph\\edge_metrics.parquet",
+    "node_metrics": "data\\processed\\graph\\node_metrics.parquet",
+    "observations": "data\\processed\\graph\\edge_observations.parquet"
+  },
+  "input_row_counts": {
+    "all_node_metrics": 6385,
+    "monthly_edge_metrics": 12907,
+    "observations": 12907
+  },
+  "join_keys": {
+    "edge_metrics": [
+      "date=period",
+      "service",
+      "edge_id"
+    ],
+    "source_node_metrics": [
+      "date=period",
+      "service",
+      "source=node_id"
+    ],
+    "target_node_metrics": [
+      "date=period",
+      "service",
+      "target=node_id"
+    ]
+  },
+  "join_validation": {
+    "edge_metric_endpoint_mismatches": 0,
+    "edge_metrics_unique_key": true,
+    "node_metrics_unique_key": true,
+    "observation_business_key_unique": true,
+    "output_business_key_unique": true,
+    "overall_metrics_excluded": true,
+    "row_count_after_each_join": 12907
+  },
+  "missing_graph_metrics": {
+    "edge_betweenness": 0,
+    "source_betweenness_centrality": 0,
+    "source_degree": 0,
+    "source_in_closeness": 0,
+    "source_in_degree": 0,
+    "source_in_degree_centrality": 0,
+    "source_out_closeness": 0,
+    "source_out_degree": 0,
+    "source_out_degree_centrality": 0,
+    "source_pagerank": 0,
+    "target_betweenness_centrality": 0,
+    "target_degree": 0,
+    "target_in_closeness": 0,
+    "target_in_degree": 0,
+    "target_in_degree_centrality": 0,
+    "target_out_closeness": 0,
+    "target_out_degree": 0,
+    "target_out_degree_centrality": 0,
+    "target_pagerank": 0
+  },
+  "negative_primary_outcome_count": 122,
+  "output_column_count": 56,
+  "output_row_count": 12907,
+  "output_schema": {
+    "cancellation_rate": "Float64",
+    "cancellation_rate_invalid_reason": "String",
+    "cancellation_rate_valid": "Boolean",
+    "commentaire_annulation": "String",
+    "commentaire_retards_depart": "String",
+    "commentaires_retard_arrivee": "String",
+    "date": "String",
+    "duree_moyenne": "Int64",
+    "edge_betweenness": "Float64",
+    "edge_id": "String",
+    "flag_cancellations_gt_planned": "Boolean",
+    "flag_negative_count": "Boolean",
+    "flag_primary_arrival_delay_below_minus_15": "Boolean",
+    "flag_sup15_lt_sup30": "Boolean",
+    "flag_sup30_lt_sup60": "Boolean",
+    "gare_arrivee": "String",
+    "gare_depart": "String",
+    "nb_annulation": "Int64",
+    "nb_train_depart_retard": "Int64",
+    "nb_train_prevu": "Int64",
+    "nb_train_retard_arrivee": "Int64",
+    "nb_train_retard_sup_15": "Int64",
+    "nb_train_retard_sup_30": "Int64",
+    "nb_train_retard_sup_60": "Int64",
+    "prct_cause_externe": "Float64",
+    "prct_cause_gestion_gare": "Float64",
+    "prct_cause_gestion_trafic": "Float64",
+    "prct_cause_infra": "Float64",
+    "prct_cause_materiel_roulant": "Float64",
+    "prct_cause_prise_en_charge_voyageurs": "Float64",
+    "retard_moyen_arrivee": "Float64",
+    "retard_moyen_depart": "Float64",
+    "retard_moyen_tous_trains_arrivee": "Float64",
+    "retard_moyen_tous_trains_depart": "Float64",
+    "retard_moyen_trains_retard_sup15": "Float64",
+    "service": "String",
+    "source": "String",
+    "source_betweenness_centrality": "Float64",
+    "source_degree": "UInt32",
+    "source_in_closeness": "Float64",
+    "source_in_degree": "UInt32",
+    "source_in_degree_centrality": "Float64",
+    "source_out_closeness": "Float64",
+    "source_out_degree": "UInt32",
+    "source_out_degree_centrality": "Float64",
+    "source_pagerank": "Float64",
+    "target": "String",
+    "target_betweenness_centrality": "Float64",
+    "target_degree": "UInt32",
+    "target_in_closeness": "Float64",
+    "target_in_degree": "UInt32",
+    "target_in_degree_centrality": "Float64",
+    "target_out_closeness": "Float64",
+    "target_out_degree": "UInt32",
+    "target_out_degree_centrality": "Float64",
+    "target_pagerank": "Float64"
+  },
+  "quality_flag_true_counts": {
+    "flag_cancellations_gt_planned": 63,
+    "flag_negative_count": 43,
+    "flag_primary_arrival_delay_below_minus_15": 11,
+    "flag_sup15_lt_sup30": 3,
+    "flag_sup30_lt_sup60": 354
+  },
+  "schema_version": "1.0",
+  "services": [
+    "International",
+    "National"
+  ],
+  "warnings": [
+    "The primary delay outcome is preserved, including negative values; flagged values are not excluded.",
+    "Graph metrics are structural topology measures and do not establish train itineraries or delay propagation.",
+    "No arrival_delay_rate is calculated because its denominator is not established."
+  ]
+}

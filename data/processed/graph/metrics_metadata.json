@@ -1,0 +1,1456 @@
+{
+  "distributions": {
+    "edge": {
+      "edge_betweenness": {
+        "max": 0.22888386123680243,
+        "mean": 0.03171725311129017,
+        "median": 0.019230769230769232,
+        "min": 0.005656108597285068,
+        "std": 0.038551446813428134
+      }
+    },
+    "node": {
+      "betweenness_centrality": {
+        "max": 0.5868627450980392,
+        "mean": 0.048116246498599434,
+        "median": 0.0,
+        "min": 0.0,
+        "std": 0.12935629306607951
+      },
+      "degree": {
+        "max": 42,
+        "mean": 4.171428571428572,
+        "median": 2.0,
+        "min": 2,
+        "std": 6.422269743186152
+      },
+      "in_closeness": {
+        "max": 0.5882352941176471,
+        "mean": 0.26136314342866235,
+        "median": 0.2670157068062827,
+        "min": 0.0784313725490196,
+        "std": 0.07755415443639571
+      },
+      "in_degree": {
+        "max": 21,
+        "mean": 2.085714285714286,
+        "median": 1.0,
+        "min": 1,
+        "std": 3.211134871593076
+      },
+      "in_degree_centrality": {
+        "max": 0.5882352941176471,
+        "mean": 0.057703081232492945,
+        "median": 0.0196078431372549,
+        "min": 0.0196078431372549,
+        "std": 0.08938100620374166
+      },
+      "out_closeness": {
+        "max": 0.5882352941176471,
+        "mean": 0.26136314342866235,
+        "median": 0.2670157068062827,
+        "min": 0.0784313725490196,
+        "std": 0.07755415443639571
+      },
+      "out_degree": {
+        "max": 21,
+        "mean": 2.085714285714286,
+        "median": 1.0,
+        "min": 1,
+        "std": 3.211134871593076
+      },
+      "out_degree_centrality": {
+        "max": 0.5882352941176471,
+        "mean": 0.057703081232492945,
+        "median": 0.0196078431372549,
+        "min": 0.0196078431372549,
+        "std": 0.08938100620374166
+      },
+      "pagerank": {
+        "max": 0.2852883835824953,
+        "mean": 0.02857142857142859,
+        "median": 0.011161324073429036,
+        "min": 0.009836369978962489,
+        "std": 0.04180136685775793
+      }
+    }
+  },
+  "graph_configuration": {
+    "directed": true,
+    "self_loops_preserved": true,
+    "weighted": false
+  },
+  "metric_definitions": {
+    "betweenness_centrality": "NetworkX normalized directed unweighted shortest-path betweenness",
+    "edge_betweenness": "NetworkX normalized directed unweighted shortest-path edge betweenness",
+    "in_closeness": "NetworkX directed closeness; inbound distances with reachable-node correction",
+    "in_degree_centrality": "in_degree / (n_nodes - 1), or 0 when n_nodes < 2",
+    "out_closeness": "NetworkX directed closeness on reversed graph; outbound distances with reachable-node correction",
+    "out_degree_centrality": "out_degree / (n_nodes - 1), or 0 when n_nodes < 2"
+  },
+  "monthly_graph_count": 210,
+  "monthly_graphs": [
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2018-01",
+      "service": "International"
+    },
+    {
+      "edges": 114,
+      "nodes": 51,
+      "period": "2018-01",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2018-02",
+      "service": "International"
+    },
+    {
+      "edges": 114,
+      "nodes": 51,
+      "period": "2018-02",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2018-03",
+      "service": "International"
+    },
+    {
+      "edges": 114,
+      "nodes": 51,
+      "period": "2018-03",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2018-04",
+      "service": "International"
+    },
+    {
+      "edges": 114,
+      "nodes": 51,
+      "period": "2018-04",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2018-05",
+      "service": "International"
+    },
+    {
+      "edges": 114,
+      "nodes": 51,
+      "period": "2018-05",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2018-06",
+      "service": "International"
+    },
+    {
+      "edges": 114,
+      "nodes": 51,
+      "period": "2018-06",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2018-07",
+      "service": "International"
+    },
+    {
+      "edges": 114,
+      "nodes": 51,
+      "period": "2018-07",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2018-08",
+      "service": "International"
+    },
+    {
+      "edges": 114,
+      "nodes": 51,
+      "period": "2018-08",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2018-09",
+      "service": "International"
+    },
+    {
+      "edges": 114,
+      "nodes": 51,
+      "period": "2018-09",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2018-10",
+      "service": "International"
+    },
+    {
+      "edges": 114,
+      "nodes": 51,
+      "period": "2018-10",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2018-11",
+      "service": "International"
+    },
+    {
+      "edges": 114,
+      "nodes": 51,
+      "period": "2018-11",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2018-12",
+      "service": "International"
+    },
+    {
+      "edges": 114,
+      "nodes": 51,
+      "period": "2018-12",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2019-01",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2019-01",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2019-02",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2019-02",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2019-03",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2019-03",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2019-04",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2019-04",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2019-05",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2019-05",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2019-06",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2019-06",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2019-07",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2019-07",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2019-08",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2019-08",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2019-09",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2019-09",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2019-10",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2019-10",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2019-11",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2019-11",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2019-12",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2019-12",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2020-01",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2020-01",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2020-02",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2020-02",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2020-03",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2020-03",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2020-04",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2020-04",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2020-05",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2020-05",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2020-06",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2020-06",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2020-07",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2020-07",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2020-08",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2020-08",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2020-09",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2020-09",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2020-10",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2020-10",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2020-11",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2020-11",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2020-12",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2020-12",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2021-01",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2021-01",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2021-02",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2021-02",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2021-03",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2021-03",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2021-04",
+      "service": "International"
+    },
+    {
+      "edges": 104,
+      "nodes": 49,
+      "period": "2021-04",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2021-05",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2021-05",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2021-06",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2021-06",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2021-07",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2021-07",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2021-08",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2021-08",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2021-09",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2021-09",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2021-10",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2021-10",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2021-11",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2021-11",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2021-12",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2021-12",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2022-01",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2022-01",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2022-02",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2022-02",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2022-03",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2022-03",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2022-04",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2022-04",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2022-05",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2022-05",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 10,
+      "period": "2022-06",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2022-06",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2022-07",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2022-07",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2022-08",
+      "service": "International"
+    },
+    {
+      "edges": 108,
+      "nodes": 50,
+      "period": "2022-08",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2022-09",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2022-09",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2022-10",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2022-10",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2022-11",
+      "service": "International"
+    },
+    {
+      "edges": 105,
+      "nodes": 50,
+      "period": "2022-11",
+      "service": "National"
+    },
+    {
+      "edges": 16,
+      "nodes": 11,
+      "period": "2022-12",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2022-12",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2023-01",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2023-01",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2023-02",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2023-02",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2023-03",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2023-03",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2023-04",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2023-04",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2023-05",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2023-05",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2023-06",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2023-06",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2023-07",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2023-07",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2023-08",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2023-08",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2023-09",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2023-09",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2023-10",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2023-10",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2023-11",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2023-11",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2023-12",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2023-12",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2024-01",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2024-01",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2024-02",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2024-02",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2024-03",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2024-03",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2024-04",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2024-04",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2024-05",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2024-05",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2024-06",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2024-06",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2024-07",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2024-07",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2024-08",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2024-08",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2024-09",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2024-09",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2024-10",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2024-10",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2024-11",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2024-11",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2024-12",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2024-12",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2025-01",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2025-01",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2025-02",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2025-02",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2025-03",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2025-03",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2025-04",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2025-04",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2025-05",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2025-05",
+      "service": "National"
+    },
+    {
+      "edges": 14,
+      "nodes": 9,
+      "period": "2025-06",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2025-06",
+      "service": "National"
+    },
+    {
+      "edges": 28,
+      "nodes": 17,
+      "period": "2025-07",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2025-07",
+      "service": "National"
+    },
+    {
+      "edges": 28,
+      "nodes": 17,
+      "period": "2025-08",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2025-08",
+      "service": "National"
+    },
+    {
+      "edges": 28,
+      "nodes": 17,
+      "period": "2025-09",
+      "service": "International"
+    },
+    {
+      "edges": 107,
+      "nodes": 50,
+      "period": "2025-09",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2025-10",
+      "service": "International"
+    },
+    {
+      "edges": 109,
+      "nodes": 51,
+      "period": "2025-10",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2025-11",
+      "service": "International"
+    },
+    {
+      "edges": 109,
+      "nodes": 51,
+      "period": "2025-11",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2025-12",
+      "service": "International"
+    },
+    {
+      "edges": 109,
+      "nodes": 51,
+      "period": "2025-12",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2026-01",
+      "service": "International"
+    },
+    {
+      "edges": 109,
+      "nodes": 51,
+      "period": "2026-01",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2026-02",
+      "service": "International"
+    },
+    {
+      "edges": 109,
+      "nodes": 51,
+      "period": "2026-02",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2026-03",
+      "service": "International"
+    },
+    {
+      "edges": 109,
+      "nodes": 51,
+      "period": "2026-03",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2026-04",
+      "service": "International"
+    },
+    {
+      "edges": 109,
+      "nodes": 51,
+      "period": "2026-04",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2026-05",
+      "service": "International"
+    },
+    {
+      "edges": 109,
+      "nodes": 51,
+      "period": "2026-05",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2026-06",
+      "service": "International"
+    },
+    {
+      "edges": 109,
+      "nodes": 51,
+      "period": "2026-06",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2026-07",
+      "service": "International"
+    },
+    {
+      "edges": 109,
+      "nodes": 51,
+      "period": "2026-07",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2026-08",
+      "service": "International"
+    },
+    {
+      "edges": 109,
+      "nodes": 51,
+      "period": "2026-08",
+      "service": "National"
+    },
+    {
+      "edges": 12,
+      "nodes": 8,
+      "period": "2026-09",
+      "service": "International"
+    },
+    {
+      "edges": 109,
+      "nodes": 51,
+      "period": "2026-09",
+      "service": "National"
+    }
+  ],
+  "observation_period": {
+    "max": "2026-09",
+    "min": "2018-01"
+  },
+  "output_schemas": {
+    "edge_metrics": {
+      "edge_betweenness": "Float64",
+      "edge_id": "String",
+      "period": "String",
+      "service": "String",
+      "source": "String",
+      "source_betweenness_centrality": "Float64",
+      "source_degree": "UInt32",
+      "source_in_closeness": "Float64",
+      "source_in_degree": "UInt32",
+      "source_in_degree_centrality": "Float64",
+      "source_out_closeness": "Float64",
+      "source_out_degree": "UInt32",
+      "source_out_degree_centrality": "Float64",
+      "source_pagerank": "Float64",
+      "target": "String",
+      "target_betweenness_centrality": "Float64",
+      "target_degree": "UInt32",
+      "target_in_closeness": "Float64",
+      "target_in_degree": "UInt32",
+      "target_in_degree_centrality": "Float64",
+      "target_out_closeness": "Float64",
+      "target_out_degree": "UInt32",
+      "target_out_degree_centrality": "Float64",
+      "target_pagerank": "Float64"
+    },
+    "node_metrics": {
+      "betweenness_centrality": "Float64",
+      "degree": "UInt32",
+      "in_closeness": "Float64",
+      "in_degree": "UInt32",
+      "in_degree_centrality": "Float64",
+      "node_id": "String",
+      "out_closeness": "Float64",
+      "out_degree": "UInt32",
+      "out_degree_centrality": "Float64",
+      "pagerank": "Float64",
+      "period": "String",
+      "service": "String",
+      "station_name": "String"
+    }
+  },
+  "overall_graph_count": 2,
+  "overall_graphs": [
+    {
+      "edges": 30,
+      "nodes": 18,
+      "service": "International"
+    },
+    {
+      "edges": 116,
+      "nodes": 52,
+      "service": "National"
+    }
+  ],
+  "pagerank_convergence_failures": [],
+  "pagerank_parameters": {
+    "alpha": 0.85,
+    "dangling": "NetworkX default (uniform redistribution)",
+    "max_iter": 1000,
+    "tol": 1e-06
+  },
+  "schema_version": "1.0",
+  "services": [
+    "International",
+    "National"
+  ],
+  "software_versions": {
+    "networkx": "3.7",
+    "polars": "2.1.0"
+  },
+  "source_paths": {
+    "edges": "data\\processed\\graph\\edges.parquet",
+    "nodes": "data\\processed\\graph\\nodes.parquet",
+    "observations": "data\\processed\\graph\\edge_observations.parquet"
+  },
+  "source_row_counts": {
+    "edges": 146,
+    "nodes": 59,
+    "observations": 12907
+  },
+  "unique_keys": {
+    "edge_metrics": [
+      "period",
+      "service",
+      "edge_id"
+    ],
+    "node_metrics": [
+      "period",
+      "service",
+      "node_id"
+    ]
+  },
+  "warnings": [
+    "Observed OD paths do not establish actual train itineraries or delay propagation.",
+    "Degree is distinct topology, not train frequency; PageRank is not passenger flow."
+  ]
+}
