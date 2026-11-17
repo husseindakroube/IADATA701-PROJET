@@ -10,13 +10,13 @@ Les données proviennent du jeu de données mensuel de régularité des TGV publ
 
 Le dataset utilisé couvre la période de **janvier 2018 à septembre 2026**.
 
-| Caractéristique | Valeur |
-|---|---:|
-| Observations brutes | 12 907 |
-| Gares distinctes | 59 |
-| Liaisons orientées distinctes | 130 |
-| Services | 2 |
-| Observations avec cible valide | 12 832 |
+| **Caractéristique**            | **Valeur** |
+| ------------------------------ | ---------- |
+| Observations brutes            | 12 907     |
+| Gares distinctes               | 59         |
+| Liaisons orientées distinctes  | 130        |
+| Services                       | 2          |
+| Observations avec cible valide | 12 832     |
 
 Une observation correspond à une liaison orientée, un service et un mois.
 
@@ -24,18 +24,16 @@ Une observation correspond à une liaison orientée, un service et un mois.
 
 Nous cherchons à prédire :
 
-\[
-\text{delay\_rate\_15}
-=
-\frac{\text{Nombre de trains en retard > 15 min}}
-{\text{Nombre de trains ayant circulé}}
-\]
+$$
+\text{delay\_rate\_15} =
+\frac{\text{Nombre de trains en retard > 15 min}}{\text{Nombre de trains ayant circulé}}
+$$
 
 avec :
 
-\[
+$$
 \text{circulated} = \text{planned} - \text{cancelled}
-\]
+$$
 
 Une observation est considérée comme valide lorsque les comptages sont cohérents, que le nombre de trains ayant circulé est strictement positif et que le nombre de retards est compris entre zéro et le nombre de trains ayant circulé.
 
@@ -70,15 +68,15 @@ Deux représentations sont utilisées :
 
 Pour chaque gare de départ et d'arrivée, plusieurs caractéristiques sont calculées :
 
-| Caractéristique | Interprétation |
-|---|---|
-| In-degree | Nombre de liaisons entrantes |
-| Out-degree | Nombre de liaisons sortantes |
-| Betweenness centrality | Position d'intermédiaire dans le réseau |
-| PageRank | Importance structurelle de la gare |
-| In-strength | Volume total de trains entrants |
-| Out-strength | Volume total de trains sortants |
-| Weighted PageRank | Importance prenant en compte les volumes de circulation |
+| **Caractéristique**    | **Interprétation**                                      |
+| ---------------------- | ------------------------------------------------------- |
+| In-degree              | Nombre de liaisons entrantes                            |
+| Out-degree             | Nombre de liaisons sortantes                            |
+| Betweenness centrality | Position d'intermédiaire dans le réseau                 |
+| PageRank               | Importance structurelle de la gare                      |
+| In-strength            | Volume total de trains entrants                         |
+| Out-strength           | Volume total de trains sortants                         |
+| Weighted PageRank      | Importance prenant en compte les volumes de circulation |
 
 Ces caractéristiques sont associées à chaque observation pour sa gare de départ et sa gare d'arrivée.
 
@@ -86,11 +84,11 @@ Ces caractéristiques sont associées à chaque observation pour sa gare de dép
 
 Trois caractéristiques supplémentaires décrivent directement la liaison à prédire :
 
-| Variable | Description |
-|---|---|
-| `edge_volume` | Nombre de trains sur la liaison orientée |
-| `edge_traffic_share` | Part de cette liaison dans le trafic sortant de la gare de départ |
-| `edge_reverse_volume` | Nombre de trains circulant sur la liaison inverse |
+| **Variable**          | **Description**                                                   |
+| --------------------- | ----------------------------------------------------------------- |
+| `edge_volume`         | Nombre de trains sur la liaison orientée                          |
+| `edge_traffic_share`  | Part de cette liaison dans le trafic sortant de la gare de départ |
+| `edge_reverse_volume` | Nombre de trains circulant sur la liaison inverse                 |
 
 Ces variables permettent de caractériser l'importance relative d'une liaison au sein du réseau.
 
@@ -106,12 +104,10 @@ Par exemple, pour une observation de janvier 2025 :
 
 Une variable supplémentaire est calculée pour chaque liaison :
 
-\[
-\text{historical\_delay\_rate\_15}
-=
-\frac{\sum_{\text{historique}} \text{late\_15}}
-{\sum_{\text{historique}} \text{circulated}}
-\]
+$$
+\text{historical\_delay\_rate\_15} =
+\frac{\sum_{\text{historique}} \text{late\_15}}{\sum_{\text{historique}} \text{circulated}}
+$$
 
 Ce taux historique tient compte des volumes de circulation plutôt que de calculer une simple moyenne des taux mensuels.
 
@@ -133,11 +129,11 @@ Le mois est conservé comme variable numérique. Les caractéristiques numériqu
 
 Le découpage respecte l'ordre chronologique des observations :
 
-| Ensemble | Période | Utilisation |
-|---|---|---|
-| Entraînement initial | 2019–2023 | Comparaison et optimisation des modèles |
-| Validation | 2024 | Sélection des variables et hyperparamètres |
-| Test final | 2025–septembre 2026 | Évaluation hors échantillon |
+| **Ensemble**         | **Période**         | **Utilisation**                            |
+| -------------------- | ------------------- | ------------------------------------------ |
+| Entraînement initial | 2019–2023           | Comparaison et optimisation des modèles    |
+| Validation           | 2024                | Sélection des variables et hyperparamètres |
+| Test final           | 2025–septembre 2026 | Évaluation hors échantillon                |
 
 Pour l'évaluation finale, le modèle est réentraîné sur **2019–2024**, puis évalué sur **2025–2026**.
 
@@ -153,15 +149,15 @@ Les expériences d'ablation utilisent les mêmes hyperparamètres afin d'isoler 
 
 ### Résultats sur la validation 2024
 
-| Configuration | MAE | RMSE | MAE pondérée |
-|---|---:|---:|---:|
-| Historique | 0.031594 | 0.044013 | 0.026628 |
-| Historique + liaisons | 0.031604 | 0.044230 | 0.026600 |
-| Liaisons | 0.032339 | 0.045192 | 0.027354 |
-| Baseline | 0.032626 | 0.045984 | 0.027392 |
-| Centralités structurelles | 0.033362 | 0.046562 | 0.027998 |
-| Réseau complet | 0.037344 | 0.049666 | 0.033048 |
-| Centralités pondérées | 0.038082 | 0.049524 | 0.034663 |
+| **Configuration**         | **MAE**  | **RMSE** | **MAE pondérée** |
+| ------------------------- | -------- | -------- | ---------------- |
+| Historique                | 0.031594 | 0.044013 | 0.026628         |
+| Historique + liaisons     | 0.031604 | 0.044230 | 0.026600         |
+| Liaisons                  | 0.032339 | 0.045192 | 0.027354         |
+| Baseline                  | 0.032626 | 0.045984 | 0.027392         |
+| Centralités structurelles | 0.033362 | 0.046562 | 0.027998         |
+| Réseau complet            | 0.037344 | 0.049666 | 0.033048         |
+| Centralités pondérées     | 0.038082 | 0.049524 | 0.034663         |
 
 Le taux historique de retard constitue la variable supplémentaire la plus informative dans cette comparaison.
 
@@ -178,20 +174,20 @@ Une recherche sur grille est effectuée sur les deux configurations les plus pro
 
 La grille explore :
 
-| Hyperparamètre | Valeurs |
-|---|---|
-| `max_iter` | 100, 150, 250 |
-| `learning_rate` | 0.03, 0.05, 0.10 |
-| `max_leaf_nodes` | 7, 15, 31 |
+| **Hyperparamètre** | **Valeurs**      |
+| ------------------ | ---------------- |
+| `max_iter`         | 100, 150, 250    |
+| `learning_rate`    | 0.03, 0.05, 0.10 |
+| `max_leaf_nodes`   | 7, 15, 31        |
 
 La sélection est réalisée selon la **MAE sur la validation 2024**.
 
 Les configurations retenues sont :
 
-| Modèle | max_iter | learning_rate | max_leaf_nodes |
-|---|---:|---:|---:|
-| Historique | 100 | 0.03 | 7 |
-| Historique + liaisons | 150 | 0.05 | 7 |
+| **Modèle**            | **max_iter** | **learning_rate** | **max_leaf_nodes** |
+| --------------------- | ------------ | ----------------- | ------------------ |
+| Historique            | 100          | 0.03              | 7                  |
+| Historique + liaisons | 150          | 0.05              | 7                  |
 
 ## 7. Évaluation finale
 
@@ -200,10 +196,10 @@ Après sélection des hyperparamètres, les modèles sont réentraînés sur les
 - Observations d'entraînement : **8 689**
 - Observations de test : **2 583**
 
-| Modèle | MAE | RMSE | MAE pondérée |
-|---|---:|---:|---:|
-| Historique | 0.040603 | 0.064661 | 0.034638 |
-| **Historique + liaisons** | **0.039209** | **0.062477** | **0.033309** |
+| **Modèle**                | **MAE**      | **RMSE**     | **MAE pondérée** |
+| ------------------------- | ------------ | ------------ | ---------------- |
+| Historique                | 0.040603     | 0.064661     | 0.034638         |
+| **Historique + liaisons** | **0.039209** | **0.062477** | **0.033309**     |
 
 L'ajout des caractéristiques de liaison au taux historique de retard permet une **réduction relative d'environ 3,43 % de la MAE** sur le jeu de test.
 
@@ -249,6 +245,7 @@ tests/
 ├── test_graph_features.py
 ├── test_ml_preprocessing.py
 └── test_temporal_features.py
+
 ```
 
 Les fonctions réutilisables sont placées dans `src/`, les scripts d'analyse et d'expérimentation dans `scripts/`, et les vérifications automatisées dans `tests/`.
