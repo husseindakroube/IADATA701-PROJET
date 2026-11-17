@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Environnement virtuel
+.venv/
+venv/
+
+# Cache et tests
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Environnement local
+.env
+.env.*
+!.env.example
+
+# Données intermédiaires générées
+data/processed/*
+!data/processed/.gitkeep
+
+# Résultats d'expérimentation générés
+outputs/
+
+# Éditeurs
+.vscode/
+.idea/
