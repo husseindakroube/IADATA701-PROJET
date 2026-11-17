@@ -48,6 +48,7 @@ HISTORY_FEATURES = [
 # Variable à prédire
 TARGET = "delay_rate_15"
 
+
 def build_preprocessor(
     numeric_features: list[str] | None = None,
 ) -> ColumnTransformer:
@@ -97,9 +98,7 @@ def build_preprocessor(
             ]
         )
 
-        transformers.append(
-            ("numeric", numeric_pipeline, numeric_features)
-        )
+        transformers.append(("numeric", numeric_pipeline, numeric_features))
 
     return ColumnTransformer(
         transformers=transformers,

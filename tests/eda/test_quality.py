@@ -4,15 +4,15 @@ import pandas as pd
 import pytest
 
 from projet_kit_data.eda.quality import (
-    check_train_counts,
+    check_comments,
+    check_durations,
     check_identifiers,
+    check_percentages,
+    check_train_counts,
     count_duplicates,
     get_column_types,
     get_dataset_overview,
     get_missing_values,
-    check_durations,
-    check_percentages,
-    check_comments,
 )
 
 

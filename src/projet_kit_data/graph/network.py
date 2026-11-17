@@ -26,18 +26,13 @@ def build_railway_graph(data: pd.DataFrame) -> nx.DiGraph:
     Returns:
         Graphe orienté des liaisons observées.
     """
-    routes = (
-        data.loc[
-            data["planned"] > 0,
-            ["departure", "arrival"],
-        ]
-        .drop_duplicates()
-    )
+    routes = data.loc[
+        data["planned"] > 0,
+        ["departure", "arrival"],
+    ].drop_duplicates()
 
     graph = nx.DiGraph()
-    graph.add_edges_from(
-        routes.itertuples(index=False, name=None)
-    )
+    graph.add_edges_from(routes.itertuples(index=False, name=None))
 
     return graph
 
@@ -68,18 +63,12 @@ def build_weighted_railway_graph(
         & (data["cancelled"] <= data["planned"])
     ]
 
-    routes = (
-        valid_data
-        .groupby(
-            ["departure", "arrival"],
-            as_index=False,
-        )["circulated"]
-        .sum()
-    )
+    routes = valid_data.groupby(
+        ["departure", "arrival"],
+        as_index=False,
+    )["circulated"].sum()
 
     graph = nx.DiGraph()
-    graph.add_weighted_edges_from(
-        routes.itertuples(index=False, name=None)
-    )
+    graph.add_weighted_edges_from(routes.itertuples(index=False, name=None))
 
     return graph

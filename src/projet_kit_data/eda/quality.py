@@ -1,7 +1,7 @@
 """Fonctions de contrôle qualité des données de régularité TGV."""
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
 def get_dataset_overview(data: pd.DataFrame) -> dict[str, int]:

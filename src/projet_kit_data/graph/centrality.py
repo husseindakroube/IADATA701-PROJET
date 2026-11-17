@@ -63,12 +63,8 @@ def compute_weighted_graph_features(
         [
             {
                 "station": station,
-                "in_strength": graph.in_degree(
-                    station, weight="weight"
-                ),
-                "out_strength": graph.out_degree(
-                    station, weight="weight"
-                ),
+                "in_strength": graph.in_degree(station, weight="weight"),
+                "out_strength": graph.out_degree(station, weight="weight"),
                 "weighted_pagerank": pagerank[station],
             }
             for station in graph.nodes

@@ -42,9 +42,7 @@ def compute_edge_features(graph: nx.DiGraph) -> pd.DataFrame:
                 "departure": departure,
                 "arrival": arrival,
                 "edge_volume": volume,
-                "edge_traffic_share": (
-                    volume / total_out if total_out > 0 else 0
-                ),
+                "edge_traffic_share": (volume / total_out if total_out > 0 else 0),
                 "edge_reverse_volume": reverse_volume,
             }
         )

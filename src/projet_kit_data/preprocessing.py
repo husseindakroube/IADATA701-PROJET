@@ -22,6 +22,7 @@ COLUMN_MAPPING = {
     "Nombre trains en retard > 15min": "late_15",
 }
 
+
 def prepare_graph_data(df: pd.DataFrame) -> pd.DataFrame:
     """Prépare les observations SNCF pour les traitements suivants.
 
@@ -48,16 +49,11 @@ def prepare_graph_data(df: pd.DataFrame) -> pd.DataFrame:
 
     if missing_columns:
         raise ValueError(
-            "Colonnes SNCF manquantes : "
-            + ", ".join(sorted(missing_columns))
+            "Colonnes SNCF manquantes : " + ", ".join(sorted(missing_columns))
         )
 
     # 1. Sélectionner et renommer les colonnes utiles
-    data = (
-        df[list(COLUMN_MAPPING)]
-        .rename(columns=COLUMN_MAPPING)
-        .copy()
-    )
+    data = df[list(COLUMN_MAPPING)].rename(columns=COLUMN_MAPPING).copy()
 
     # 2. Normaliser les dates et les identifiants de gares
     data["date"] = pd.to_datetime(
@@ -82,9 +78,8 @@ def prepare_graph_data(df: pd.DataFrame) -> pd.DataFrame:
     )
 
     # 5. Calculer le taux de retard sur les observations valides
-    data["delay_rate_15"] = (
-        data["late_15"]
-        .div(data["circulated"].where(data["valid_target"]))
+    data["delay_rate_15"] = data["late_15"].div(
+        data["circulated"].where(data["valid_target"])
     )
 
     return data

@@ -22,22 +22,15 @@ def compute_historical_delay_features(
         DataFrame contenant departure, arrival et
         historical_delay_rate_15.
     """
-    valid_data = historical_data.loc[
-        historical_data["valid_target"]
-    ]
+    valid_data = historical_data.loc[historical_data["valid_target"]]
 
-    routes = (
-        valid_data
-        .groupby(["departure", "arrival"], as_index=False)
-        .agg(
-            historical_late_15=("late_15", "sum"),
-            historical_circulated=("circulated", "sum"),
-        )
+    routes = valid_data.groupby(["departure", "arrival"], as_index=False).agg(
+        historical_late_15=("late_15", "sum"),
+        historical_circulated=("circulated", "sum"),
     )
 
     routes["historical_delay_rate_15"] = (
-        routes["historical_late_15"]
-        / routes["historical_circulated"]
+        routes["historical_late_15"] / routes["historical_circulated"]
     )
 
     return routes[

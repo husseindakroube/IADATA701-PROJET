@@ -27,19 +27,14 @@ def add_station_features(
     result = data.copy()
 
     feature_columns = [
-        column
-        for column in station_features.columns
-        if column != "station"
+        column for column in station_features.columns if column != "station"
     ]
 
     for direction in ("departure", "arrival"):
         renamed_features = station_features.rename(
             columns={
                 "station": direction,
-                **{
-                    column: f"{direction}_{column}"
-                    for column in feature_columns
-                },
+                **{column: f"{direction}_{column}" for column in feature_columns},
             }
         )
 
