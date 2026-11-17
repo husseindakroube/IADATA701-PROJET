@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 
-from sncf_rail_insight.ml.models import build_preprocessor
+from projet_kit_data.ml.models import build_preprocessor
 
 
 def test_baseline_preprocessing() -> None:
@@ -23,6 +23,7 @@ def test_baseline_preprocessing() -> None:
     assert transformed.shape == (2, 7)
     assert np.isfinite(transformed).all()
 
+
 def test_numeric_features_with_missing_values() -> None:
     """Vérifie l'imputation des valeurs numériques manquantes."""
     data = pd.DataFrame(
@@ -35,9 +36,7 @@ def test_numeric_features_with_missing_values() -> None:
         }
     )
 
-    preprocessor = build_preprocessor(
-        numeric_features=["edge_volume"]
-    )
+    preprocessor = build_preprocessor(numeric_features=["edge_volume"])
 
     transformed = preprocessor.fit_transform(data)
 

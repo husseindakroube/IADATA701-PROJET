@@ -3,7 +3,7 @@
 import pandas as pd
 import pytest
 
-from sncf_tgv.eda.quality import (
+from projet_kit_data.eda.quality import (
     check_train_counts,
     check_identifiers,
     count_duplicates,

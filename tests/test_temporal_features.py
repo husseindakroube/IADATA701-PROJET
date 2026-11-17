@@ -3,10 +3,10 @@
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from sncf_rail_insight.ml.historical import (
+from projet_kit_data.ml.historical import (
     compute_historical_delay_features,
 )
-from sncf_rail_insight.ml.temporal import (
+from projet_kit_data.ml.temporal import (
     build_temporal_graph_dataset,
 )
 
@@ -78,9 +78,7 @@ def test_current_month_excluded_from_history() -> None:
     }
 
     feature_columns = [
-        column
-        for column in original.columns
-        if column not in current_columns
+        column for column in original.columns if column not in current_columns
     ]
 
     original_features = original.loc[

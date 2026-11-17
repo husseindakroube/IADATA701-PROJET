@@ -3,7 +3,7 @@
 import networkx as nx
 import pytest
 
-from sncf_rail_insight.graph.routes import compute_edge_features
+from projet_kit_data.graph.routes import compute_edge_features
 
 
 def test_edge_features() -> None:
