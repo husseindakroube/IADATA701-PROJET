@@ -24,17 +24,11 @@ Une observation correspond à une liaison orientée, un service et un mois.
 
 Nous cherchons à prédire :
 
-$$
-\text{delay\_rate\_15} =
-\frac{\text{Nombre de trains en retard } > 15 \text{ min}}
-{\text{Nombre de trains ayant circulé}}
-$$
+`delay_rate_15 = nombre de trains en retard > 15 min / nombre de trains ayant circulé`
 
 avec :
 
-$$
-\text{circulated} = \text{planned} - \text{cancelled}
-$$
+`circulated = planned - cancelled`
 
 Une observation est considérée comme valide lorsque les comptages sont cohérents, que le nombre de trains ayant circulé est strictement positif et que le nombre de retards est compris entre zéro et le nombre de trains ayant circulé.
 
@@ -105,11 +99,7 @@ Par exemple, pour une observation de janvier 2025 :
 
 Une variable supplémentaire est calculée pour chaque liaison :
 
-$$
-\text{historical\_delay\_rate\_15} =
-\frac{\sum_{\text{historique}} \text{late\_15}}
-{\sum_{\text{historique}} \text{circulated}}
-$$
+`historical_delay_rate_15 = somme(late_15 sur les 12 mois précédents) / somme(circulated sur les 12 mois précédents)`
 
 Ce taux historique tient compte des volumes de circulation plutôt que de calculer une simple moyenne des taux mensuels.
 
