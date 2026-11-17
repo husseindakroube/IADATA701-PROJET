@@ -12,6 +12,7 @@ dependencies = [
     "scipy>=1.18.1",
     "seaborn>=0.13.2",
     "statsmodels>=0.15.0",
+    "polars>=2.1.0",
 ]
 
 [dependency-groups]
