@@ -26,7 +26,8 @@ Nous cherchons à prédire :
 
 $$
 \text{delay\_rate\_15} =
-\frac{\text{Nombre de trains en retard > 15 min}}{\text{Nombre de trains ayant circulé}}
+\frac{\text{Nombre de trains en retard } > 15 \text{ min}}
+{\text{Nombre de trains ayant circulé}}
 $$
 
 avec :
@@ -106,7 +107,8 @@ Une variable supplémentaire est calculée pour chaque liaison :
 
 $$
 \text{historical\_delay\_rate\_15} =
-\frac{\sum_{\text{historique}} \text{late\_15}}{\sum_{\text{historique}} \text{circulated}}
+\frac{\sum_{\text{historique}} \text{late\_15}}
+{\sum_{\text{historique}} \text{circulated}}
 $$
 
 Ce taux historique tient compte des volumes de circulation plutôt que de calculer une simple moyenne des taux mensuels.
