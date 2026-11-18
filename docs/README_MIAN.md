@@ -10,7 +10,7 @@ Le dépôt rassemble la préparation des données, la construction et l’analys
 
 Le schéma ci-dessous présente le flux de travail global du projet, de l’ingestion des données à l’application envisagée :
 
-![Schéma global du projet SNCF](docs/images/Projet_SNCF.svg)
+![Schéma global du projet SNCF](images/Projet_SNCF.svg)
 
 Le périmètre actuellement disponible dans ce dépôt comprend l’ingestion, le prétraitement, la construction des graphes, les métriques, la préparation du jeu de recherche, les analyses descriptives et les analyses d’association. Le schéma inclut aussi la prédiction et une application Streamlit, qui constituent la suite du travail collectif; aucune application Streamlit ni pipeline de prédiction n’est présent dans le package Python actuel.
 
