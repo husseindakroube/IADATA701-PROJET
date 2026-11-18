@@ -252,7 +252,7 @@ En plus des scripts d'entraînement et d'évaluation, la contribution met à dis
 
 - **Un référentiel géographique reproductible**, construit par `scripts/reporting/prepare_station_coordinates.py` depuis `data/reference/liste-des-gares.csv` et les compléments étrangers définis dans le script.
 
-Le guide **`outputs/streamlit/README.md`** donne les champs, la signification des visuels et les consignes d'intégration. Les **sélections par mois, gare et liaison** du dashboard se font via les **menus du panneau latéral**, pas par un clic sur la carte. Les centralités de la carte sont mensuelles, tandis que les caractéristiques ML utilisent un historique glissant pour éviter les fuites temporelles.
+Le guide **`outputs/README.md`** donne les champs, la signification des visuels et les consignes d'intégration. Les **sélections par mois, gare et liaison** du dashboard se font via les **menus du panneau latéral**, pas par un clic sur la carte. Les centralités de la carte sont mensuelles, tandis que les caractéristiques ML utilisent un historique glissant pour éviter les fuites temporelles.
 
 ## 10. Organisation du code
 
@@ -394,7 +394,7 @@ uv run python scripts/reporting/interactive_network_dashboard.py
 
 ```
 
-\> Les scripts d'exports prédictifs nécessitent que les données, les modèles ou leurs calculs préalables soient disponibles suivant leur implémentation ; consulter également le guide `outputs/streamlit/README.md`.
+\> Les scripts d'exports prédictifs nécessitent que les données, les modèles ou leurs calculs préalables soient disponibles suivant leur implémentation ; consulter également le guide `outputs/README.md`.
 
 ### Ouvrir le dashboard cartographique
 
