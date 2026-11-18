@@ -1,66 +1,35 @@
 # Intégration et fonctionnalités restantes
 
-Cette intégration ajoute les six pages et expose les résultats déjà présents dans le
-projet de l'équipe. Elle ne crée pas de nouvelle analyse scientifique, ne réentraîne
-aucun modèle et ne certifie pas les résultats historiques des notebooks.
+Mise à jour du 18 novembre 2026 à partir du projet complémentaire. Seuls les travaux déjà fournis sont intégrés ; aucune nouvelle analyse ni aucun entraînement n'est exécuté.
 
-## Correspondance des pages
-
-| Page | Éléments intégrés | Manques ou réserves |
+| Page | Résultats intégrés | Restant ou à vérifier |
 |---|---|---|
-| Accueil | Design TGVision conservé, compteurs dynamiques, filtres communs, accès aux cinq autres pages | Taux global d'arrivée validé, taux global d'annulation, trois découvertes scientifiques validées, date d'extraction, noms/rôles de l'équipe |
-| Qualité | `sncf.parquet`, quatre flags existants, manquants, observations distinctes signalées, audit original, téléchargement | Dictionnaire complet et disponibilité prédictive, vérification des mois manquants, impact comparable des exclusions |
-| Liaisons et réseau | Séries mensuelles sources, annulations du research dataset, causes non agrégées, graphes sauvegardés, centralités et détails de gare | Taux d'arrivée harmonisé, comparateur, classement avec volume minimal, carte, relations centralité/ponctualité validées |
-| Profils et clusters | Labels du CSV, effectifs et liste des paires, figures du coude/PCA extraites sans exécuter le notebook 04 | PCA interactive, export des profils et période/version, noms validés, sensibilité aux graines, clustering prédictif sans fuite |
-| Prédictions | Métriques existantes, vérification contre les prédictions, consultation liaison/mois et courbes du test | A/B/C/D harmonisés, R², gain relatif et stabilité, erreurs par groupe avec effectifs, protocole complet de disponibilité, audit des enrichissements |
-| Conclusions | Limites, périmètre réseau, sources et notebooks téléchargeables | Réponse scientifique finale démontrée sur l'association et la valeur prédictive |
+| Accueil | Design et filtres conservés, compteurs dynamiques | Taux globaux validés, trois découvertes quantifiées, date d'extraction, équipe |
+| Qualité | Flags, observations distinctes signalées, manquants, rapports | Dictionnaire complet, mois manquants, comparaison avant/après nettoyage |
+| Liaisons/réseau | Séries sources, annulations, causes mensuelles, graphes, centralités | Taux d'arrivée harmonisé, référence comparable, classement avec seuil de volume, carte, associations validées |
+| Clusters | Nouveaux labels, profils et résumé, effectifs, durée, taux historique >15 min, figures PCA/coude | PCA interactive, stabilité selon initialisation, noms validés, dénominateurs des causes |
+| Prédictions | Naïf et A/B/C/D sur le même test, MAE/RMSE/R², historique par liaison/mois/modèle, MAE par cluster avec effectifs | Erreurs par service, gain relatif explicite, stabilité temporelle, horizon opérationnel et manifeste complets, correspondance des sept anciennes expériences |
+| Conclusions | Comparaison dynamique issue des prédictions et limites | Preuves suffisantes sur les associations réseau/ponctualité et stabilité de l'apport prédictif |
 
-## Divergences importantes
+## Périmètres et réserves
 
-- La clé descriptive est `(date, service, gare_depart, gare_arrivee)` : elle conserve
-  les directions et les services. Les 65 labels de clusters sont des **paires non
-  orientées**, avec des effectifs 25, 19, 5 et 16. Les décomptes ne sont pas interchangeables.
-- Le snapshot ETL contient 12 907 observations, de 2018-01 à 2026-09. Il conserve
-  toutes les lignes, dont 420 déclenchent au moins une des quatre règles. Le nombre
-  12 487 correspond au filtre du notebook de clustering, pas à l'effectif ETL global.
-- Le contrat de données laisse le dénominateur du taux officiel d'arrivée non établi.
-  La page d'exploration affiche donc les champs sources et les annulations mensuelles
-  existantes, sans inventer ce taux.
-- La cible ML fournie est `nb_train_retard_sup_15 / (nb_train_prevu - nb_annulation)`.
-  Le champ >15 min a un périmètre d'applicabilité particulier à confirmer. Le notebook
-  de clustering utilise encore un ratio sur les trains **prévus**, ainsi que des
-  moyennes de causes dont le dénominateur n'est pas confirmé. Ces taux et profils ne
-  sont pas présentés comme des indicateurs harmonisés.
-- Les métriques JSON contiennent seulement « Naïf historique » et
-  « HistGradientBoosting final » (MAE, RMSE, MAE pondérée). Les expériences de sept
-  jeux de variables et de clustering restent consultables dans les notebooks/scripts,
-  mais ne constituent pas des résultats A/B/C/D exportés sous un protocole commun.
-- Les figures PCA/coude sont des sorties historiques sauvegardées du notebook 04.
-  Elles ne sont pas recalculées. Le CSV des labels ne fournit ni empreinte des données,
-  ni date de génération, ni période exacte : la correspondance doit être vérifiée.
-- Les R² 0,4513 et 0,4595 du cahier des charges ne sont pas affirmés comme résultats
-  vérifiés de cette intégration. Les associations ne prouvent pas une causalité.
+- ETL : 12 907 observations de 2018-01 à 2026-09, dont 420 avec au moins un flag. Les 12 487 observations sans flag ne définissent pas tous les périmètres.
+- Clusters : 65 paires non orientées ; effectifs 4, 18, 24 et 19 pour les groupes 0 à 3. Le notebook 04 utilise 9 414 observations sans flag jusqu'à 2024-05. StandardScaler et KMeans sont appris sur cette période uniquement.
+- Le résumé du taux >15 min utilise les cibles valides du pipeline ML avant cette même borne, avec le ratio des sommes (retards / circulations). Son périmètre de qualité diffère de celui des profils. Ce taux ne doit pas être assimilé au taux officiel d'arrivée.
+- Les moyennes des causes restent des variables techniques du clustering ; leur dénominateur n'est pas confirmé. Elles ne sont pas présentées comme une composition globale des retards.
+- Notebook 05 : entraînement 2019-01 à 2024-05, validation 2024-06 à 2025-06, test 2025-07 à 2026-09 (1 857 lignes communes). Graphe construit sur train pour validation, puis train + validation pour test. Choix du modèle sur la MAE pondérée de validation.
+- L'historique utilise les mois antérieurs : évaluation séquentielle et non prévision de tous les mois depuis une seule date. Le code corrige le périmètre d'apprentissage du clustering ; un audit complet de disponibilité et de provenance reste nécessaire.
+- Les différences entre A/B/C/D sont faibles. Le naïf a un meilleur R² ; les chiffres 0,4513/0,4595 de la proposition ne décrivent pas ces exports.
+- Figures PCA/coude extraites des sorties du nouveau notebook, sans réexécution. Pas de PCA interactive inventée.
 
-## Structure reprise de l'équipe
+## Structure et reproductibilité
 
-`src/projet_kit_data/` contient les modules `ingestion`, `etl`, `eda`, `graph`, `ml`
-et les adaptateurs historiques. `data/raw/` conserve les fichiers sources ;
-`data/processed/` les tables et résultats ; `data/reports/` les audits et rapports.
-`notebooks/`, `scripts/exploration/`, `scripts/experiments/`, `models/`, `docs/` et
-`tests/` reprennent la structure du projet complémentaire. L'interface reste dans
-`app/` et son identité visuelle dans `app/styles/` et `images/`.
+Structure de l'équipe conservée : `src/projet_kit_data/`, `data/raw/`, `data/processed/`, `data/reports/`, `models/`, `notebooks/`, `scripts/exploration/`, `scripts/experiments/`, `docs/`, `tests/`. L'interface et les styles restent dans `app/` et `images/`.
 
-Les fichiers importés sont identifiés par SHA-256 dans `docs/integration_manifest.json`.
-Ils ont été copiés sans réécrire les sources ni modifier le projet complémentaire.
-Le module `web_data.py` et `app/utils/data.py` constituent uniquement la couche
-de chargement, de validation et d'affichage nécessaire à l'intégration.
+Le module `comparaison.py`, son test et les exports 04/05 sont importés avec leurs empreintes dans `docs/integration_manifest.json`. L'application lit les résultats ; elle ne charge pas les fichiers joblib et ne réentraîne pas les modèles. Les données brutes et le projet complémentaire ne sont pas modifiés.
 
-## Livraison non encore complète
+Restent : documentation Sphinx construite, preuve de CI distante et de couverture supérieure à 90 %, lien public fonctionnel, manifeste de génération/version/dépendances par produit. La configuration Docker/SSH existante est conservée (voir `docs/CI_CD.md`), sans nouveau déploiement. Prévisions futures et intervalles absents.
 
-Pas de déploiement public fourni ; pas de manifeste complet par modèle (version,
-variables, split, environnement) ; pas de documentation Sphinx construite ; pas de
-validation distante de la couverture. La CI lance maintenant pytest avec un seuil de
-90,1 % (mesure locale initiale : 90,19 %). La chaîne Docker/SSH est configurée, mais
-son activation serveur reste à faire ; voir `docs/CI_CD.md`. Restent également
-la validation scientifique des points ci-dessus. Ils ne sont pas développés dans cette
-intégration, conformément au périmètre demandé. La prévision future est également absente.
+## Vérification locale
+
+162 tests réussis, dont les six pages et les filtres ; couverture app + src : 90,47 %. Métriques comparées aux prédictions, correspondance de A avec la baseline et cohérence labels/profils/résumé vérifiées. Contrôle Ruff et compilation réussis ; 110 empreintes importées conformes. Précision du rapport de couverture fixée à deux décimales pour le seuil 90,1 %. CI distante et déploiement non vérifiés.

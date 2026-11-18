@@ -43,3 +43,6 @@ dev = [
 testpaths = ["tests"]
 pythonpath = ["src", "app"]
 addopts = "-ra"
+
+[tool.coverage.report]
+precision = 2

@@ -71,3 +71,33 @@ def test_dependent_route_filters_and_test_month():
     app.selectbox[0].select(app.selectbox[0].options[-1]).run()
     app.selectbox[1].select(app.selectbox[1].options[-1]).run()
     assert not app.exception
+
+
+def test_comparison_exports_share_test_rows_and_metrics():
+    from sklearn.metrics import r2_score
+
+    frame = load_table("data/processed/ml/comparaison_predictions_test.parquet")
+    baseline = load_table("data/processed/ml/baseline_predictions_test.parquet")
+    keys = ["date", "service", "departure", "arrival"]
+    joined = frame.merge(baseline, on=keys, how="outer", validate="one_to_one", indicator=True)
+    assert joined["_merge"].eq("both").all()
+    assert np.allclose(joined.prediction_a, joined.prediction_ml)
+    assert np.allclose(joined.delay_rate_15_x, joined.delay_rate_15_y)
+    saved = load_json("data/processed/ml/comparaison_metrics.json")
+    for name, col in zip(saved, ["prediction_naive", "prediction_a", "prediction_b", "prediction_c", "prediction_d"]):
+        actual = compute_metrics(frame.delay_rate_15, frame[col], frame.circulated)
+        actual["r2"] = r2_score(frame.delay_rate_15, frame[col])
+        for metric, value in actual.items():
+            assert np.isclose(value, saved[name][metric], rtol=1e-8)
+
+
+def test_cluster_profiles_match_new_labels_and_summary():
+    from projet_kit_data.comparaison import load_cluster_features
+
+    labels = load_cluster_features(ROOT / "data/processed/clusters_liaisons.csv")
+    profiles = load_table("data/processed/ml/clusters_profils.parquet")
+    summary = load_table("data/processed/ml/clusters_resume.parquet")
+    joined = labels.merge(profiles, left_on=["gare_a", "gare_b"], right_on=["gare_1", "gare_2"], how="outer", validate="one_to_one", indicator=True)
+    assert joined["_merge"].eq("both").all()
+    assert joined.cluster_x.eq(joined.cluster_y).all()
+    assert profiles.groupby("cluster").size().to_dict() == summary.set_index("cluster").nombre_paires.to_dict()

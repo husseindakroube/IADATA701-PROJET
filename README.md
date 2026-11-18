@@ -35,6 +35,7 @@ src/projet_kit_data/
   eda/                     Analyses exploratoires
   graph/                   Construction, centralités, rapports et figures
   ml/                      Préparation, historique, modèles et évaluation
+  comparaison.py           Fonctions des expériences A/B/C/D de l’équipe
   web_data.py              Lecture/validation pour le site
 data/
   raw/                     Sources immuables
@@ -50,6 +51,9 @@ tests/                     Tests importés et tests d'intégration de l'applicat
 logs/                      Journal local de l'application
 ```
 
+La mise à jour intègre les profils de clusters appris sur la période d’entraînement et
+les prédictions A/B/C/D sur les mêmes 1 857 observations de test, avec erreurs par cluster.
+
 ## Sources et génération des résultats
 
 Les scripts et notebooks importés restent disponibles pour étudier la génération
@@ -58,7 +62,7 @@ Leurs paramètres et chemins de lancement sont documentés dans leurs sources.
 Les notebooks sont téléchargeables depuis la page Conclusions.
 
 `docs/integration_manifest.json` conserve les chemins et empreintes SHA-256 des
-102 fichiers importés. `data/reports/clustering/elbow.png`, `pca.png` et `pca.txt`
+fichiers importés. `data/reports/clustering/elbow.png`, `pca.png` et `pca.txt`
 sont extraits des sorties enregistrées du notebook 04, sans exécuter celui-ci.
 
 Le site expose les résultats compatibles. Il ne publie pas un taux global d'arrivée
@@ -77,7 +81,7 @@ Les tests d'intégration vérifient le chargement des six pages, les filtres, le
 métier et la correspondance des métriques avec les mêmes observations de test.
 La CI lance désormais la suite complète, publie les rapports et exige au moins
 90,1 % de couverture sur `app/` et `src/projet_kit_data/`. Le relevé local initial
-est de 90,19 % (147 tests). Les tests de déploiement sont également exécutés.
+a été actualisé à 90,47 % (162 tests), le 18 novembre 2026. Les tests de déploiement sont également exécutés.
 
 ## Documentation et déploiement
 

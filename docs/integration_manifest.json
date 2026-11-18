@@ -117,7 +117,7 @@
   },
   {
     "path": "data/processed/clusters_liaisons.csv",
-    "sha256": "1ffb94cef244db3a629e3a20bb95ebbcfde022e159e2fe609314eb2c0bae009d"
+    "sha256": "ae89adc20969793a56fb884076d49a040f0f78cad99b6283235fd2209c993981"
   },
   {
     "path": "data/processed/research_dataset.parquet",
@@ -393,11 +393,11 @@
   },
   {
     "path": "notebooks/04_ml_non_supervise.ipynb",
-    "sha256": "7260a6289ee505df87fc1ee8620a64ed948a28e579efead176ce6ef8b762971f"
+    "sha256": "c8acba7a48787a88266eaee9499f11049fa7f32a6fa99ce4cbf66e714518ed08"
   },
   {
     "path": "notebooks/05_ml_comparaison.ipynb",
-    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    "sha256": "1b13d170b40fb03a48f6bf0f45cdf3ca7484693df25f665cd14fdd8c34cacde9"
   },
   {
     "path": "models/baseline_model.joblib",
@@ -406,5 +406,37 @@
   {
     "path": "image/Projet_SNCF.svg",
     "sha256": "51c0c141917914ed28ede966affc62920c5eaee6e0bfc6dc1578746e7a9e40ba"
+  },
+  {
+    "path": "src/projet_kit_data/comparaison.py",
+    "sha256": "2a900359a7243c8484f7535a0945cdea4f4acf1f640f865cd2c6def439fe9dee"
+  },
+  {
+    "path": "tests/test_comparaison.py",
+    "sha256": "90524124292e8e9488f18662d27b956b24eb8ecc4440f87e5c62a724ddc78841"
+  },
+  {
+    "path": "data/processed/ml/clusters_profils.parquet",
+    "sha256": "3db4075a2c13cca3a6b691d8669efe8e97358268fd1521b32866b8f0a503c60d"
+  },
+  {
+    "path": "data/processed/ml/clusters_resume.parquet",
+    "sha256": "4e681e7dac27393d98a60f73c1d201e11ede50f928e3174953d7497b8371c5e3"
+  },
+  {
+    "path": "data/processed/ml/comparaison_metrics.json",
+    "sha256": "2f4adbfb54858aeed35be0924d921181aa194187787ee1d42ca6a70aa6424d9d"
+  },
+  {
+    "path": "data/processed/ml/comparaison_predictions_test.parquet",
+    "sha256": "4f8a8ba956405b547116525dcb7ac836f98af0168998a806bcfd8ad61bab64bd"
+  },
+  {
+    "path": "models/clustering_model.joblib",
+    "sha256": "d57852ac39265a0d0f5a4798d60d2f478beb30444718c065e8bd93535772e808"
+  },
+  {
+    "path": "models/comparaison_modele_retenu.joblib",
+    "sha256": "c6193f9d72fe627f2913900f15f088bcd35df7f70537ebcdc770a9abc9254642"
   }
 ]

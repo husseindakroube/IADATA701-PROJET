@@ -18,12 +18,30 @@ summary = table(
 if not summary.empty:
     st.caption("Périmètre du rapport réseau : 2018-01 → 2026-09.")
     st.dataframe(summary, hide_index=True)
-st.write(
-    "L'application présente une baseline naïve et un modèle supervisé issus des "
-    "fichiers de test. Ces deux résultats seuls ne permettent pas d'isoler l'apport "
-    "du graphe ou du clustering. Les valeurs R² 0,4513 et 0,4595 de la proposition "
-    "ne sont donc pas présentées comme une conclusion vérifiée."
-)
+predictions = table("data/processed/ml/comparaison_predictions_test.parquet", required=False)
+if not predictions.empty:
+    from sklearn.metrics import mean_absolute_error, r2_score
+
+    scores = {}
+    for code in ["naive", "a", "b", "c", "d"]:
+        scores[code] = (
+            mean_absolute_error(predictions.delay_rate_15, predictions[f"prediction_{code}"]) * 100,
+            r2_score(predictions.delay_rate_15, predictions[f"prediction_{code}"]),
+        )
+    best = min("abcd", key=lambda code: scores[code][0])
+    st.write(
+        f"Sur {len(predictions):,} observations de test, le modèle {best.upper()} "
+        f"a la plus faible MAE des variantes A à D : {scores[best][0]:.3f} pp, "
+        f"contre {scores['a'][0]:.3f} pp pour A et {scores['naive'][0]:.3f} pp "
+        f"pour le naïf historique. Son R² est {scores[best][1]:.4f}, "
+        f"contre {scores['naive'][1]:.4f} pour le naïf."
+    )
+    st.write(
+        "Les différences de MAE entre les variantes sont faibles ; le naïf conserve "
+        "ici un meilleur R². Ces résultats ne démontrent pas une amélioration générale "
+        "grâce au réseau ou aux clusters. La stabilité sur d'autres périodes reste à vérifier. "
+        "Ce classement descriptif du test ne remplace pas le choix du modèle sur validation."
+    )
 st.subheader("Limites")
 st.markdown(
     "- Données mensuelles sur une partie des services TGV ; pas de risque individuel.\n"
