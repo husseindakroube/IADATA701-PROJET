@@ -49,9 +49,9 @@ def test_preserves_service_identity() -> None:
     prepared = prepare_baseline_data(data)
     features = build_baseline_dataset(prepared)
     assert len(features) == 4
-    rates = features.loc[
-        features["date"] == pd.Timestamp("2021-01-01")
-    ].set_index("service")
+    rates = features.loc[features["date"] == pd.Timestamp("2021-01-01")].set_index(
+        "service"
+    )
     assert rates.loc["National", "historical_delay_rate_15"] == pytest.approx(0.1)
     assert rates.loc["International", "historical_delay_rate_15"] == pytest.approx(0.4)
 

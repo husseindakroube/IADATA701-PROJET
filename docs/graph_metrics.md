@@ -1,100 +1,63 @@
-# Graph Metrics
+# Métriques des graphes
 
-## Research context
+## Contexte de recherche
 
-The project asks: *Dans quelle mesure la structure du réseau TGV est-elle
-associée à la régularité des liaisons ?* This phase describes observed network
-topology so a later research-data step can compare structure with monthly
-operational observations. It does not calculate associations or infer causes.
+La question est : *Dans quelle mesure la structure du réseau TGV est-elle associée à la régularité des liaisons ?* Cette phase décrit la topologie observée afin de permettre une comparaison ultérieure avec les observations opérationnelles mensuelles. Elle ne calcule pas d’association et n’établit aucune causalité.
 
-Edges are directed from origin to destination because the liaison is directed.
-National and International services are analyzed in separate graphs. Metrics
-are initially unweighted: a connection counts once regardless of the number of
-trains or any delay/cancellation measurement. An overall graph uses the union
-of a service's observed edges over the full dataset. A monthly graph uses only
-that service's edges observed in the selected month, and contains no stations
-absent from those edges. Consequently, overall and monthly scores are different
-snapshots and must not be interchanged.
+Les arêtes suivent la direction origine-destination. Les services National et International sont analysés séparément. Les métriques ne sont pas pondérées : une connexion compte une fois, indépendamment du trafic, des retards et des annulations. Le graphe global est l’union des arêtes observées sur toute la période. Un graphe mensuel contient uniquement les arêtes du mois et les gares qui y participent. Les scores globaux et mensuels ne sont donc pas interchangeables.
 
-The graph consists of origin-destination liaisons, not confirmed train
-itineraries, transfer connections, or physical track segments. Shortest paths
-describe paths in this observed topology only. Centrality does not demonstrate
-actual train movement, passenger volume, operational importance, or delay
-propagation.
+Les liaisons ne sont ni des itinéraires confirmés, ni des correspondances, ni des tronçons physiques. Les plus courts chemins décrivent uniquement cette topologie. La centralité ne mesure pas les mouvements réels, le volume de voyageurs, l’importance opérationnelle ou la propagation des retards.
 
-## Metric reference
+## Référence des métriques
 
-All calculations use NetworkX directed simple graphs and unweighted shortest
-paths. An edge is unique by its construction `edge_id` within a service-period
-graph. Degree counts distinct neighbors, not service frequency.
+Les calculs utilisent des graphes simples orientés NetworkX et des plus courts chemins non pondérés. `edge_id` identifie une arête dans un graphe service-période. Le degré compte les voisins distincts, pas la fréquence du service.
 
-| Metric | Definition and normalization | Interpretation and limitations |
+| Métrique | Définition et normalisation | Interprétation et limites |
 |---|---|---|
-| `in_degree` | Number of distinct incoming neighbors. | High values indicate more observed incoming liaison connections. |
-| `out_degree` | Number of distinct outgoing neighbors. | High values indicate more observed outgoing liaison connections. |
-| `degree` | `in_degree + out_degree`; a self-loop contributes once to each. | Total directed connection count, not traffic volume. |
-| `in_degree_centrality` | `in_degree / (n - 1)`; zero when `n < 2`. | Fraction of possible other nodes that link into the node. |
-| `out_degree_centrality` | `out_degree / (n - 1)`; zero when `n < 2`. | Fraction of possible other nodes reached directly from the node. |
-| `betweenness_centrality` | NetworkX normalized directed betweenness, with unweighted shortest paths and endpoints excluded. For directed graphs the normalization uses ordered node pairs. | High scores indicate a node lies on a larger share of shortest directed paths. Disconnected pairs contribute no paths; this is not evidence of real transfers. |
-| `in_closeness` | NetworkX directed closeness on the original graph: distances from nodes that can reach the focal node. Uses the reachable-node correction (`wf_improved=True`). | High values indicate short inbound paths from reachable nodes. Unreachable nodes are excluded from distance sums and the reachability fraction reduces scores. |
-| `out_closeness` | Same directed closeness calculation on the reversed graph, giving distances from the focal node to nodes it can reach. Uses the same reachability correction. | High values indicate short outbound reachability. It is not interchangeable with inbound closeness. |
-| `pagerank` | NetworkX directed PageRank with `alpha=0.85`, unweighted edges, configurable `max_iter` and `tol`. Dangling nodes use NetworkX's default redistribution according to the personalization vector (uniform when absent). | High values mean a node receives links from nodes with higher PageRank. It is not passenger volume, train frequency, or operational influence. A non-converged graph gets null PageRank for every node and a detailed metadata/report entry; other metrics remain available. |
-| `edge_betweenness` | NetworkX normalized directed edge betweenness on unweighted shortest paths. | High values indicate an observed directed liaison appears on more shortest paths. It does not assert a train physically traverses that liaison as one leg. |
+| `in_degree` | Nombre de voisins entrants distincts | Nombre de connexions entrantes observées |
+| `out_degree` | Nombre de voisins sortants distincts | Nombre de connexions sortantes observées |
+| `degree` | `in_degree + out_degree` ; une boucle contribue une fois à chaque degré | Total des connexions orientées, pas du trafic |
+| `in_degree_centrality` | `in_degree / (n - 1)` ; zéro si `n < 2` | Part des autres nœuds possibles reliés au nœud en entrée |
+| `out_degree_centrality` | `out_degree / (n - 1)` ; zéro si `n < 2` | Part des autres nœuds possibles atteints directement |
+| `betweenness_centrality` | Intermédiarité orientée normalisée NetworkX, sans pondération ni extrémités ; normalisation par paires ordonnées | Part des plus courts chemins passant par le nœud ; les paires déconnectées ne contribuent pas. Ce n’est pas une preuve de correspondances réelles |
+| `in_closeness` | Proximité orientée sur le graphe d’origine, distances des nœuds pouvant atteindre le nœud étudié ; correction `wf_improved=True` | Des valeurs élevées indiquent de courts chemins entrants. Les nœuds inaccessibles sont exclus des distances et la part accessible réduit le score |
+| `out_closeness` | Même calcul sur le graphe inversé et même correction d’accessibilité | Proximité sortante, distincte de la proximité entrante |
+| `pagerank` | PageRank orienté non pondéré, `alpha=0.85`, `max_iter` et `tol` configurables ; redistribution des nœuds sans sortie selon la personnalisation, uniforme par défaut | Liens reçus de nœuds à PageRank élevé, sans mesure de trafic ou d’influence opérationnelle. En cas de non-convergence, tous les PageRank du graphe sont nuls, l’échec est documenté et les autres métriques restent disponibles |
+| `edge_betweenness` | Intermédiarité orientée normalisée des arêtes sur les plus courts chemins non pondérés | Fréquence topologique de la liaison dans ces chemins, sans preuve qu’un train la traverse comme étape physique |
 
-Degree centralities use the explicit denominator `n - 1`. Betweenness and
-closeness use NetworkX's normalized directed and reachable-node conventions,
-respectively. For graphs with one node, normalized degree centralities are zero;
-NetworkX returns zero closeness and betweenness. A self-loop remains a directed
-edge and contributes to in- and out-degree.
+Les degrés normalisés utilisent `n - 1`. L’intermédiarité et la proximité suivent les conventions de normalisation orientée et d’accessibilité de NetworkX. Pour un seul nœud, ces centralités valent zéro. Une boucle reste une arête orientée et contribue aux degrés entrant et sortant.
 
-## Data model
+## Modèle de données
 
-The pipeline reads the existing construction outputs and writes
-`data/processed/graph/node_metrics.parquet`, `edge_metrics.parquet`, and
-`metrics_metadata.json`, plus `data/reports/graph/metrics_report.md`.
+La chaîne lit les résultats de construction existants et écrit `data/processed/graph/node_metrics.parquet`, `edge_metrics.parquet`, `metrics_metadata.json` et `data/reports/graph/metrics_report.md`.
 
 ### `node_metrics.parquet`
 
-| Column | Type |
+| Colonne | Type |
 |---|---|
-| `period` | String: `overall` or `YYYY-MM` |
-| `service` | String |
-| `node_id` | String |
-| `station_name` | String |
+| `period` | String : `overall` ou `YYYY-MM` |
+| `service`, `node_id`, `station_name` | String |
 | `in_degree`, `out_degree`, `degree` | UInt32 |
 | `in_degree_centrality`, `out_degree_centrality` | Float64 |
-| `betweenness_centrality`, `in_closeness`, `out_closeness`, `pagerank` | Float64, nullable on PageRank convergence failure |
+| `betweenness_centrality`, `in_closeness`, `out_closeness`, `pagerank` | Float64 ; PageRank peut être nul en cas de non-convergence |
 
-Unique key: `(period, service, node_id)`.
+Clé unique : `(period, service, node_id)`.
 
 ### `edge_metrics.parquet`
 
-The identity fields are `period` (String), `service` (String), `edge_id`
-(String), `source` (String node ID), and `target` (String node ID). They are
-followed by `edge_betweenness` (Float64), then the node metric fields prefixed
-with `source_` and `target_`. Endpoint fields include in-degree, out-degree,
-degree, in/out degree centrality, betweenness, in/out closeness, and PageRank.
-Degree fields are UInt32; all other values are Float64, with PageRank nullable
-if its graph failed to converge.
+Les champs d’identité `period`, `service`, `edge_id`, `source` et `target` sont des chaînes. Ils sont suivis de `edge_betweenness` (Float64) et des métriques des nœuds préfixées par `source_` et `target_` : degrés, centralités de degré, intermédiarité, proximités et PageRank. Les degrés sont UInt32, les autres mesures Float64 ; PageRank peut être nul en cas de non-convergence.
 
-Unique key: `(period, service, edge_id)`. Endpoint metrics are taken from the
-same service-period graph as their edge. Construction `edge_id` values are
-reused; no competing identifier is generated.
+Clé unique : `(period, service, edge_id)`. Les métriques des extrémités proviennent du même graphe service-période que l’arête. Les identifiants de construction sont réutilisés. Pour les données mensuelles, joindre sur `period = date`, `service` et `edge_id`, avec contrôle supplémentaire des extrémités si nécessaire. Ne pas joindre `period="overall"` comme un score mensuel.
 
-The later monthly research dataset should join metrics using `period = date`,
-`service`, and `edge_id` (or validate source/target as additional integrity
-checks). `period = "overall"` is a separate summary and must not be joined as
-though it were a monthly score.
+## Exécution et configuration
 
-## Run and configure
-
-From the repository root:
+Depuis la racine du dépôt :
 
 ```powershell
 uv run python -c "from projet_kit_data.graph import run_graph_metrics_pipeline; result = run_graph_metrics_pipeline()"
 ```
 
-The public API is:
+Interface publique :
 
 ```python
 run_graph_metrics_pipeline(
@@ -109,15 +72,6 @@ run_graph_metrics_pipeline(
 )
 ```
 
-The returned `GraphMetricsResult` exposes `node_metrics`, `edge_metrics`,
-`metadata`, and `output_paths`. Metadata includes per-graph node/edge counts,
-metric definitions, software versions, configuration, convergence failures,
-schemas, unique keys, and warnings. The report provides overall rankings,
-overall metric summaries, monthly coverage and evolution, and interpretation
-limitations. Execution does not rerun ETL or graph construction.
+`GraphMetricsResult` expose `node_metrics`, `edge_metrics`, `metadata` et `output_paths`. Les métadonnées décrivent les effectifs par graphe, définitions, versions logicielles, configuration, échecs de convergence, schémas, clés et avertissements. Le rapport présente les classements globaux, distributions, couverture et évolution mensuelle et limites. Cette exécution ne relance ni l’ETL ni la construction.
 
-For reproducibility, keep input construction artifacts immutable and record the
-input paths, NetworkX/Polars versions, and PageRank parameters from metadata.
-National and International must remain separate in all downstream joins and
-analysis. Any association between these structural metrics and operational
-regularity is descriptive evidence, not proof of causality.
+Pour reproduire les résultats, conserver les entrées de construction immuables et enregistrer leurs chemins, les versions NetworkX/Polars et les paramètres PageRank. Les services restent distincts dans les jointures et analyses ultérieures. Une association entre structure et régularité reste descriptive et ne prouve pas une causalité.

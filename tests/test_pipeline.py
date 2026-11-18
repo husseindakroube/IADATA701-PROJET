@@ -1,4 +1,4 @@
-"""Tests for the shared ETL orchestration entry point."""
+"Tests du point d’entrée commun d’orchestration ETL."
 
 from __future__ import annotations
 

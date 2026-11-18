@@ -78,10 +78,9 @@ def train_and_evaluate(
 
 def format_comparison_table(results: list[dict]) -> pd.DataFrame:
     """Formate les résultats des modèles en un tableau comparatif trié par MAE."""
-    tableau = pd.DataFrame([
-        {"modele": r["modele"], "mae": r["mae"], "rmse": r["rmse"]}
-        for r in results
-    ])
+    tableau = pd.DataFrame(
+        [{"modele": r["modele"], "mae": r["mae"], "rmse": r["rmse"]} for r in results]
+    )
     return tableau.sort_values("mae").reset_index(drop=True)
 
 
@@ -105,11 +104,13 @@ def compute_errors_by_group(
         Série indexée par le groupe, avec la MAE en points de pourcentage.
     """
     predictions = model.predict(test[columns])
-    erreurs = pd.DataFrame({
-        "cible": test[target].to_numpy(),
-        "prediction": predictions,
-        "groupe": test[group_column].to_numpy(),
-    })
+    erreurs = pd.DataFrame(
+        {
+            "cible": test[target].to_numpy(),
+            "prediction": predictions,
+            "groupe": test[group_column].to_numpy(),
+        }
+    )
     erreurs["abs_erreur"] = (erreurs["cible"] - erreurs["prediction"]).abs()
     return (erreurs.groupby("groupe")["abs_erreur"].mean() * 100).round(3)
 
@@ -137,7 +138,11 @@ def add_graph_features(data: pd.DataFrame) -> pd.DataFrame:
     station_features = compute_graph_features(G)
 
     feature_cols = [
-        "in_degree", "out_degree", "total_degree", "betweenness", "pagerank"
+        "in_degree",
+        "out_degree",
+        "total_degree",
+        "betweenness",
+        "pagerank",
     ]
 
     enrichi = data.copy()

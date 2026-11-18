@@ -1,4 +1,4 @@
-"""Tests for reusable descriptive chart generation."""
+"Tests de génération de graphiques descriptifs réutilisables."
 
 import polars as pl
 

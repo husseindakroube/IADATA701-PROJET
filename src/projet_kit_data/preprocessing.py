@@ -26,11 +26,12 @@ COLUMN_MAPPING = {
 def prepare_graph_data(df: pd.DataFrame) -> pd.DataFrame:
     """Prépare les observations SNCF pour les traitements suivants.
 
-    La cible est définie par :
+    La cible est définie par ::
 
         delay_rate_15 = late_15 / (planned - cancelled)
 
     Une observation est considérée comme valide si :
+
     - au moins un train a circulé
     - le nombre de trains en retard est compris entre
       zéro et le nombre de trains ayant circulé.

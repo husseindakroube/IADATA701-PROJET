@@ -3,6 +3,9 @@
 import pandas as pd
 import pytest
 
+from projet_kit_data.eda.report import generate_quality_report
+from projet_kit_data.web_data import ROOT
+
 from projet_kit_data.eda.quality import (
     check_comments,
     check_durations,
@@ -29,6 +32,23 @@ def test_dataset_overview() -> None:
 
     assert result["n_rows"] == 2
     assert result["n_columns"] == 2
+
+
+def test_quality_report_uses_current_package_and_preserves_input() -> None:
+    """Vérifie que l'agrégateur public fonctionne sur les données du projet."""
+    data = pd.read_parquet(ROOT / "data/processed/sncf.parquet").head(3)
+    original = data.copy(deep=True)
+    report = generate_quality_report(data)
+    assert report["overview"] == {"n_rows": 3, "n_columns": len(data.columns)}
+    assert report["duplicates"]["business_keys"] == 0
+    assert {
+        "identifiers",
+        "train_counts",
+        "durations",
+        "percentages",
+        "comments",
+    } <= report.keys()
+    pd.testing.assert_frame_equal(data, original)
 
 
 def test_missing_values() -> None:

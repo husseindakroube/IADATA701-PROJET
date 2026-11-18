@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  UV_VERSION: '0.12.13'
+  MPLBACKEND: Agg
+  STREAMLIT_BROWSER_GATHER_USAGE_STATS: 'false'
+
+jobs:
+  checks:
+    name: Code, tests et couverture
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v7.0.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Installation de l’environnement verrouillé
+        run: uv sync --locked --dev
+      - name: Vérification PEP 8, erreurs Python et présence des docstrings
+        run: uv run --locked ruff check app src tests scripts docs/conf.py
+      - name: Vérification du formatage
+        run: uv run --locked ruff format --check app src tests scripts docs/conf.py
+      - name: Vérification de la syntaxe Python
+        run: uv run --locked python -m compileall -q app src scripts
+      - name: Construction de la documentation Sphinx sans avertissement
+        run: uv run --locked sphinx-build -W --keep-going -b html docs docs/_build/html
+      - name: Génération de journaux de démonstration sans données réelles
+        run: uv run --locked python scripts/deployment/generate_log_examples.py reports/log-examples
+      - name: Exécution des tests, dont les six pages Streamlit
+        run: >-
+          uv run --locked pytest -q
+          --cov=src/projet_kit_data --cov=app
+          --cov-fail-under=90.1 --cov-report=term-missing:skip-covered
+          --cov-report=xml:reports/coverage.xml
+          --cov-report=html:reports/coverage
+          --junitxml=reports/pytest.xml
+      - name: Conservation des rapports même en cas d’échec
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: test-reports-${{ github.sha }}
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Conservation de la documentation HTML
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: sphinx-html-${{ github.sha }}
+          path: docs/_build/html/
+          if-no-files-found: warn
+          retention-days: 14

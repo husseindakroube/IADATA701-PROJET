@@ -81,12 +81,12 @@
     "weighted": false
   },
   "metric_definitions": {
-    "betweenness_centrality": "NetworkX normalized directed unweighted shortest-path betweenness",
-    "edge_betweenness": "NetworkX normalized directed unweighted shortest-path edge betweenness",
-    "in_closeness": "NetworkX directed closeness; inbound distances with reachable-node correction",
-    "in_degree_centrality": "in_degree / (n_nodes - 1), or 0 when n_nodes < 2",
-    "out_closeness": "NetworkX directed closeness on reversed graph; outbound distances with reachable-node correction",
-    "out_degree_centrality": "out_degree / (n_nodes - 1), or 0 when n_nodes < 2"
+    "betweenness_centrality": "Intermédiarité NetworkX normalisée des plus courts chemins orientés non pondérés",
+    "edge_betweenness": "Intermédiarité NetworkX normalisée des arêtes sur les plus courts chemins orientés non pondérés",
+    "in_closeness": "Proximité orientée NetworkX ; distances entrantes corrigées selon les nœuds accessibles",
+    "in_degree_centrality": "in_degree / (n_nodes - 1), ou 0 si n_nodes < 2",
+    "out_closeness": "Proximité orientée NetworkX sur le graphe inversé ; distances sortantes corrigées selon les nœuds accessibles",
+    "out_degree_centrality": "out_degree / (n_nodes - 1), ou 0 si n_nodes < 2"
   },
   "monthly_graph_count": 210,
   "monthly_graphs": [
@@ -1414,7 +1414,7 @@
   "pagerank_convergence_failures": [],
   "pagerank_parameters": {
     "alpha": 0.85,
-    "dangling": "NetworkX default (uniform redistribution)",
+    "dangling": "Valeur par défaut NetworkX : redistribution uniforme",
     "max_iter": 1000,
     "tol": 1e-06
   },
@@ -1450,7 +1450,7 @@
     ]
   },
   "warnings": [
-    "Observed OD paths do not establish actual train itineraries or delay propagation.",
-    "Degree is distinct topology, not train frequency; PageRank is not passenger flow."
+    "Les chemins observés ne prouvent ni itinéraires réels ni propagation des retards.",
+    "Le degré décrit les connexions distinctes, pas la fréquence des trains ; PageRank n’est pas un flux de voyageurs."
   ]
 }

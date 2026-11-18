@@ -1,5 +1,5 @@
 """Évalue les modèles sélectionnés sur la période test 2025–2026."""
-    
+
 from sncf_rail_insight.dataset import load_ml_dataset
 from sncf_rail_insight.ml.evaluation import compute_metrics
 from sncf_rail_insight.ml.models import (
@@ -25,6 +25,7 @@ MODEL_CONFIGS = {
         "max_leaf_nodes": 7,
     },
 }
+
 
 def main() -> None:
     """Réentraîne sur 2019–2024 et évalue sur janvier 2025–septembre 2026."""

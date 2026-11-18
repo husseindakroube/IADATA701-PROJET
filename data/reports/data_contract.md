@@ -1,152 +1,152 @@
-# SNCF TGV Monthly Regularity: Shared Data Contract
+# Régularité mensuelle TGV SNCF : contrat commun de données
 
-**Status:** Proposed shared interface, version 1.0 for team review  
-**Scope:** Raw and reusable tabular representation of the SNCF monthly TGV regularity export. This document defines shared field semantics and interchange expectations. It does not implement cleaning or require any particular DataFrame library.
+**Statut :** interface commune proposée, version 1.0 soumise à l’équipe.
+**Périmètre :** représentation tabulaire brute et réutilisable de l’export mensuel SNCF. Ce document définit le sens des champs et les échanges attendus sans implémenter de nettoyage ni imposer une bibliothèque de DataFrame.
 
-## 1. Purpose and scope
+## 1. Objectif et périmètre
 
-EDA, graph analysis, machine learning, audit, and future ETL work need to agree on what a row and each source field mean. A shared contract reduces accidental differences in field names, date interpretation, missing-value handling, and units when data passes between modules.
+L’exploration, l’analyse de graphe, l’apprentissage automatique, l’audit et l’ETL doivent partager la signification d’une ligne et de chaque champ. Le contrat réduit les divergences accidentelles de noms, dates, absences et unités entre modules.
 
-The contract is **library-neutral**. Consumers may use Pandas, Polars, or another suitable tool and provide a small adapter at their boundary. The shared schema concerns field names, logical types, meaning, and preservation rules; it does not prescribe one in-memory DataFrame type or force the current Polars audit implementation on other modules.
+Le contrat est **indépendant des bibliothèques**. Chaque consommateur peut utiliser Pandas, Polars ou un autre outil avec un adaptateur à sa frontière. Il définit noms, types logiques, sens et règles de conservation, sans imposer un type de table en mémoire ni l’implémentation Polars de l’audit.
 
-This proposal follows `data/reports/cross_branch_cleaning_impact_report.md`, especially sections 9.1–9.5. Where the current SNCF data dictionary is needed to confirm exact field definitions or units, the item is explicitly marked as requiring confirmation. Field descriptions below are working interpretations based on the export names and existing project analysis, not new claims of official definitions.
+Cette proposition prolonge `data/reports/cross_branch_cleaning_impact_report.md`, notamment ses sections 9.1–9.5. Les définitions et unités nécessitant le dictionnaire officiel SNCF sont signalées. Les descriptions sont des interprétations de travail fondées sur les noms et analyses existantes, pas de nouvelles définitions officielles.
 
-## 2. Data grain and business key
+## 2. Granularité et clé métier
 
-One record represents **one monthly service-route observation** in the SNCF dataset.
+Une ligne représente **une observation mensuelle d’un service et d’une liaison** dans les données SNCF.
 
-The business key is:
+La clé métier est :
 
 ```text
 (date, service, gare_depart, gare_arrivee)
 ```
 
-The route is directed: `gare_depart` and `gare_arrivee` must not be swapped or collapsed into an undirected pair. The `service` category must also be preserved. The same month and station pair can appear for different service categories, and those are distinct observations. Keep the source values and spellings for these key fields; any normalized route labels should be derived fields.
+La liaison est orientée : ne pas échanger `gare_depart` et `gare_arrivee` ni les fusionner en paire non orientée. Conserver aussi `service` : un même mois et une même paire peuvent apparaître dans plusieurs services, qui restent des observations distinctes. Préserver valeurs et orthographe des clés ; les libellés normalisés éventuels doivent être dérivés.
 
-## 3. Canonical schema
+## 3. Schéma canonique
 
-The canonical field names are the 26 short names in the SNCF JSON export and current audit schema. Every field is **nullable** in the shared contract, even if it has no nulls in a particular snapshot. Counts and planned duration use logical integers; averages and percentages use decimal numeric values. Physical Pandas/Polars dtypes may differ as long as they preserve these logical types and nulls.
+Les noms canoniques sont les 26 noms courts de l’export JSON SNCF et de l’audit. Chaque champ accepte les **valeurs nulles**, même s’il est complet dans un état donné. Comptages et durée prévue sont des entiers logiques ; moyennes et pourcentages sont décimaux. Les types physiques Pandas/Polars peuvent différer s’ils préservent ces types et les absences.
 
-Descriptions and units marked “confirm” should be verified against the authoritative SNCF data dictionary before they are used to enforce corrections or validity ranges.
+Les descriptions et unités marquées « à confirmer » doivent être vérifiées dans le dictionnaire officiel avant d’imposer corrections ou plages de validité.
 
-| Canonical name | Logical type | Working meaning | Unit | Nullability and semantic caveats |
+| Nom canonique | Type logique | Signification de travail | Unité | Valeurs nulles et réserves sémantiques |
 | --- | --- | --- | --- | --- |
-| `date` | String, `YYYY-MM` | Reporting month for the observation. | Calendar month | Nullable by contract; a null or malformed value is an invalid key. Do not replace it with a day-level source date. |
-| `service` | String | Service category attached to the observation. | None | Nullable by contract; preserve category labels and include it in the business key. Official category definitions require the SNCF dictionary. |
-| `gare_depart` | String | Origin station label. | None | Nullable by contract; preserve source spelling. It is directional and part of the key. |
-| `gare_arrivee` | String | Destination station label. | None | Nullable by contract; preserve source spelling. It is directional and part of the key. |
-| `duree_moyenne` | Nullable integer | Mean planned journey duration, according to the field name. | Minutes (confirm exact definition) | May be zero in exceptional records; do not treat zero as null. Exact calculation and scope require SNCF confirmation. |
-| `nb_train_prevu` | Nullable integer count | Number of trains/circulations planned for the month, according to the field name. | Trains | Negative values conflict with count semantics and should be flagged. A zero value is distinct from missing. Confirm which timetable version is counted. |
-| `nb_annulation` | Nullable integer count | Number of cancelled trains/circulations, according to the field name. | Trains | Negative values conflict with count semantics and should be flagged. It may exceed `nb_train_prevu` in the observed source; do not globally delete or rewrite such rows without confirming SNCF counting conventions. |
-| `commentaire_annulation` | Nullable string | Source commentary associated with cancellations. | None | Preserve text exactly. Null and empty string are distinct unless a display-only rule says otherwise. |
-| `nb_train_depart_retard` | Nullable integer count | Number of trains reported late at departure. | Trains | Negative values conflict with count semantics and should be flagged. Exact delay threshold and scope require SNCF confirmation. |
-| `retard_moyen_depart` | Nullable decimal number | Mean delay for the subset described as late at departure, according to the field name. | Minutes (confirm exact definition) | Negative values may represent early running under some definitions; do not reject or clip on sign alone. Confirm the population and weighting. |
-| `retard_moyen_tous_trains_depart` | Nullable decimal number | Mean departure delay over the population indicated as all trains. | Minutes (confirm exact definition) | “All trains” population and treatment of cancellations/early running require SNCF confirmation. Preserve negative values pending that confirmation. |
-| `commentaire_retards_depart` | Nullable string | Source commentary associated with departure delays. | None | Preserve source text; null is not the same as an empty string. |
-| `nb_train_retard_arrivee` | Nullable integer count | Number of trains reported late at arrival. | Trains | Negative values conflict with count semantics and should be flagged. The exact “official” arrival threshold may depend on journey duration; confirm in the data dictionary. |
-| `retard_moyen_arrivee` | Nullable decimal number | Mean arrival delay for the subset described as late at arrival. | Minutes (confirm exact definition) | Do not automatically clip negative values; verify the definition and eligible population first. |
-| `retard_moyen_tous_trains_arrivee` | Nullable decimal number | Mean arrival delay over the population indicated as all trains. | Minutes (confirm exact definition) | “All trains” population and weighting require SNCF confirmation. Extreme negative values are diagnostic flags, not proof of the correct replacement. |
-| `commentaires_retard_arrivee` | Nullable string | Source commentary associated with arrival delays. | None | Preserve source text; missingness is high in the checked snapshot. Null is not an observed zero or an empty explanation. |
-| `nb_train_retard_sup_15` | Nullable integer count | Number of trains beyond the 15-minute threshold, according to the field name. | Trains | The dataset description limits applicability to routes competing with air travel. There is no applicability flag in this dataset; do not universally enforce `sup_15 >= sup_30`. Confirm exact scope with SNCF. |
-| `retard_moyen_trains_retard_sup15` | Nullable decimal number | Average delay for the >15-minute group, according to the field name. | Minutes (confirm exact definition) | The >15 applicability limitation also applies here. A negative value may reflect the published definition or inconsistent source values; do not automatically change it. |
-| `nb_train_retard_sup_30` | Nullable integer count | Number of trains beyond the 30-minute threshold, according to the field name. | Trains | Negative values conflict with count semantics and must be flagged, but not changed to zero without evidence. The Q1 2025 relationship with `sup_60` requires source-version/definition review. |
-| `nb_train_retard_sup_60` | Nullable integer count | Number of trains beyond the 60-minute threshold, according to the field name. | Trains | Negative values conflict with count semantics and should be flagged. Do not overwrite `sup_30` or infer it from this field. Confirm threshold and population definitions. |
-| `prct_cause_externe` | Nullable decimal number | Percentage attributed to external causes, according to the field name. | Percent points, expected scale 0–100 (confirm definition) | Null means unknown/unreported, not zero. Check bounds and total diagnostically; do not fill missing causes with zero. |
-| `prct_cause_infra` | Nullable decimal number | Percentage attributed to infrastructure causes. | Percent points, expected scale 0–100 (confirm definition) | Null means unknown/unreported, not zero. Exact category boundary and denominator require SNCF confirmation. |
-| `prct_cause_gestion_trafic` | Nullable decimal number | Percentage attributed to traffic-management causes. | Percent points, expected scale 0–100 (confirm definition) | Null means unknown/unreported, not zero. Exact category boundary and denominator require SNCF confirmation. |
-| `prct_cause_materiel_roulant` | Nullable decimal number | Percentage attributed to rolling-stock causes. | Percent points, expected scale 0–100 (confirm definition) | Null means unknown/unreported, not zero. Exact category boundary and denominator require SNCF confirmation. |
-| `prct_cause_gestion_gare` | Nullable decimal number | Percentage attributed to station-management causes, according to the field name. | Percent points, expected scale 0–100 (confirm definition) | Null means unknown/unreported, not zero. The precise included causes and denominator require SNCF confirmation. |
-| `prct_cause_prise_en_charge_voyageurs` | Nullable decimal number | Percentage attributed to passenger handling/care, according to the field name. | Percent points, expected scale 0–100 (confirm definition) | Null means unknown/unreported, not zero. The precise included causes and denominator require SNCF confirmation. |
+| `date` | Chaîne, `YYYY-MM` | Mois de l’observation. | Mois calendaire | Nullable ; une valeur absente ou mal formée constitue une clé invalide. Ne pas la remplacer par une date journalière. |
+| `service` | Chaîne | Catégorie du service. | Sans unité | Nullable ; conserver les catégories dans la clé. Définition officielle à confirmer auprès de la SNCF. |
+| `gare_depart` | Chaîne | Nom de la gare d’origine. | Sans unité | Nullable ; conserver l’orthographe, la direction et son rôle dans la clé. |
+| `gare_arrivee` | Chaîne | Nom de la gare de destination. | Sans unité | Nullable ; conserver l’orthographe, la direction et son rôle dans la clé. |
+| `duree_moyenne` | Entier nullable | Durée moyenne prévue du trajet selon le nom du champ. | Minutes, définition à confirmer | Peut exceptionnellement valoir zéro ; ne pas confondre zéro et absence. Calcul et périmètre à confirmer. |
+| `nb_train_prevu` | Comptage entier nullable | Nombre mensuel de trains ou circulations prévus. | Trains | Signaler les négatifs. Distinguer zéro et absence. Confirmer la version de l’horaire utilisée. |
+| `nb_annulation` | Comptage entier nullable | Nombre de trains ou circulations annulés. | Trains | Signaler les négatifs. Les valeurs peuvent dépasser `nb_train_prevu` dans la source ; ne pas supprimer ou réécrire ces lignes sans confirmer les conventions SNCF. |
+| `commentaire_annulation` | Chaîne nullable | Commentaire source sur les annulations. | Sans unité | Préserver le texte exact. Distinguer valeur nulle et chaîne vide sauf règle d’affichage explicite. |
+| `nb_train_depart_retard` | Comptage entier nullable | Nombre de trains déclarés retardés au départ. | Trains | Signaler les négatifs ; seuil exact et population à confirmer. |
+| `retard_moyen_depart` | Nombre décimal nullable | Retard moyen du sous-ensemble déclaré retardé au départ. | Minutes, définition à confirmer | Selon la définition, un négatif peut représenter une avance. Ne pas exclure ou borner sur le seul signe ; confirmer population et pondération. |
+| `retard_moyen_tous_trains_depart` | Nombre décimal nullable | Retard moyen au départ de la population dite de tous les trains. | Minutes, définition à confirmer | Confirmer la population, les annulations et les avances ; conserver les négatifs dans l’attente. |
+| `commentaire_retards_depart` | Chaîne nullable | Commentaire source sur les retards au départ. | Sans unité | Préserver le texte ; une valeur nulle n’est pas une chaîne vide. |
+| `nb_train_retard_arrivee` | Comptage entier nullable | Nombre de trains déclarés retardés à l’arrivée. | Trains | Signaler les négatifs. Le seuil officiel peut dépendre de la durée ; vérifier le dictionnaire. |
+| `retard_moyen_arrivee` | Nombre décimal nullable | Retard moyen du sous-ensemble retardé à l’arrivée. | Minutes, définition à confirmer | Ne pas borner automatiquement les négatifs ; vérifier définition et population admissible. |
+| `retard_moyen_tous_trains_arrivee` | Nombre décimal nullable | Retard moyen à l’arrivée de la population dite de tous les trains. | Minutes, définition à confirmer | Population et pondération à confirmer. Les négatifs extrêmes sont des diagnostics, pas une preuve de la correction attendue. |
+| `commentaires_retard_arrivee` | Chaîne nullable | Commentaire source sur les retards à l’arrivée. | Sans unité | Préserver le texte. Beaucoup d’absences dans l’état vérifié ; une absence n’est ni un zéro ni une explication vide. |
+| `nb_train_retard_sup_15` | Comptage entier nullable | Nombre de trains dépassant 15 minutes de retard selon le nom du champ. | Trains | Applicabilité limitée aux liaisons en concurrence avec l’avion, sans indicateur dédié. Ne pas imposer universellement `sup_15 >= sup_30` ; confirmer le périmètre SNCF. |
+| `retard_moyen_trains_retard_sup15` | Nombre décimal nullable | Retard moyen du groupe >15 minutes. | Minutes, définition à confirmer | Même réserve d’applicabilité. Un négatif peut refléter la définition publiée ou une incohérence ; ne pas le modifier automatiquement. |
+| `nb_train_retard_sup_30` | Comptage entier nullable | Nombre de trains dépassant 30 minutes de retard. | Trains | Signaler les négatifs sans les remplacer par zéro sans preuve. Vérifier version/définition de la relation à `sup_60` au premier trimestre 2025. |
+| `nb_train_retard_sup_60` | Comptage entier nullable | Nombre de trains dépassant 60 minutes de retard. | Trains | Signaler les négatifs. Ne pas écraser ou déduire `sup_30` depuis ce champ ; confirmer seuils et populations. |
+| `prct_cause_externe` | Nombre décimal nullable | Pourcentage attribué aux causes externes. | Pourcentage, échelle attendue 0–100, à confirmer | Valeur nulle = inconnue/non publiée, pas zéro. Contrôler bornes et somme à titre diagnostique ; ne pas remplir les causes absentes par zéro. |
+| `prct_cause_infra` | Nombre décimal nullable | Pourcentage attribué à l’infrastructure. | Pourcentage, échelle attendue 0–100, à confirmer | Distinguer absence et zéro ; périmètre de catégorie et dénominateur à confirmer. |
+| `prct_cause_gestion_trafic` | Nombre décimal nullable | Pourcentage attribué à la gestion du trafic. | Pourcentage, échelle attendue 0–100, à confirmer | Distinguer absence et zéro ; périmètre de catégorie et dénominateur à confirmer. |
+| `prct_cause_materiel_roulant` | Nombre décimal nullable | Pourcentage attribué au matériel roulant. | Pourcentage, échelle attendue 0–100, à confirmer | Distinguer absence et zéro ; périmètre de catégorie et dénominateur à confirmer. |
+| `prct_cause_gestion_gare` | Nombre décimal nullable | Pourcentage attribué à la gestion des gares. | Pourcentage, échelle attendue 0–100, à confirmer | Distinguer absence et zéro ; causes incluses et dénominateur à confirmer. |
+| `prct_cause_prise_en_charge_voyageurs` | Nombre décimal nullable | Pourcentage attribué à la prise en charge des voyageurs. | Pourcentage, échelle attendue 0–100, à confirmer | Distinguer absence et zéro ; causes incluses et dénominateur à confirmer. |
 
-### Field groups and expected logical types
+### Groupes de champs et types logiques attendus
 
-- **Identifiers and category:** `date`, `service`, `gare_depart`, `gare_arrivee` are strings.
-- **Planned duration and counts:** `duree_moyenne`, `nb_train_prevu`, `nb_annulation`, `nb_train_depart_retard`, `nb_train_retard_arrivee`, `nb_train_retard_sup_15`, `nb_train_retard_sup_30`, and `nb_train_retard_sup_60` are nullable integers. Counts should be whole numbers; invalid numeric strings or fractional values should be flagged.
-- **Delay averages:** `retard_moyen_depart`, `retard_moyen_tous_trains_depart`, `retard_moyen_arrivee`, `retard_moyen_tous_trains_arrivee`, and `retard_moyen_trains_retard_sup15` are nullable decimal numbers, interpreted in minutes pending exact SNCF definitions.
-- **Cause percentages:** the six `prct_cause_*` fields are nullable decimal numbers represented in percent points, not proportions from 0 to 1. Confirm their precise denominator and category definitions in the official dictionary.
-- **Comments:** the three comment fields are nullable strings.
+- **Identifiants et catégorie :** `date`, `service`, `gare_depart`, `gare_arrivee` sont des chaînes.
+- **Durée prévue et comptages :** `duree_moyenne`, `nb_train_prevu`, `nb_annulation`, `nb_train_depart_retard`, `nb_train_retard_arrivee`, `nb_train_retard_sup_15`, `nb_train_retard_sup_30`, `nb_train_retard_sup_60` sont des entiers nullables. Signaler les textes numériques invalides et valeurs fractionnaires.
+- **Retards moyens :** `retard_moyen_depart`, `retard_moyen_tous_trains_depart`, `retard_moyen_arrivee`, `retard_moyen_tous_trains_arrivee`, `retard_moyen_trains_retard_sup15` sont décimaux nullables, interprétés en minutes sous réserve de confirmation SNCF.
+- **Causes :** les six champs `prct_cause_*` sont décimaux nullables, en points de pourcentage et non en fractions de 0 à 1. Confirmer dénominateurs et catégories.
+- **Commentaires :** les trois champs de commentaires sont des chaînes nullables.
 
-## 4. Date conventions
+## 4. Convention des dates
 
-`date` must remain a month string in `YYYY-MM` format, for example `2025-01`.
+`date` reste une chaîne mensuelle `YYYY-MM`, par exemple `2025-01`.
 
-Validate both the shape and calendar month: the month component must be from `01` through `12`. Do not silently convert the contract field into a day-level date or timezone-aware timestamp. A consumer may derive a separate first-of-month datetime column for plotting or time-series operations, while retaining the original `date` value and grain.
+Valider le format et le mois, de `01` à `12`. Ne pas convertir silencieusement ce champ en jour ou en instant avec fuseau. Une colonne séparée au premier du mois peut être dérivée pour graphiques ou séries temporelles tout en conservant valeur et granularité d’origine.
 
-## 5. Missing values and type handling
+## 5. Valeurs manquantes et types
 
-1. **Null is not zero.** Preserve absent values as null/NA. A measured count or percentage of zero is an observed value and must remain distinguishable from unknown or unreported data.
-2. **No silent filling.** Do not fill nulls with zero to make arithmetic possible. A calculation that needs complete inputs should define its own eligibility mask and report how many rows were excluded.
-3. **Logical types are library-independent.** Use nullable string, integer, decimal-number, and comment-string types as specified above. Pandas may use nullable extension dtypes; Polars may use its native types. The wire representation or physical DataFrame dtype does not change the logical contract.
-4. **Parse errors are visible.** When reading CSV or other typed text, parse numeric fields according to their groups. A non-empty value that cannot be parsed, or a fractional value in a count field, must be recorded as a parse/validation failure with field and row context. Do not silently leave it as text or coerce it to zero. Preserve the original representation in the immutable source so the issue can be traced.
-5. **Null-only columns still have a logical type.** In the checked 12,907-record snapshot, `commentaire_annulation` and `commentaire_retards_depart` are entirely null (100% each), while `commentaires_retard_arrivee` is null in 12,209 records (94.59%) and populated in 698. The first two remain nullable strings under this contract even if Polars infers a physical `Null` type from this snapshot. Do not drop these columns or treat the snapshot’s missingness as proof that they are permanently unused.
+1. **Une absence n’est pas zéro.** Conserver les absences comme null/NA. Un comptage ou pourcentage zéro est observé et reste distinct de l’inconnu ou non publié.
+2. **Aucun remplissage silencieux.** Ne pas remplacer les absences par zéro pour permettre un calcul. Définir un masque d’admissibilité et indiquer le nombre de lignes exclues.
+3. **Types logiques indépendants des bibliothèques.** Respecter les chaînes, entiers et décimaux nullables définis ici. Pandas peut utiliser ses types d’extension et Polars ses types natifs ; le format de transport ne change pas le contrat.
+4. **Échecs de conversion visibles.** Interpréter les textes numériques selon les groupes. Une valeur non vide illisible ou fractionnaire dans un comptage doit produire un diagnostic avec champ et ligne. Ne pas la laisser silencieusement en texte ni la remplacer par zéro. Conserver la représentation originale dans la source immuable.
+5. **Les colonnes entièrement nulles gardent un type logique.** Sur 12,907 observations, `commentaire_annulation` et `commentaire_retards_depart` sont absents à 100% ; `commentaires_retard_arrivee` est absent dans 12,209 lignes (94.59%) et renseigné dans 698. Les deux premiers restent des chaînes nullables même si Polars infère Null. Ne pas supprimer ces colonnes ni considérer leur absence actuelle comme permanente.
 
-## 6. Data quality and anomaly policy
+## 6. Politique de qualité et d’anomalies
 
-The raw export is evidence. Audit findings are flags for review and for metric-specific eligibility decisions; they are not, by themselves, instructions to rewrite source values.
+L’export brut constitue une preuve. Les constats d’audit servent à l’examen et à l’admissibilité propre à chaque métrique ; ils ne constituent pas seuls une instruction de réécriture.
 
-### Validation rules versus correction rules
+### Validation et correction
 
-**Validation rules** may report that a field is missing, has an unexpected type, violates a shape or logical constraint, or participates in a suspicious relationship. A validation result should identify the predicate, affected fields/rows, and counts without changing the record.
+Une **règle de validation** signale un champ absent, un type inattendu, une contrainte non respectée ou une relation suspecte. Elle identifie condition, champs, lignes et effectifs sans modifier l’observation.
 
-**Correction rules** change a value, remove a row, or replace a source representation. Apply one only when supported by an authoritative definition or a documented, reviewed decision. Keep the original value, correction rationale, rule/version, and a way to trace the output row to its raw source.
+Une **règle de correction** change une valeur, retire une ligne ou remplace une représentation. Elle exige une définition officielle ou une décision documentée et revue. Conserver valeur originale, justification, version de règle et traçabilité vers la source.
 
-The following investigation policy applies:
+La politique d’investigation est la suivante :
 
-- Preserve the original JSON as an immutable source artifact and preserve observed values in all derived data.
-- Add diagnostic flags or separate quality metadata instead of automatically deleting suspicious rows.
-- Do not replace negative count values with zero without source evidence. Negative counts conflict with count semantics and should be flagged for count-based calculations, but the correct replacement is unknown.
-- Do not force `nb_train_retard_sup_30 >= nb_train_retard_sup_60`. The 2025 Q1 pattern is a strong diagnostic signal, but it does not establish corrected `sup_30` values.
-- Do not automatically enforce `nb_train_retard_sup_15 >= nb_train_retard_sup_30`. The >15 field has limited route applicability, and this export has no field identifying eligible routes.
-- Do not globally delete records where `nb_annulation > nb_train_prevu`. Their exact interpretation depends on SNCF’s timetable and cancellation counting convention.
-- Do not automatically clip negative average delays. Early running may be represented as negative delay, and exact definitions/populations require confirmation.
-- For calculations, define explicit metric-specific eligibility conditions (for example, a positive denominator) and report excluded rows. Such exclusions should not delete the source row from the shared dataset.
+- Conserver le JSON original immuable et les valeurs observées dans les données dérivées.
+- Ajouter des indicateurs ou métadonnées qualité séparés plutôt que supprimer automatiquement les lignes suspectes.
+- Ne pas remplacer les comptages négatifs par zéro sans preuve. Ils sont incompatibles avec le sens d’un comptage et doivent être signalés, mais la correction reste inconnue.
+- Ne pas imposer `nb_train_retard_sup_30 >= nb_train_retard_sup_60`. Le premier trimestre 2025 fournit un signal fort sans déterminer les valeurs corrigées.
+- Ne pas imposer automatiquement `nb_train_retard_sup_15 >= nb_train_retard_sup_30` : l’applicabilité de >15 est limitée et les liaisons admissibles ne sont pas identifiées.
+- Ne pas supprimer globalement `nb_annulation > nb_train_prevu` ; l’interprétation dépend des conventions de programme et d’annulation SNCF.
+- Ne pas borner automatiquement les moyennes négatives : elles peuvent représenter une avance ; définitions et populations sont à confirmer.
+- Définir les conditions d’admissibilité propres à chaque métrique, par exemple un dénominateur positif, et compter les exclusions sans supprimer la ligne source du jeu partagé.
 
-## 7. Shared preprocessing and module-specific transformations
+## 7. Préparation commune et transformations propres aux modules
 
-| Layer | Responsibility under this contract |
+| Couche | Responsabilité dans ce contrat |
 | --- | --- |
-| Ingestion | Retrieve the source export and preserve its field names, values, and JSON nulls. Store the downloaded JSON without ETL changes. |
-| Audit | Diagnose schema, missingness, duplicates, types, and logical anomalies. Emit findings/flags without modifying source records. |
-| Cleaning | Apply only confirmed, documented correction rules. Preserve raw values and row lineage; make changes reproducible and reviewable. No such rule is authorized by this document alone. |
-| Preprocessing | Provide a typed, reusable representation that follows the canonical schema, date convention, and null policy. Keep shared preparation limited to parsing, type validation, and traceability. |
-| EDA | Choose analysis-specific numerator definitions, eligible populations, and denominators; record exclusions and derived measures with the analysis. |
-| Graph | Choose edge inclusion, direction representation, aggregation window, edge weights, and handling of missing or flagged measures. Preserve the source route direction unless an explicitly undirected view is required. |
-| ML | Define target, predictors, temporal feature windows, train/validation/test splits, and leakage controls. Keep model features local to the modeling workflow. |
+| Acquisition | Récupérer l’export et conserver noms, valeurs et nulls JSON ; stocker la source sans transformation ETL. |
+| Audit | Diagnostiquer schéma, absences, doublons, types et anomalies logiques ; publier les constats sans modifier la source. |
+| Nettoyage | Appliquer seulement les corrections confirmées et documentées, avec valeurs brutes, traçabilité et reproductibilité. Ce document seul n’autorise aucune correction. |
+| Prétraitement | Produire une représentation typée réutilisable conforme au schéma, aux dates et aux absences ; limiter la préparation commune à la lecture, aux types et à la traçabilité. |
+| Exploration | Choisir numérateurs, populations admissibles et dénominateurs propres à l’analyse ; documenter exclusions et mesures dérivées. |
+| Graphe | Définir inclusion des arêtes, directions, fenêtres, pondération et gestion des absences/anomalies ; préserver la direction source sauf vue explicitement non orientée. |
+| Apprentissage automatique | Définir cible, prédicteurs, fenêtres historiques, ensembles d’entraînement/validation/test et contrôles de fuite ; conserver ces choix dans le traitement de modélisation. |
 
-Shared preprocessing must not absorb EDA rate definitions, graph edge engineering, or ML targets/features. Those choices answer module-specific questions and may use different valid populations.
+Le prétraitement commun ne doit pas absorber les définitions de taux exploratoires, la construction d’arêtes ou les cibles/variables prédictives : ces décisions répondent à des objectifs et populations différents.
 
-## 8. Storage and compatibility
+## 8. Stockage et compatibilité
 
-- **Raw source:** Keep `data/raw/regularite-mensuelle-tgv-aqst.json` as the immutable JSON array downloaded from the verified SNCF export. Do not rewrite it during cleaning or preprocessing.
-- **Logical schema:** Use the 26 canonical short field names listed in section 3 in shared typed outputs and APIs. Avoid creating alternate source-field names; compatibility mappings belong at input/output boundaries.
-- **Legacy EDA compatibility:** The inspected EDA notebook reads a semicolon-separated CSV with UTF-8-SIG encoding and French display headers, then maps those headers to canonical short names. If that legacy input is retained, provide a reproducible export with `;`, UTF-8-SIG, and the existing French headers, or keep the notebook’s Pandas adapter to map canonical names. Do not make the canonical contract depend on that legacy file format.
-- **Pandas and Polars:** Allow adapters to construct the same logical schema in each library. No library migration is required. Keep the quality module’s Pandas interface if it remains useful; the current audit may continue to use Polars.
-- **Parquet:** Parquet may be considered later if the team agrees on schema metadata and the required engine/dependency. It is not required for this contract or current migration.
-- **Null serialization:** Document the null encoding of any derived CSV. Avoid an encoding that makes a real zero or empty comment indistinguishable from missing data.
+- **Source brute :** conserver `data/raw/regularite-mensuelle-tgv-aqst.json` comme tableau JSON immuable de l’export SNCF vérifié. Ne pas le réécrire lors du nettoyage ou prétraitement.
+- **Schéma logique :** utiliser les 26 noms courts canoniques dans les sorties typées et interfaces. Les correspondances de compatibilité appartiennent aux frontières d’entrée/sortie.
+- **Ancienne interface exploratoire :** le carnet examiné lit un CSV à point-virgule en UTF-8-SIG avec en-têtes français, ensuite renommés. Conserver cet export reproductible ou un adaptateur Pandas, sans rendre le contrat dépendant de cet ancien format.
+- **Pandas et Polars :** permettre des adaptateurs vers le même schéma logique, sans migration obligatoire. Le module qualité peut rester sous Pandas et l’audit sous Polars.
+- **Parquet :** option ultérieure après accord sur métadonnées, moteur et dépendances ; non requis pour ce contrat initial.
+- **Sérialisation des absences :** documenter leur encodage dans les CSV dérivés et les distinguer du zéro réel ou du commentaire vide.
 
-## 9. Versioning and migration
+## 9. Versionnement et migration
 
-This document proposes a simple contract version independent of the source dataset’s publication version. Keep the contract version in documentation or artifact-level metadata; do not add it as a fabricated SNCF source column.
+La version de ce contrat est indépendante de la version de publication SNCF. L’inscrire dans la documentation ou les métadonnées des fichiers, pas dans une colonne source SNCF inventée.
 
-Recommended migration sequence:
+Migration recommandée :
 
-1. Keep raw JSON unchanged and identify it by source snapshot/date or checksum where reproducibility requires it.
-2. Adopt the 26-field canonical names and logical types at module boundaries before changing any consumer’s internal implementation.
-3. Implement typed loaders/adapters for Pandas and Polars as needed. Explicitly report parse failures and preserve nulls.
-4. Preserve the legacy EDA CSV interface during transition, either with a compatibility export (`;`, UTF-8-SIG, French headers) or a small loader/header adapter.
-5. Run the old and new loaders side by side. Compare row counts, key/date coverage, null counts, and the EDA’s core rates and route summaries before switching that consumer. For future graph/ML consumers, compare edge coverage/weights or target/feature populations as applicable.
-6. Switch consumers individually after review; do not require a coordinated library migration. Keep module-specific eligibility and feature choices local.
-7. Document future schema changes with the contract version, changed fields/types/semantics, compatibility impact, and any migration mapping. Never silently repurpose an existing field name.
+1. Conserver le JSON brut et l’identifier par date, état source ou empreinte si nécessaire à la reproductibilité.
+2. Adopter les 26 noms et types canoniques aux frontières avant de modifier les traitements internes.
+3. Fournir les chargeurs typés Pandas/Polars nécessaires, signaler les échecs et préserver les absences.
+4. Maintenir l’ancienne interface CSV pendant la transition par export compatible (`;`, UTF-8-SIG, en-têtes français) ou petit adaptateur.
+5. Exécuter anciens et nouveaux chargeurs côte à côte. Comparer effectifs, clés, dates, absences, taux et synthèses par liaison avant bascule. Pour graphe/prédiction, comparer couverture/poids ou populations de cibles/variables.
+6. Migrer chaque consommateur après revue, sans imposer une migration simultanée de bibliothèque. Garder localement les choix d’admissibilité et de variables.
+7. Documenter toute évolution de schéma : version, champs, types, sens, compatibilité et correspondances. Ne jamais réutiliser silencieusement un nom pour une autre signification.
 
-## 10. Open semantic questions
+## 10. Questions sémantiques ouvertes
 
-The following details require confirmation from the authoritative SNCF data dictionary before they can underpin strict correction rules:
+Les points suivants nécessitent confirmation du dictionnaire officiel SNCF avant de justifier des corrections strictes :
 
-- Exact population, calculation, and weighting for each `retard_moyen_*` field, especially “tous trains” and the >15 conditional measure.
-- Exact threshold and applicability definitions for `nb_train_depart_retard`, `nb_train_retard_arrivee`, and `nb_train_retard_sup_15`.
-- Why `nb_train_retard_sup_30` and `nb_train_retard_sup_60` have the observed order inversion in Q1 2025, and whether the field definition or source process changed then.
-- Whether `nb_annulation` refers to cancellations against an earlier timetable while `nb_train_prevu` reflects a later/current timetable, explaining records with zero planned counts and positive cancellations.
-- The exact duration definition for `duree_moyenne` and the denominator/category boundaries for the six cause percentages.
-- The intended representation of negative delay averages and the SNCF meaning of negative values at very large magnitudes.
+- Population, calcul et pondération de chaque `retard_moyen_*`, notamment tous trains et conditionnel >15.
+- Seuils et applicabilité de `nb_train_depart_retard`, `nb_train_retard_arrivee` et `nb_train_retard_sup_15`.
+- Inversion >30/>60 au premier trimestre 2025 : éventuel changement de définition ou de production.
+- Éventuelle référence de `nb_annulation` à un programme antérieur et de `nb_train_prevu` à un programme ultérieur, expliquant annulations positives et prévisions nulles.
+- Définition exacte de `duree_moyenne`, dénominateurs et frontières des six catégories de causes.
+- Signification des moyennes négatives et, en particulier, de leurs amplitudes extrêmes.
 
-Until resolved, these remain documented uncertainties. This contract does not assert causality, prescribe replacement values, or claim that the current snapshot is representative of future exports.
+Ces points restent des incertitudes documentées. Le contrat n’affirme aucune causalité, ne prescrit aucune valeur de remplacement et ne prétend pas que l’état observé représente les exports futurs.

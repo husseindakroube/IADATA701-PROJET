@@ -1,34 +1,63 @@
 [project]
-name = "iadata701-projet"
+name = "projet-kit-data"
 version = "0.1.0"
+description = "Application interactive d’analyse de la régularité des TGV SNCF"
+readme = "README.md"
+authors = [
+    { name = "mianzha", email = "144988642+mianzha@users.noreply.github.com" }
+]
 requires-python = ">=3.12"
 dependencies = [
-    "matplotlib>=3.11.2",
-    "networkx>=3.7",
-    "numpy>=2.5.4",
-    "pandas>=3.1.0",
-    "requests>=2.34.2",
-    "scikit-learn>=1.9.1",
-    "scipy>=1.18.1",
-    "seaborn>=0.13.2",
-    "statsmodels>=0.15.0",
-    "polars>=2.1.0",
-    "plotly>=7.1.0",
+    "pandas>=2.2",
+    "pyarrow>=18",
+    "polars>=1.0",
+    "networkx>=3.4",
+    "plotly>=5.24",
+    "requests>=2.32",
+    "matplotlib==3.11.2",
+    "scikit-learn==1.9.1",
+    "scipy==1.18.1",
+    "seaborn==0.13.2",
+    "statsmodels==0.15.0",
     "streamlit>=1.67.0",
-    "pyarrow>=26.0.1",
+    "folium>=1.0.0",
+    "streamlit-folium>=0.27.4",
 ]
+
+[project.scripts]
+projet-kit-data = "projet_kit_data:main"
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "ipykernel>=7.4.0",
-    "jupyterlab>=4.6.5",
+    "ipykernel==7.4.0",
+    "jupyterlab==4.6.5",
     "pytest>=9.2.0",
     "pytest-cov>=7.1.0",
     "ruff>=0.17.3",
-    "sphinx>=9.1.1",
+    "sphinx==9.1.1",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "app"]
 addopts = "-ra"
+
+[tool.coverage.report]
+precision = 2
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "D1"]
+# Le formateur gère les lignes de code ; les URL et textes affichés peuvent
+# dépasser la largeur sans être coupés artificiellement.
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D1"]

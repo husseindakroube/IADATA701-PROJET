@@ -1,4 +1,4 @@
-"""Tests for the SNCF raw-data ingestion helpers."""
+"Tests des fonctions d’acquisition des données brutes SNCF."
 
 import json
 from pathlib import Path
@@ -16,7 +16,7 @@ def make_response(
     status_code: int = 200,
     headers: dict[str, str] | None = None,
 ) -> requests.Response:
-    """Create a real Requests response object without network access."""
+    "Crée un véritable objet réponse Requests sans accès au réseau."
     response = requests.Response()
     response.status_code = status_code
     response.headers.update(headers or {})
@@ -96,7 +96,7 @@ def test_fetch_raw_data_raises_after_retry_limit(
     monkeypatch.setattr(sncf_api.requests, "get", get)
     monkeypatch.setattr(sncf_api.time, "sleep", sleep)
 
-    with pytest.raises(sncf_api.SNCFAPIError, match="after 3 retries"):
+    with pytest.raises(sncf_api.SNCFAPIError, match="3 nouvelles tentatives"):
         sncf_api.fetch_raw_data()
 
     assert get.call_count == 4

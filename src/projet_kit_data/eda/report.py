@@ -1,7 +1,7 @@
 """Génération du rapport de qualité des données SNCF."""
 
 import pandas as pd
-from sncf_tgv.eda.quality import (
+from projet_kit_data.eda.quality import (
     check_comments,
     check_durations,
     check_identifiers,

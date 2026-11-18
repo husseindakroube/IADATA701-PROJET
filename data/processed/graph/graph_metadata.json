@@ -1,14 +1,14 @@
 {
   "artifact_schema_version": "1.0",
   "construction_configuration": {
-    "empty_key_policy": "reject whitespace-only key values; preserve all retained source values",
-    "input_rows_with_duplicate_business_keys": "exclude every row in duplicate groups",
-    "operational_measurement_policy": "preserve nulls, values, and diagnostic flags unchanged"
+    "empty_key_policy": "refuser les clés composées uniquement d’espaces ; préserver toutes les valeurs sources retenues",
+    "input_rows_with_duplicate_business_keys": "exclure toutes les lignes des groupes dupliqués",
+    "operational_measurement_policy": "conserver les valeurs nulles, valeurs et indicateurs de diagnostic inchangés"
   },
   "distinct_month_count": 105,
   "duplicate_business_key_record_count": 0,
   "duplicate_business_key_records": 0,
-  "edge_identity_definition": "(service, origin station label, destination station label)",
+  "edge_identity_definition": "(service, libellé de la gare de départ, libellé de la gare d’arrivée)",
   "excluded_record_count": 0,
   "exclusion_reasons": {},
   "exclusion_reasons_and_counts": {},
@@ -18,8 +18,8 @@
     "flag_sup15_lt_sup30": 3,
     "flag_sup30_lt_sup60": 354
   },
-  "graph_directionality": "directed; combined graph is a MultiDiGraph keyed by edge_id",
-  "identifier_generation_strategy": "First 24 hexadecimal characters of SHA-256 over compact UTF-8 JSON identity tuples; node IDs use node_<digest>, edge IDs use edge_<digest>.",
+  "graph_directionality": "orienté ; le graphe combiné est un MultiDiGraph indexé par edge_id",
+  "identifier_generation_strategy": "24 premiers caractères hexadécimaux du SHA-256 des tuples d’identité JSON UTF-8 compacts ; identifiants node_<digest> et edge_<digest>.",
   "maximum_observation_month": "2026-09",
   "minimum_observation_month": "2018-01",
   "monthly_observation_count": 12907,
@@ -48,7 +48,7 @@
     }
   },
   "node_count": 59,
-  "node_identity_definition": "Exact original station label (gare_depart/gare_arrivee)",
+  "node_identity_definition": "Libellé exact de la gare source (gare_depart/gare_arrivee)",
   "service_aware_edge_count": 146,
   "service_categories": [
     "International",
@@ -698,6 +698,6 @@
   },
   "valid_monthly_observation_count": 12907,
   "warnings": [
-    "A liaison is an observed origin-destination pair, not necessarily a physical adjacent railway segment, a consecutive train leg, or a confirmed train connection. Graph adjacency does not establish train movement or delay propagation."
+    "Une liaison est une paire origine-destination observée, pas nécessairement un tronçon physique adjacent, une étape consécutive ou une correspondance confirmée. L’adjacence ne prouve ni mouvement réel ni propagation des retards."
   ]
 }

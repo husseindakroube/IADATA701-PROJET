@@ -1,4 +1,4 @@
-"""Tests for the local SNCF data quality audit."""
+"Tests de l’audit local de qualité des données SNCF."
 
 import json
 from pathlib import Path
@@ -10,7 +10,7 @@ from projet_kit_data.etl.audit import audit_raw_data
 
 
 def sample_records() -> list[dict[str, Any]]:
-    """Return a small dataset with known quality issues."""
+    "Renvoie un petit jeu de données avec des anomalies connues."
     first = {
         "date": "2024-01",
         "service": "National",
@@ -49,7 +49,7 @@ def sample_records() -> list[dict[str, Any]]:
 
 
 def write_records(path: Path, records: object) -> None:
-    """Write a temporary JSON input file."""
+    "Écrit un fichier JSON d’entrée temporaire."
     path.write_text(json.dumps(records, ensure_ascii=False), encoding="utf-8")
 
 
@@ -189,7 +189,7 @@ def test_audit_includes_anomaly_examples_and_threshold_ordering(
         "nb_train_retard_sup_15 >= nb_train_retard_sup_30 >= nb_train_retard_sup_60"
     )
     assert ordering["record_count"] == 4
-    assert "competing with air travel" in ordering["note"]
+    assert "concurrence avec l’avion" in ordering["note"]
     assert (
         ordering["pairwise_checks"]["nb_train_retard_sup_30_ge_nb_train_retard_sup_60"][
             "record_count"
@@ -223,16 +223,16 @@ def test_audit_generates_readable_report_without_changing_raw_file(
     audit_raw_data(input_path, report_path)
 
     report = report_path.read_text(encoding="utf-8")
-    assert "Dataset overview" in report
-    assert "Missing values" in report
+    assert "Aperçu du jeu de données" in report
+    assert "Valeurs manquantes" in report
     assert "Duplicates" in report
-    assert "Negative numerical values" in report
-    assert "Numerical statistics" in report
-    assert "Logical consistency diagnostics" in report
-    assert "Anomaly examples" in report
+    assert "Valeurs numériques négatives" in report
+    assert "Statistiques numériques" in report
+    assert "Diagnostics de cohérence logique" in report
+    assert "Exemples d’anomalies" in report
     assert "negative_nb_train_retard_sup_30" in report
     assert "Threshold ordering" in report
-    assert "No records or values were modified." in report
+    assert "Aucune observation ni valeur n’a été modifiée." in report
     assert input_path.read_bytes() == original_contents
 
 
@@ -248,7 +248,7 @@ def test_audit_handles_empty_dataset(tmp_path: Path) -> None:
     assert results["duplicates"]["exact_duplicate_record_count"] == 0
     assert results["negative_values"]["nb_train_prevu"]["percentage"] is None
     assert report_path.exists()
-    assert "Records: 0" in report_path.read_text(encoding="utf-8")
+    assert "Observations : 0" in report_path.read_text(encoding="utf-8")
 
 
 @pytest.mark.parametrize(

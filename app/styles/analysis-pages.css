@@ -1,0 +1,92 @@
+/* Shared hierarchy for Streamlit content; navigation and footer keep their palette. */
+:root {
+    --accent-vert: #287763;
+    --accent-indigo: #3e3ec9;
+    --accent-bleu: #087f9c;
+    --fond-accent-doux: #f2f7f8;
+    /* Darker cyan keeps gradient text readable on white. */
+    --degrade-interface: linear-gradient(
+        100deg, var(--accent-vert) 0%, var(--accent-indigo) 55%, var(--accent-bleu) 100%
+    );
+}
+
+[data-testid="stHeading"] h1 {
+    color: var(--couleur-slogan);
+    font-size: clamp(2rem, 3.3vw, 2.8rem);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    padding-bottom: 0.65rem;
+    margin-bottom: 0.5rem;
+}
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+    [data-testid="stHeading"] h1 {
+        background: var(--degrade-interface);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+}
+[data-testid="stHeading"] h2,
+[data-testid="stHeading"] h3 {
+    color: var(--couleur-slogan);
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+}
+[data-testid="stHeading"] h2::after {
+    content: "";
+    display: block;
+    width: 48px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--degrade-interface);
+    margin-top: 10px;
+}
+[data-testid="stHeading"] h3 {
+    border-left: 3px solid var(--accent-vert);
+    padding-left: 12px;
+}
+
+/* Restrained accents for data labels and selected views. */
+[data-testid="stMetricLabel"] {
+    color: var(--couleur-accent);
+}
+[data-testid="stMetricValue"] {
+    color: var(--couleur-slogan);
+}
+[data-testid="stTabs"] [data-baseweb="tab-list"] {
+    gap: 12px;
+}
+[data-testid="stTabs"] button[role="tab"] {
+    color: var(--couleur-description);
+    border-radius: 8px 8px 0 0;
+    padding-left: 14px;
+    padding-right: 14px;
+}
+[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
+    color: var(--couleur-accent);
+    background: var(--fond-accent-doux);
+}
+[data-testid="stTabs"] [data-baseweb="tab-highlight"] {
+    background: var(--degrade-interface);
+    height: 3px;
+}
+[data-testid="stExpander"] summary {
+    color: var(--couleur-slogan);
+    background-color: #f8fafb;
+}
+[data-testid="stExpander"] summary:hover {
+    background-color: var(--fond-accent-doux);
+}
+
+@media (forced-colors: active) {
+    [data-testid="stHeading"] h1 {
+        background: none;
+        color: CanvasText;
+    }
+}
+@media print {
+    [data-testid="stHeading"] h1 {
+        background: none;
+        color: #25364a;
+    }
+}

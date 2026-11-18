@@ -1,83 +1,39 @@
-# Research Data Preparation
+# Préparation des données de recherche
 
-## Purpose and grain
+## Objectif et granularité
 
-This phase prepares a joinable monthly dataset for the question: *Dans quelle
-mesure la structure du réseau TGV est-elle associée à la régularité des
-liaisons ?* It does not calculate statistical associations or infer
-causality. The grain is one directed liaison, service, and month, uniquely
-identified by `(date, service, gare_depart, gare_arrivee)`. The original source
-observation and its fields remain in the output.
+Cette phase prépare des données mensuelles joignables pour étudier l’association entre structure du réseau TGV et régularité. Elle ne calcule pas d’association statistique et ne déduit pas de causalité. Une observation correspond à une liaison orientée, un service et un mois, avec la clé unique `(date, service, gare_depart, gare_arrivee)`. Les champs de l’observation source sont conservés.
 
-## Inputs and joins
+## Entrées et jointures
 
-The pipeline reads the existing Phase 1 artifacts; it does not rerun ETL,
-construction, or graph metrics:
+La chaîne lit les fichiers de la phase 1 sans relancer l’ETL, la construction ni les métriques :
 
-| Input | Default path | Join purpose |
+| Entrée | Chemin par défaut | Usage |
 |---|---|---|
-| Monthly edge observations | `data/processed/graph/edge_observations.parquet` | Operational source values, source/target node IDs, and edge ID |
-| Edge metrics | `data/processed/graph/edge_metrics.parquet` | Monthly `edge_betweenness` |
-| Node metrics | `data/processed/graph/node_metrics.parquet` | Monthly structural metrics for source and target stations |
+| Observations mensuelles des arêtes | `data/processed/graph/edge_observations.parquet` | Valeurs opérationnelles, identifiants des extrémités et de l’arête |
+| Métriques des arêtes | `data/processed/graph/edge_metrics.parquet` | Intermédiarité mensuelle `edge_betweenness` |
+| Métriques des nœuds | `data/processed/graph/node_metrics.parquet` | Métriques mensuelles des gares de départ et d’arrivée |
 
-Only rows with a month in `period` are eligible for joins. `period="overall"`
-is explicitly excluded. Edge metrics are joined by `(date=period, service,
-edge_id)` and their stored source/target IDs are checked against the observation.
-Node metrics are joined separately by `(date=period, service,
-source=node_id)` and `(date=period, service, target=node_id)`. Node values receive
-`source_` and `target_` prefixes. Every lookup key is checked for uniqueness,
-joins are many-to-one, and the row count is checked after every join. Missing
-metrics remain null; they do not remove source observations.
+Seules les lignes dont `period` est un mois participent aux jointures ; `period="overall"` est exclu. Les arêtes sont jointes sur `(date=period, service, edge_id)` et les identifiants d’extrémité sont contrôlés. Les nœuds sont joints séparément sur `(date=period, service, source=node_id)` et `(date=period, service, target=node_id)`, avec préfixes `source_` et `target_`. Les clés sont uniques, les jointures sont plusieurs-à-un et l’effectif est contrôlé après chacune. Les métriques absentes restent nulles sans supprimer d’observation.
 
-## Operational variables
+## Variables opérationnelles
 
-The primary outcome is `retard_moyen_tous_trains_arrivee`; its source value,
-including negative values and nulls, is preserved. The Boolean
-`flag_primary_arrival_delay_below_minus_15` marks values below -15 minutes and
-does not exclude them. `retard_moyen_arrivee` is retained as a supplementary
-severity indicator. Existing source quality flags and operational counts,
-threshold counts, cause percentages, and comments are retained unchanged.
+La variable principale est `retard_moyen_tous_trains_arrivee` ; les valeurs négatives et nulles sont préservées. `flag_primary_arrival_delay_below_minus_15` signale les valeurs inférieures à −15 minutes sans les exclure. `retard_moyen_arrivee` est un indicateur complémentaire de gravité. Les indicateurs qualité, comptages, seuils, causes et commentaires restent inchangés.
 
-`cancellation_rate` is computed as
-`nb_annulation / nb_train_prevu` only when `nb_train_prevu > 0` and
-`0 <= nb_annulation <= nb_train_prevu`. Otherwise the rate is null, source
-counts are preserved, `cancellation_rate_valid` is false, and
-`cancellation_rate_invalid_reason` identifies the first failing condition.
-Null is never replaced by zero. No `arrival_delay_rate` is calculated because
-the denominator for trains actually operated is not established by the
-available fields. Threshold-based delay rates and causal variables are not
-created.
+`cancellation_rate = nb_annulation / nb_train_prevu` est calculé uniquement si `nb_train_prevu > 0` et `0 <= nb_annulation <= nb_train_prevu`. Sinon, le taux est nul, les comptages sont conservés, `cancellation_rate_valid` vaut faux et `cancellation_rate_invalid_reason` indique la première condition non satisfaite. Une valeur nulle n’est jamais remplacée par zéro. `arrival_delay_rate` n’est pas calculé : son dénominateur de circulations effectives n’est pas établi dans ce traitement. Aucun taux de retard par seuil ni variable causale n’est ajouté.
 
-## Output and reproducibility
+## Sorties et reproductibilité
 
-From the repository root:
+Depuis la racine du dépôt :
 
 ```powershell
 uv run python -c "from projet_kit_data.graph.analysis import run_research_data_preparation_pipeline; result = run_research_data_preparation_pipeline()"
 ```
 
-Outputs are `data/processed/research_dataset.parquet`,
-`data/processed/research_dataset_metadata.json`, and
-`data/reports/graph/research_data_quality_report.md`. The Parquet contains all
-source observation columns plus `edge_betweenness`, source/target-prefixed
-monthly node metrics, `flag_primary_arrival_delay_below_minus_15`,
-`cancellation_rate`, `cancellation_rate_valid`, and
-`cancellation_rate_invalid_reason`. Exact Polars types are recorded in the
-metadata and report. Paths are configurable through the public API.
+Les sorties sont `data/processed/research_dataset.parquet`, `data/processed/research_dataset_metadata.json` et `data/reports/graph/research_data_quality_report.md`. La table conserve les colonnes sources et ajoute `edge_betweenness`, les métriques mensuelles des extrémités, `flag_primary_arrival_delay_below_minus_15`, `cancellation_rate`, `cancellation_rate_valid` et `cancellation_rate_invalid_reason`. Les types Polars exacts figurent dans les métadonnées et le rapport. Les chemins sont configurables par l’interface publique.
 
-The metadata records grain, row/column counts, month and service coverage,
-input paths and row counts, join keys/validation, missing metric counts,
-cancellation validity and reason counts, delay anomaly counts, output schema,
-and relevant caveats. The Markdown quality report presents the same results for
-review. Preserve the Phase 1 construction and metric artifacts as immutable
-inputs so the derived dataset can be reproduced.
+Les métadonnées consignent granularité, effectifs, couverture mensuelle et par service, sources, clés et contrôles des jointures, métriques manquantes, validité des annulations, motifs d’invalidité, anomalies de retard, schéma et réserves. Le rapport qualité présente les mêmes résultats. Conserver les entrées de construction et de métriques de la phase 1 immuables pour reproduire les données dérivées.
 
-## Limitations
+## Limites
 
-The SNCF liaison rows describe monthly origin-destination relationships, not
-individual train paths or physical track segments. Structural metrics do not
-demonstrate actual train movement or delay propagation. Negative mean delays
-are retained and flagged rather than interpreted as errors or corrected.
-Cancellation rates with zero/nonpositive denominators or inconsistent counts
-are unavailable, not zero. The arrival-delay-rate denominator remains
-unresolved and that rate is intentionally absent.
+Les observations décrivent des relations origine-destination mensuelles, pas des trajets individuels ni des tronçons physiques. Les métriques structurelles ne prouvent ni mouvements réels ni propagation des retards. Les retards moyens négatifs sont conservés et signalés, sans correction automatique. Les taux d’annulation avec dénominateur non positif ou comptages incohérents sont indisponibles, pas nuls au sens numérique. Le dénominateur du taux d’arrivée tardive reste à établir ; ce taux est donc absent.

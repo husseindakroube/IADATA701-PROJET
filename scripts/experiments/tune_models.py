@@ -25,14 +25,14 @@ FEATURE_SETS = {
     "Historique + liaisons": HISTORY_FEATURES + EDGE_FEATURES,
 }
 
+
 def main() -> None:
     """Compare les configurations sur 2024, sans utiliser le jeu de test."""
     data = load_ml_dataset("data/raw/regularite-mensuelle-tgv-aqst.csv")
 
     train = data.loc[data["date"] < "2024-01-01"]
     validation = data.loc[
-        (data["date"] >= "2024-01-01")
-        & (data["date"] < "2025-01-01")
+        (data["date"] >= "2024-01-01") & (data["date"] < "2025-01-01")
     ]
 
     y_train = train[TARGET]
@@ -81,6 +81,7 @@ def main() -> None:
 
         print("\nMeilleure configuration selon la MAE pondérée :")
         print(results_df.nsmallest(1, "weighted_mae").to_string(index=False))
+
 
 if __name__ == "__main__":
     main()

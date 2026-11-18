@@ -1,4 +1,4 @@
-"""Tests for research dataset joins and derived cancellation rates."""
+"Tests des jointures de recherche et des taux d’annulation calculés."
 
 import json
 
@@ -179,7 +179,7 @@ def test_monthly_edge_and_node_joins_are_service_specific_and_keep_missing_metri
 
 def test_duplicate_keys_and_endpoint_mismatch_are_rejected() -> None:
     observations, edges, nodes = inputs()
-    with pytest.raises(ValueError, match="duplicate key"):
+    with pytest.raises(ValueError, match="clés dupliquées"):
         prepare_research_dataset(
             pl.concat([observations, observations.head(1)]), edges, nodes
         )
@@ -189,7 +189,7 @@ def test_duplicate_keys_and_endpoint_mismatch_are_rejected() -> None:
         .otherwise(pl.col("source"))
         .alias("source")
     )
-    with pytest.raises(ValueError, match="disagree on directed endpoints"):
+    with pytest.raises(ValueError, match="extrémités orientées incohérentes"):
         prepare_research_dataset(observations, bad_edges, nodes)
 
 
@@ -215,5 +215,5 @@ def test_file_pipeline_exports_dataset_metadata_and_report(tmp_path) -> None:
     metadata = json.loads(result.output_paths["metadata"].read_text(encoding="utf-8"))
     assert metadata["output_row_count"] == 5
     report = result.output_paths["quality_report"].read_text(encoding="utf-8")
-    assert "Missing graph metrics" in report
-    assert "Output schema" in report
+    assert "Métriques de graphe manquantes" in report
+    assert "Schéma de sortie" in report

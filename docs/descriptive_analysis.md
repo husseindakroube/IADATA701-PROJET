@@ -1,106 +1,57 @@
-# Descriptive Network Analysis and Visualizations
+# Analyse descriptive et visualisations du réseau
 
-Phase 3A summarizes existing Phase 1 graph metrics and Phase 2 operational
-observations. It does not recalculate metrics, join structural and operational
-outcomes for inferential comparisons, or perform correlations, tests, or
-regression. National and International are reported separately.
+La phase 3A résume les métriques de graphe de la phase 1 et les observations opérationnelles de la phase 2. Elle ne recalcule pas les métriques et ne réalise ni comparaison inférentielle, ni corrélation, ni test, ni régression. Les services National et International sont présentés séparément.
 
-## Run
+## Exécution
 
-From the repository root:
+Depuis la racine du dépôt :
 
 ```powershell
 uv run python -c "from projet_kit_data.graph.descriptive import run_descriptive_analysis; result = run_descriptive_analysis()"
 uv run python -c "from projet_kit_data.graph.visualization import run_visualization_pipeline; paths = run_visualization_pipeline()"
 ```
 
-Descriptive tables are written to `data/processed/graph/descriptive/`; figures
-are written to `data/processed/graph/visualizations/`; the narrative report is
-maintained in `data/reports/graph/research_report.md`. The generator replaces
-only its marked descriptive section, preserving other report content.
+Les tables sont écrites dans `data/processed/graph/descriptive/`, les figures dans `data/processed/graph/visualizations/` et le rapport dans `data/reports/graph/research_report.md`. Le générateur remplace uniquement sa section délimitée et conserve les autres contenus.
 
-## Descriptive table outputs
+## Tables descriptives
 
-- `network_summary.parquet`: one row per service; overall node/edge counts,
-  weak/strong component counts, largest weak component, multiple in/out degree
-  node counts, and self-loops. Components are computed from the existing
-  directed edge table and checked against construction metadata.
-- `node_metric_summary.parquet`: one row per service and the overall node
-  metric distributions (non-null count, missing count, mean, standard
-  deviation, median, 25th/75th percentiles, minimum, maximum).
-- `node_rankings.parquet`: up to ten rows per service and ranking measure
-  (`connectivity_degree`, `betweenness_centrality`, `pagerank`), with rank,
-  station ID, station name, and value.
-- `edge_rankings.parquet`: up to ten overall directed liaison rows per service
-  by edge betweenness, with edge ID and readable origin/destination names.
-- `monthly_summary.parquet`: one row per month/service with observed node and
-  edge counts, mean degree, maximum PageRank, maximum/median node betweenness,
-  and mean/maximum edge betweenness.
-- `operational_summary.parquet`: outcome distribution summaries per service
-  for all-train mean arrival delay, cancellation rate, and mean arrival delay
-  among delayed trains. It also reports missing counts and descriptive Tukey
-  1.5-IQR outlier counts. Outlier counts do not filter or alter observations.
-- `quality_flag_summary.parquet`: counts of existing Boolean `flag_*` values by
-  service.
+- `network_summary.parquet` : une ligne par service ; nombres de nœuds, arêtes, composantes faiblement et fortement connexes, taille de la plus grande composante faible, nœuds à plusieurs voisins entrants/sortants et boucles. Les composantes sont calculées sur les arêtes existantes et comparées aux métadonnées de construction.
+- `node_metric_summary.parquet` : une ligne par service ; effectifs non nuls et manquants, moyenne, écart-type, médiane, quartiles, minimum et maximum de chaque métrique globale des nœuds.
+- `node_rankings.parquet` : jusqu’à dix gares par service et mesure (`connectivity_degree`, `betweenness_centrality`, `pagerank`), avec rang, identifiant, nom et valeur.
+- `edge_rankings.parquet` : jusqu’à dix liaisons orientées globales par service, classées par intermédiarité, avec identifiant et noms d’origine/destination.
+- `monthly_summary.parquet` : une ligne par mois/service ; nombres de nœuds et arêtes, degré moyen, PageRank maximal, intermédiarité maximale et médiane des nœuds, intermédiarité moyenne et maximale des arêtes.
+- `operational_summary.parquet` : distributions par service du retard moyen à l’arrivée de tous les trains, du taux d’annulation et du retard moyen des trains retardés. Inclut les valeurs manquantes et les valeurs atypiques selon Tukey, à 1,5 écart interquartile. Ces comptages ne filtrent ni ne modifient les observations.
+- `quality_flag_summary.parquet` : effectifs des indicateurs booléens `flag_*` existants par service.
 
-Node and edge ranking values use the Phase 1 full-period (`period="overall"`)
-metrics. Monthly summaries use only monthly metric rows. Operational outcome
-summaries use the Phase 2 monthly research dataset and are not mixed with
-overall graph metrics.
+Les classements utilisent les métriques globales `period="overall"`. Les synthèses mensuelles utilisent seulement les lignes mensuelles. Les résultats opérationnels viennent du jeu mensuel de recherche et ne sont pas mélangés aux métriques globales.
 
-### Output schemas
+### Schémas de sortie
 
-All tables are Parquet files. Identifier, station, service, period, and metric
-name fields are strings; numeric summaries are numeric columns and can contain
-nulls where the source metrics are missing.
+Toutes les tables sont au format Parquet. Identifiants, gares, services, périodes et noms de métriques sont des chaînes. Les synthèses numériques peuvent être nulles si les sources sont manquantes.
 
-| File | Rows | Columns and types |
-| --- | --- | --- |
-| `network_summary.parquet` | 1 per service | `service` (String); `node_count`, `edge_count`, `weakly_connected_components`, `strongly_connected_components`, `largest_weak_component`, `nodes_multiple_incoming`, `nodes_multiple_outgoing`, `self_loops` (Int64) |
-| `node_metric_summary.parquet` | 1 per service | `service` (String); for each node metric: `*_count` and `*_missing` (UInt32), and `*_mean`, `*_std`, `*_median`, `*_q25`, `*_q75`, `*_min`, `*_max` (numeric; degree extrema retain integer type) |
-| `node_rankings.parquet` | Up to 10 per service and ranking measure | `rank` (UInt32), `service`, `ranking_metric`, `node_id`, `station_name` (String), `value` (Float64) |
-| `edge_rankings.parquet` | Up to 10 per service | `service`, `edge_id`, `source`, `origin_name`, `target`, `destination_name` (String), `edge_betweenness` (Float64) |
-| `monthly_summary.parquet` | 1 per month/service | `period`, `service` (String); `node_count`, `edge_count` (UInt32); mean/max metric summaries (Float64) |
-| `operational_summary.parquet` | 1 per service | `service` (String); each outcome's count, missing, and outlier count (UInt32), plus summary statistics (Float64) |
-| `quality_flag_summary.parquet` | 1 per service | `service` (String); one UInt32 count for each existing Boolean quality flag |
+| Fichier | Lignes | Colonnes et types |
+|---|---|---|
+| `network_summary.parquet` | Une par service | `service` (String) ; `node_count`, `edge_count`, `weakly_connected_components`, `strongly_connected_components`, `largest_weak_component`, `nodes_multiple_incoming`, `nodes_multiple_outgoing`, `self_loops` (Int64) |
+| `node_metric_summary.parquet` | Une par service | `service` (String) ; pour chaque métrique : `*_count`, `*_missing` (UInt32), `*_mean`, `*_std`, `*_median`, `*_q25`, `*_q75`, `*_min`, `*_max` (numériques ; extrema des degrés entiers) |
+| `node_rankings.parquet` | Jusqu’à dix par service et mesure | `rank` (UInt32), `service`, `ranking_metric`, `node_id`, `station_name` (String), `value` (Float64) |
+| `edge_rankings.parquet` | Jusqu’à dix par service | `service`, `edge_id`, `source`, `origin_name`, `target`, `destination_name` (String), `edge_betweenness` (Float64) |
+| `monthly_summary.parquet` | Une par mois/service | `period`, `service` (String), `node_count`, `edge_count` (UInt32), synthèses moyennes et maximales (Float64) |
+| `operational_summary.parquet` | Une par service | `service` (String), effectifs valides, manquants et atypiques de chaque indicateur (UInt32), statistiques (Float64) |
+| `quality_flag_summary.parquet` | Une par service | `service` (String), un comptage UInt32 par indicateur booléen existant |
 
-The exact monthly-summary and outcome field names are recorded in their
-Parquet schemas. They are derived from the existing Phase 1/2 source column
-names and do not redefine those source measures.
+Les noms exacts des champs mensuels et opérationnels figurent dans leurs schémas Parquet. Ils sont dérivés des colonnes des phases 1 et 2 sans redéfinir les mesures sources.
 
-## Charts
+## Figures
 
-Generated PNGs are:
+- `network_national.png`, `network_international.png` : graphes orientés origine-destination complets ; les directions réciproques sont courbées séparément, les composantes internationales sont disposées indépendamment et la taille des nœuds représente l’intermédiarité globale.
+- `degree_distributions.png` : barres regroupées et normalisées des degrés entrants/sortants, valeurs entières et effectif de gares par service.
+- `node_centrality_distributions.png` : fonctions de répartition empiriques de l’intermédiarité et du PageRank, avec proportions de valeurs nulles au sens numérique dans la légende.
+- `top10_station_rankings.png` : noms des dix gares les mieux classées par degré, intermédiarité et PageRank, par service.
+- `edge_betweenness_distribution.png` : fonction de répartition et histogramme complémentaire, médiane et 90e percentile.
+- `top10_edge_rankings.png` : dix liaisons à plus forte intermédiarité par service, avec noms d’origine/destination.
+- `monthly_network_evolution.png` : effectifs de nœuds/arêtes et maxima mensuels de PageRank/intermédiarité ; annotations des changements internationaux en 2025.
+- `operational_outcome_distributions.png` : distributions du retard principal, du retard complémentaire des trains retardés et du taux d’annulation. L’histogramme central de tous les trains omet les valeurs signalées sous −15 minutes ; les moyennes des trains retardés au-delà de 120 minutes ont un panneau distinct. Les annulations disposent d’une vue complète et d’un zoom 0–0,10. Les taux absents restent absents. Ces choix d’affichage ne modifient pas le fichier de recherche ; les effectifs affichés sont indiqués.
 
-- `network_national.png`, `network_international.png`: full directed OD graphs;
-  reciprocal directions curve separately, International weak components are
-  arranged independently, and node size represents overall node betweenness.
-- `degree_distributions.png`: grouped, normalized in-degree/out-degree bars;
-  each panel shows integer degree values and the service node count.
-- `node_centrality_distributions.png`: separate empirical CDFs for node
-  betweenness and PageRank, with zero-valued proportions in the legend.
-- `top10_station_rankings.png`: readable station labels for the ten highest
-  values of degree, betweenness and PageRank by service.
-- `edge_betweenness_distribution.png`: empirical CDF and supplementary
-  histogram, annotated with median and 90th percentile.
-- `top10_edge_rankings.png`: ten highest-betweenness directed liaisons per
-  service, using origin/destination names.
-- `monthly_network_evolution.png`: node/edge counts and maximum monthly
-  PageRank/betweenness, with 2025 International topology change annotations.
-- `operational_outcome_distributions.png`: primary arrival delay, supplementary
-  delayed-train arrival delay, and cancellation-rate distributions by service.
-  The flagged all-train delays below -15 minutes are omitted from that central
-  histogram; delayed-train averages above 120 minutes are separated in a tail
-  panel; cancellation rates have a full-range panel and a 0–0.10 zoom. Missing
-  cancellation rates remain missing. These display-only exclusions do not
-  alter the research Parquet file, and the figure reports the displayed counts.
+## Limites d’interprétation
 
-## Interpretation limits
-
-Degree counts distinct observed OD neighbors, not train frequency or passenger
-traffic. Graph paths are not necessarily actual train itineraries or physical
-track segments. Centrality is not evidence of delay propagation. Negative
-arrival-delay values remain in descriptive summaries and plots; zero and null
-cancellation rates remain distinct. These outputs describe distributions and
-topology only. Any relationship assessment belongs to Phase 3B and must account
-for repeated liaison-month observations and temporal structure.
+Le degré compte les voisins origine-destination observés, pas la fréquence des trains ou le trafic voyageurs. Les chemins ne sont pas nécessairement des itinéraires réels ou des voies physiques. La centralité ne prouve pas une propagation des retards. Les retards négatifs restent dans les synthèses ; les taux d’annulation nuls et absents restent distincts. Ces résultats décrivent uniquement distributions et topologie. L’étude des relations relève de la phase 3B et doit tenir compte des observations répétées liaison-mois et de la structure temporelle.
