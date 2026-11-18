@@ -1,4 +1,5 @@
 from pathlib import Path
+from html import escape
 import streamlit as st
 from utils.data import filters, observations, scope_metrics, table
 
@@ -128,34 +129,35 @@ if not network.empty:
                  "orientées** dans le graphe enregistré (2018-01 → 2026-09). "
                  "Ce périmètre fixe décrit les services AQST, pas l'infrastructure ferroviaire.")
 
-# Les clés distinguent les boutons portant tous le même libellé.
-col1, col2, col3 = st.columns(3)
+# Une même structure visuelle pour les cinq cartes ; textes conservés.
+cards = [
+    ("🚆", "Qualité des données",
+     "Consulter les anomalies et les règles du prétraitement existant",
+     "data_quality", "Découvrir →"),
+    ("🚄", "Liaisons et réseau",
+     "Étude de la structure du réseau ferroviaire et de ses relations avec la régularité des liaisons",
+     "routes_network", "Découvrir →"),
+    ("🚅", "Prédiction des retards",
+     "Comparaison des modèles de machine learning avec et sans caractéristiques du graphe pour évaluer leur apport prédictif",
+     "predictions", "Découvrir →"),
+    ("🚈", "Profils et clusters",
+     "Explorer les groupes de liaisons déjà calculés",
+     "clusters", "Consulter les profils →"),
+    ("🚂", "Conclusions et reproductibilité",
+     "Consulter les limites, les sources et les fonctionnalités manquantes",
+     "conclusions", "Consulter le bilan →"),
+]
 
-with col1, st.container(border=True):
-    st.subheader("Qualité des données")
-    st.write("Consulter les anomalies et les règles du prétraitement existant")
-    if st.button("Découvrir →", key="data_quality_button"):
-            st.switch_page("pages/data_quality.py")
-
-with col2, st.container(border=True):
-    st.subheader("Liaisons et réseau")
-    st.write("Étude de la structure du réseau ferroviaire et de ses relations avec la régularité des liaisons")
-    if st.button("Découvrir →", key="routes_network_button"):
-            st.switch_page("pages/routes_network.py")
-
-with col3, st.container(border=True):
-    st.subheader("🚅 Prédiction des retards")
-    st.write("Comparaison des modèles de machine learning avec et sans caractéristiques du graphe pour évaluer leur apport prédictif")
-    if st.button("Découvrir →", key="predictions_button"):
-        st.switch_page("pages/predictions.py")
-
-col4, col5 = st.columns(2)
-with col4, st.container(border=True):
-    st.subheader("Profils et clusters")
-    st.write("Explorer les groupes de liaisons déjà calculés")
-    st.page_link("pages/clusters.py", label="Consulter les profils →")
-with col5, st.container(border=True):
-    st.subheader("Conclusions et reproductibilité")
-    st.write("Consulter les limites, les sources et les fonctionnalités manquantes")
-    st.page_link("pages/conclusions.py", label="Consulter le bilan →")
-
+cards_html = []
+for icon, title, description, page, button in cards:
+    cards_html.append(
+        '<article class="exploration-card">'
+        f'<h3><span class="exploration-card-icon" aria-hidden="true">{icon}</span>'
+        f'<span>{escape(title)}</span></h3>'
+        f'<p>{escape(description)}</p>'
+        f'<a class="exploration-card-button" href="./{page}" '
+        f'aria-label="{escape(button)} — {escape(title)}">{escape(button)}</a>'
+        '</article>'
+    )
+st.html('<section class="exploration-cards" aria-label="Explorer le projet">'
+        + ''.join(cards_html) + '</section>')
