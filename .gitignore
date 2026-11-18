@@ -17,3 +17,11 @@ docs/_build/
 reports/
 .coverage*
 .env
+
+# Additional shared development ignores
+*.py[cod]
+.ipynb_checkpoints/
+.ruff_cache/
+htmlcov/
+.env.*
+.vscode/
