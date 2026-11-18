@@ -24,7 +24,10 @@ Une observation correspond à une liaison orientée, un service et un mois.
 
 Nous cherchons à prédire :
 
-`delay_rate_15 = nombre de trains en retard > 15 min / nombre de trains ayant circulé`
+$$
+\mathrm{delay\_rate\_15} =
+\frac{\text{Nombre de trains en retard > 15 min}}{\text{Nombre de trains ayant circulé}}
+$$
 
 avec :
 
@@ -39,9 +42,13 @@ Les observations invalides sont exclues de l'entraînement et de l'évaluation.
 Le diagnostic initial a notamment identifié :
 
 - 75 observations avec une cible invalide ;
+
 - 63 observations avec plus d'annulations que de circulations prévues ;
+
 - 43 valeurs négatives pour les retards supérieurs à 30 minutes, toutes observées en 2025 ;
+
 - 354 incohérences entre les comptages de retards supérieurs à 30 et 60 minutes ;
+
 - aucun doublon exact ni doublon sur la combinaison mois, service et liaison.
 
 Ces contrôles sont disponibles dans `scripts/exploration/data_quality.py`.
@@ -51,12 +58,15 @@ Ces contrôles sont disponibles dans `scripts/exploration/data_quality.py`.
 Le réseau est représenté par un **graphe orienté** :
 
 - chaque nœud représente une gare ;
+
 - chaque arête représente une liaison orientée entre deux gares ;
+
 - le poids d'une arête représente le nombre de trains ayant circulé sur cette liaison pendant la période étudiée.
 
 Deux représentations sont utilisées :
 
 - un graphe non pondéré, pour étudier la structure du réseau ;
+
 - un graphe pondéré par les circulations, pour prendre en compte les volumes de trafic.
 
 ### Variables de graphe
@@ -94,12 +104,17 @@ Pour éviter toute **fuite temporelle (*data leakage*)**, les variables de graph
 Par exemple, pour une observation de janvier 2025 :
 
 - le réseau est construit avec les données de janvier à décembre 2024 ;
+
 - les centralités et les volumes des liaisons sont calculés sur cet historique ;
+
 - les données de janvier 2025 ne participent pas à la construction de ces variables.
 
 Une variable supplémentaire est calculée pour chaque liaison :
 
-`historical_delay_rate_15 = somme(late_15 sur les 12 mois précédents) / somme(circulated sur les 12 mois précédents)`
+$$
+\mathrm{historical\_delay\_rate\_15} =
+\frac{\sum_{\text{historique}} \text{late\_15}}{\sum_{\text{historique}} \text{circulated}}
+$$
 
 Ce taux historique tient compte des volumes de circulation plutôt que de calculer une simple moyenne des taux mensuels.
 
@@ -162,6 +177,7 @@ Ces résultats montrent l'intérêt d'une sélection ciblée des variables de gr
 Une recherche sur grille est effectuée sur les deux configurations les plus prometteuses :
 
 - Historique
+
 - Historique + liaisons.
 
 La grille explore :
@@ -186,6 +202,7 @@ Les configurations retenues sont :
 Après sélection des hyperparamètres, les modèles sont réentraînés sur les observations de 2019 à 2024 et évalués sur la période 2025–septembre 2026.
 
 - Observations d'entraînement : **8 689**
+
 - Observations de test : **2 583**
 
 | **Modèle**                | **MAE**      | **RMSE**     | **MAE pondérée** |
@@ -207,94 +224,212 @@ En revanche, les centralités globales du réseau ne se révèlent pas systémat
 
 Il s'agit d'une amélioration mesurée sur ce dataset et ce découpage temporel, et non d'une garantie de généralisation à d'autres périodes ou réseaux.
 
-## 8. Organisation du code
+## 8. Étude complémentaire : historique récent et tendance
+
+Une expérience distincte a évalué, sur la **validation 2024** (entraînement 2019–2023), l'ajout d'une moyenne récente sur **3 mois** et d'une tendance de retard (taux récent sur 3 mois moins taux historique sur 12 mois) aux variables historiques et de liaison. Toutes ces variables sont calculées **avant le mois à prédire**.
+
+| Configuration expérimentale | MAE | RMSE | MAE pondérée |
+| --- | ---: | ---: | ---: |
+| Historique 12 mois + liaisons | 0.030915 | 0.042623 | 0.026108 |
+| + historique récent 3 mois | 0.030201 | 0.041711 | 0.025390 |
+| + tendance 3 mois − 12 mois | **0.030029** | **0.041422** | **0.025244** |
+| Baseline naïve historique 12 mois | 0.031055 | 0.042828 | 0.026113 |
+| Baseline naïve historique 3 mois | 0.032404 | 0.045293 | 0.027713 |
+
+Ces chiffres sont des **résultats de validation**, pas une réévaluation du modèle final sur 2025–2026. Le modèle final documenté en section 7 reste la comparaison historique / historique + liaison. Cette expérience complémentaire montre qu'un signal temporel récent pourrait être utile et mérite une évaluation finale spécifique avant toute revendication de gain hors échantillon.
+
+Script : `scripts/experiments/compare_recent_features.py`.
+
+## 9. Livrables d'analyse et d'intégration
+
+En plus des scripts d'entraînement et d'évaluation, la contribution met à disposition :
+
+- **Six CSV** dans `outputs/streamlit/` : `network_nodes.csv`, `network_edges.csv`, `predictions.csv`, `monthly_errors.csv`, `route_errors.csv`, `delay_level_errors.csv`.
+
+- **Quatre PNG de reporting** générés par `scripts/reporting/generate_streamlit_assets.py`, à utiliser comme illustrations ou exemples à adapter à Streamlit.
+
+- **Un explorateur cartographique mensuel**, `outputs/reporting/interactive_network_dashboard.html`, généré par `scripts/reporting/interactive_network_dashboard.py` à partir des données mensuelles et des coordonnées géographiques.
+
+- **Un référentiel géographique reproductible**, construit par `scripts/reporting/prepare_station_coordinates.py` depuis `data/reference/liste-des-gares.csv` et les compléments étrangers définis dans le script.
+
+Le guide **`outputs/streamlit/README.md`** donne les champs, la signification des visuels et les consignes d'intégration. Les **sélections par mois, gare et liaison** du dashboard se font via les **menus du panneau latéral**, pas par un clic sur la carte. Les centralités de la carte sont mensuelles, tandis que les caractéristiques ML utilisent un historique glissant pour éviter les fuites temporelles.
+
+## 10. Organisation du code
 
 ```text
+
 src/sncf_rail_insight/
+
 ├── dataset.py
+
 ├── preprocessing.py
+
 ├── graph/
+
 │   ├── network.py
+
 │   ├── centrality.py
+
 │   └── routes.py
+
 └── ml/
+
     ├── historical.py
+
     ├── enrichment.py
+
     ├── temporal.py
+
     ├── models.py
+
     └── evaluation.py
 
 scripts/
+
 ├── exploration/
+
 │   ├── data_quality.py
-│   └── network_analysis.py
-└── experiments/
-    ├── compare_models.py
-    ├── tune_models.py
-    └── evaluate_models.py
+
+│   ├── network_analysis.py
+
+│   └── export_network.py
+
+├── experiments/
+
+│   ├── compare_models.py
+
+│   ├── tune_models.py
+
+│   ├── evaluate_models.py
+
+│   ├── analyze_predictions.py
+
+│   └── compare_recent_features.py
+
+└── reporting/
+
+    ├── prepare_station_coordinates.py
+
+    ├── generate_streamlit_assets.py
+
+    └── interactive_network_dashboard.py
+
+data/
+
+├── raw/regularite-mensuelle-tgv-aqst.csv
+
+└── reference/
+
+    ├── liste-des-gares.csv
+
+    └── station_coordinates.csv       # généré
+
+outputs/
+
+├── streamlit/                       # six CSV et guide d'intégration
+
+└── reporting/                       # quatre PNG et HTML générés
 
 tests/
+
 ├── test_graph_features.py
+
 ├── test_ml_preprocessing.py
+
 └── test_temporal_features.py
 
 ```
 
 Les fonctions réutilisables sont placées dans `src/`, les scripts d'analyse et d'expérimentation dans `scripts/`, et les vérifications automatisées dans `tests/`.
 
-## 9. Installation et reproduction
+## 11. Installation et reproduction
 
-Le projet utilise Python 3.12 et `uv` pour la gestion de l'environnement.
-
-Depuis la racine du dépôt :
+Le projet utilise Python 3.12 et `uv` pour gérer les dépendances. Toutes les commandes ci-dessous sont lancées **à la racine du dépôt**.
 
 ```bash
+
 uv sync
+
 ```
 
-Le fichier de données attendu est :
+### Fichiers sources indispensables
 
-```text
-data/raw/regularite-mensuelle-tgv-aqst.csv
-```
+- `data/raw/regularite-mensuelle-tgv-aqst.csv` : dataset AQST des retards et circulations, nécessaire à l'analyse et au modèle.
 
-### Explorer les données
+- `data/reference/liste-des-gares.csv` : référentiel SNCF nécessaire à la **régénération des coordonnées**. Le script en extrait les positions françaises et utilise un référentiel explicite pour les destinations étrangères.
+
+`data/reference/station_coordinates.csv` est une **sortie générée** ; elle est utilisée par le dashboard, mais n'a pas besoin d'être saisie manuellement.
+
+### Exploration et ML
 
 ```bash
+
 uv run python scripts/exploration/data_quality.py
+
 uv run python scripts/exploration/network_analysis.py
-```
 
-### Reproduire les expériences
-
-```bash
-# Comparaison des groupes de variables
 uv run python scripts/experiments/compare_models.py
 
-# Optimisation des hyperparamètres
 uv run python scripts/experiments/tune_models.py
 
-# Évaluation finale
 uv run python scripts/experiments/evaluate_models.py
+
+uv run python scripts/experiments/compare_recent_features.py
+
 ```
 
-### Exécuter les tests
+### Générer les CSV, les PNG et la carte
 
 ```bash
-uv run pytest tests/ -v
-uv run ruff check src/ scripts/ tests/
+
+uv run python scripts/exploration/export_network.py
+
+uv run python scripts/experiments/analyze_predictions.py
+
+uv run python scripts/reporting/generate_streamlit_assets.py
+
+uv run python scripts/reporting/prepare_station_coordinates.py
+
+uv run python scripts/reporting/interactive_network_dashboard.py
+
 ```
 
-Les tests couvrent notamment l'encodage, les valeurs manquantes, le calcul des caractéristiques de liaison et l'absence de fuite temporelle dans le feature engineering.
+\> Les scripts d'exports prédictifs nécessitent que les données, les modèles ou leurs calculs préalables soient disponibles suivant leur implémentation ; consulter également le guide `outputs/streamlit/README.md`.
 
-## 10. Limites et perspectives
+### Ouvrir le dashboard cartographique
 
-Plusieurs pistes restent ouvertes :
+```bash
 
-- Étudier les erreurs par liaison, période et niveau de trafic.
-- Analyser plus précisément l'apport individuel des caractéristiques de graphe.
-- Évaluer la robustesse des résultats sur plusieurs fenêtres temporelles.
-- Explorer des modèles plus directement adaptés aux données relationnelles ou spatio-temporelles.
-- Étudier l'effet de variables externes, notamment les événements perturbant l'exploitation ferroviaire.
+uv run python -m http.server 8000
 
-Cette contribution se concentre donc sur **l'analyse du graphe ferroviaire et l'amélioration de la prédiction des retards par des variables de réseau**.
+```
+
+Puis accéder à :
+
+`http\://localhost:8000/outputs/reporting/interactive_network_dashboard.html`
+
+**Important :** l'ouverture du HTML en `file://` a provoqué une carte blanche lors des essais. Le chargement par **HTTP local** a été testé et fonctionne. Les menus du panneau latéral permettent la sélection ; **la sélection par clic sur la carte n'est pas prise en charge** dans cette version.
+
+### Exécuter les tests et contrôles
+
+```bash
+
+uv run pytest tests/ -v
+
+uv run ruff check src/ scripts/ tests/
+
+```
+
+## 12. Limites et perspectives
+
+- Les modèles ne bénéficient pas uniformément de toutes les centralités ; l'amélioration est observée sur la configuration et le découpage temporel étudiés.
+
+- Les épisodes de retard extrême demeurent difficiles à prévoir et peuvent générer une sous-estimation.
+
+- Les expériences de tendance récente sont des résultats de **validation 2024**, à confirmer sur un test final distinct.
+
+- Certaines destinations de la carte sont des positions **représentatives** (par exemple `ITALIE`), faute de gare précise dans la source AQST.
+
+- Les visuels PNG sont statiques ; les filtres avancés de Streamlit peuvent être construits depuis les CSV.
+
+Cette contribution se concentre sur **l'analyse de graphe et l'amélioration de la prédiction des retards par des variables de réseau**, avec des livrables documentés pour intégration Streamlit.

@@ -22,8 +22,14 @@ htmlcov/
 data/processed/*
 !data/processed/.gitkeep
 
-# Résultats d'expérimentation générés
-outputs/
+# Résultats générés
+outputs/*
+
+# Exports destinés à Streamlit
+!outputs/streamlit/
+!outputs/streamlit/*.csv
+!outputs/reporting/
+!outputs/reporting/*.png
 
 # Éditeurs
 .vscode/

@@ -12,38 +12,41 @@ from sncf_rail_insight.ml.historical import compute_historical_delay_features
 def build_temporal_graph_dataset(
     data: pd.DataFrame,
     window_months: int = 12,
+    recent_window_months: int | None = None,
 ) -> pd.DataFrame:
     """Construit le dataset ML à partir de fenêtres historiques glissantes.
 
     Pour chaque mois t, les caractéristiques sont calculées uniquement
     sur l'intervalle [t - window_months, t[.
 
-    Le mois courant n'intervient jamais dans le calcul des variables
-    historiques utilisées pour sa propre prédiction.
+    Une fenêtre récente optionnelle permet de calculer le taux de retard
+    récent et sa tendance par rapport au taux historique.
 
-    Les premiers mois, ne disposant pas d'un historique suffisamment
-    ancien, sont exclus du dataset final.
+    Les premiers mois sans historique suffisant sont exclus.
+    Les caractéristiques indisponibles restent à NaN.
 
     Args:
         data: Observations mensuelles issues de prepare_graph_data().
-        window_months: Nombre de mois d'historique utilisés (12 par défaut).
+        window_months: Fenêtre historique principale (12 mois par défaut).
+        recent_window_months: Fenêtre récente optionnelle, en mois.
 
     Returns:
-        DataFrame contenant les observations mensuelles enrichies avec :
-            - les centralités structurelles des gares
-            - les caractéristiques pondérées des gares
-            - les caractéristiques des liaisons orientées
-            - les taux historiques de retard par liaison.
-
-        Les caractéristiques indisponibles pour une gare ou une liaison
-        absente de l'historique restent à NaN.
+        DataFrame enrichi avec les caractéristiques des gares,
+        des liaisons et les statistiques historiques de retard.
 
     Raises:
-        ValueError: Si la fenêtre est invalide ou si l'historique est
-            insuffisant pour construire le dataset.
+        ValueError: Si les fenêtres sont invalides ou si
+            l'historique est insuffisant.
     """
     if window_months < 1:
         raise ValueError("window_months doit être supérieur à zéro.")
+
+    if recent_window_months is not None and not (
+        1 <= recent_window_months <= window_months
+    ):
+        raise ValueError(
+            "recent_window_months doit être compris entre 1 et window_months."
+        )
 
     data = data.sort_values("date").copy()
     first_date = data["date"].min()
@@ -52,9 +55,7 @@ def build_temporal_graph_dataset(
 
     for current_date in sorted(data["date"].unique()):
         # 1. Sélectionner exclusivement les mois antérieurs
-        start_date = current_date - pd.DateOffset(
-            months=window_months
-        )
+        start_date = current_date - pd.DateOffset(months=window_months)
 
         if start_date < first_date:
             continue
@@ -64,9 +65,7 @@ def build_temporal_graph_dataset(
             & (data["date"] < current_date)
         ]
 
-        current_data = data.loc[
-            data["date"] == current_date
-        ]
+        current_data = data.loc[data["date"] == current_date]
 
         # 2. Construire une seule fois le graphe historique pondéré
         graph = build_weighted_railway_graph(historical_data)
@@ -75,12 +74,23 @@ def build_temporal_graph_dataset(
         station_features = compute_all_graph_features(graph)
         route_features = compute_edge_features(graph)
 
-        # 4. Calculer les taux de retard historiques
+        # 4. Calculer les statistiques historiques de retard
+        recent_data = None
+
+        if recent_window_months is not None:
+            recent_start = current_date - pd.DateOffset(
+                months=recent_window_months
+            )
+            recent_data = historical_data.loc[
+                historical_data["date"] >= recent_start
+            ]
+
         delay_features = compute_historical_delay_features(
-            historical_data
+            historical_data,
+            recent_data=recent_data,
         )
 
-        # 5. Ajouter les caractéristiques aux observations courantes
+        # 5. Enrichir les observations du mois courant
         enriched = add_station_features(
             current_data,
             station_features,

@@ -11,12 +11,14 @@ from sncf_rail_insight.preprocessing import prepare_graph_data
 def load_ml_dataset(
     csv_path: str | Path,
     window_months: int = 12,
+    recent_window_months: int | None = None,
 ) -> pd.DataFrame:
     """Construit le dataset ML à partir du CSV SNCF.
 
     Args:
         csv_path: Chemin du fichier CSV.
-        window_months: Fenêtre historique utilisée pour les variables.
+        window_months: Fenêtre historique principale, en mois.
+        recent_window_months: Fenêtre récente optionnelle, en mois.
 
     Returns:
         Observations enrichies avec une cible valide et le mois
@@ -24,7 +26,12 @@ def load_ml_dataset(
     """
     raw_data = pd.read_csv(csv_path, sep=";")
     data = prepare_graph_data(raw_data)
-    data = build_temporal_graph_dataset(data, window_months=window_months)
+
+    data = build_temporal_graph_dataset(
+        data,
+        window_months=window_months,
+        recent_window_months=recent_window_months,
+    )
 
     data["month"] = data["date"].dt.month
 

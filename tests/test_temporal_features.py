@@ -1,6 +1,7 @@
 """Tests des caractéristiques historiques et temporelles."""
 
 import pandas as pd
+import pytest
 from pandas.testing import assert_frame_equal
 
 from sncf_rail_insight.ml.historical import (
@@ -95,3 +96,37 @@ def test_current_month_excluded_from_history() -> None:
 
     # Contrôle explicite du taux historique attendu.
     assert original_features["historical_delay_rate_15"].iloc[0] == 0.1
+
+def test_recent_delay_rate_and_trend() -> None:
+    """Vérifie les taux historiques, récents et leur différence."""
+    months = pd.date_range("2020-01-01", periods=13, freq="MS")
+
+    data = pd.DataFrame(
+        {
+            "date": months,
+            "service": ["National"] * 13,
+            "departure": ["A"] * 13,
+            "arrival": ["B"] * 13,
+            "planned": [100] * 13,
+            "cancelled": [0] * 13,
+            "circulated": [100] * 13,
+            "late_15": [10] * 9 + [40] * 3 + [0],
+            "valid_target": [True] * 13,
+            "delay_rate_15": [0.1] * 9 + [0.4] * 3 + [0.0],
+        }
+    )
+
+    result = build_temporal_graph_dataset(
+        data,
+        window_months=12,
+        recent_window_months=3,
+    )
+
+    assert len(result) == 1
+
+    row = result.iloc[0]
+
+    # 9 mois à 10 % et 3 mois à 40 %.
+    assert row["historical_delay_rate_15"] == pytest.approx(0.175)
+    assert row["recent_delay_rate_15"] == pytest.approx(0.4)
+    assert row["delay_rate_trend_15"] == pytest.approx(0.225)
