@@ -38,6 +38,14 @@ if path.is_file():
     with st.expander("État détaillé de l'intégration", expanded=True):
         st.markdown(path.read_text(encoding="utf-8"))
 st.subheader("Documents et code reproductibles")
+with st.expander("Crédits photographiques"):
+    st.markdown(
+        "Photographie de l’accueil : **SNCF TGV inOui Réseau Duplex à Paris Gare de Lyon**, "
+        "par [Superalbs / Wikimedia Commons](https://commons.wikimedia.org/wiki/"
+        "File:SNCF_TGV_inOui_Reseau_Duplex_at_Paris_Gare_de_Lyon.jpg). "
+        "Licence [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). "
+        "Version de 1 280 pixels, sans recadrage ni retouche."
+    )
 for relative, label in [
     ("docs/INTEGRATION_GAPS.md", "Liste des manques et correspondance des pages"),
     ("data/reports/data_contract.md", "Contrat des données"),

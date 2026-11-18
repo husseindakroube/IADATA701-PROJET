@@ -8,6 +8,7 @@ def load_css():
     COLORSTYLE_FILE = BASE_PATH / "styles" / "colors.css"
     CSSSPAGE_FILE = BASE_PATH / "styles" / "page-principal.css"
     CSSBARRE_FILE = BASE_PATH / "styles" / "barre-navigation.css"
+    ANALYSIS_FILE = BASE_PATH / "styles" / "analysis-pages.css"
 
     # Charger la palette puis les composants dans un ordre de cascade stable.
     css = (
@@ -16,6 +17,8 @@ def load_css():
     + CSSSPAGE_FILE.read_text(encoding="utf-8")
     + "\n"
     + CSSBARRE_FILE.read_text(encoding="utf-8")
+    + "\n"
+    + ANALYSIS_FILE.read_text(encoding="utf-8")
 )
     # Injecter les règles CSS sans ajouter de contenu visible.
     st.html(f"<style>{css}</style>")

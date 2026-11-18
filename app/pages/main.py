@@ -13,14 +13,14 @@ title_title, Logo_title = st.columns(
     vertical_alignment="center",
 )
 
-# Conserver le format GIF pour afficher l’animation du train.
+# Photographie statique d'un TGV SNCF identifiable, stockée localement.
 with Logo_title:
     with st.container(
         horizontal_alignment="right"
     ):
       st.image(
-         str(IMAGES_PATH / "TGV_title.gif"),
-         width="content",
+         str(IMAGES_PATH / "tgv_inoui_gare_de_lyon.jpg"),
+         width="stretch",
       )
 
 # Les classes HTML reprennent les styles de page-principal.css.
