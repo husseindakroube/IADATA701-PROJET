@@ -88,9 +88,8 @@ a été actualisé à 91,95 % (172 tests), le 18 novembre 2026. Les tests de dé
 Les vérifications de syntaxe, style et docstrings couvrent tous les scripts,
 y compris ceux de génération des coordonnées et des agrégats de liaisons.
 Les tests de l'interface vérifient aussi la sélection sur la carte et les courbes
-directionnelles du graphe. Après le contrôle de santé Docker, la CI charge les
-six pages dans l'image de production, sans réseau, avec
-`scripts/deployment/smoke_app.py`, avant toute publication sur GHCR.
+directionnelles du graphe. Les six pages sont chargées par les tests Streamlit
+dans la CI. GitHub Actions ne construit ni ne publie d'image Docker.
 
 ## Documentation et déploiement
 
@@ -100,10 +99,15 @@ référence Python générée depuis les docstrings. Après la commande de const
 ci-dessus, ouvrir `docs/_build/html/index.html`. La CI échoue en cas d'avertissement
 Sphinx et publie le HTML dans l'artefact `sphinx-html-<commit>`.
 Le lien d'application publique reste à renseigner après déploiement effectif.
-Le workflow construit et vérifie une image Docker, la publie sur GHCR depuis main,
-puis peut la déployer par SSH avec contrôle de santé et retour à la version précédente
-en cas d’échec. Configurer les Secrets de production et `DEPLOY_ENABLED` avant activation.
-Voir [la configuration CI/CD](docs/CI_CD.md) pour le serveur, le proxy et les commandes.
+Le déploiement cible est Streamlit Community Cloud : dépôt
+`husseindakroube/IADATA701-PROJET`, branche `main`, entrée `app/app.py`, Python 3.12.
+Le parcours prévu est : branche de développement → CI → Pull Request vers `main`
+→ fusion après validation → mise à jour par Community Cloud. Ce service ne dépend
+pas du résultat de GitHub Actions : protéger `main` avec le contrôle obligatoire
+`Code, tests et couverture` pour imposer ce parcours. Cette protection doit être
+configurée dans GitHub ; le fichier YAML ne l'active pas.
+Voir [la configuration CI/CD](docs/CI_CD.md) pour la création de l'application et
+les règles de fusion. Aucun secret SSH ni `DEPLOY_ENABLED` n'est nécessaire.
 Le déploiement réel reste à valider ; la documentation Sphinx est construite localement.
 
 ## Équipe et dépôt

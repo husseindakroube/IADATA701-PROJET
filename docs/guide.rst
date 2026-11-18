@@ -57,9 +57,19 @@ de longueur, mais le format du code est contrôlé séparément.
 Déploiement
 -------------------
 
-Le workflow construit l'image Docker, contrôle son état de santé puis charge
-les six pages avec les dépendances de production. La publication GHCR est
-limitée à ``main``. Le déploiement SSH est facultatif et activé par
-``DEPLOY_ENABLED=true`` ; voir ``docs/CI_CD.md`` pour les secrets, les prérequis
-serveur et le retour arrière. Aucune URL publique n'est attestée par un test
-local ; le lien final doit être ajouté au README après déploiement effectif.
+GitHub Actions vérifie le code, les six pages, la couverture et la documentation.
+Streamlit Community Cloud exécute l'application depuis le dépôt
+``husseindakroube/IADATA701-PROJET``, branche ``main``, entrée ``app/app.py``,
+avec Python 3.12 et les dépendances de ``uv.lock``.
+
+Le parcours prévu est : branche de développement, CI, Pull Request, fusion
+vers ``main``, mise à jour par Community Cloud. La protection de ``main`` doit
+être configurée dans GitHub pour exiger ``Code, tests et couverture`` et empêcher
+les modifications directes contournant les contrôles. Community Cloud ne vérifie
+pas lui-même le résultat de la CI avant d'actualiser une application.
+
+Voir ``docs/CI_CD.md`` pour les étapes de configuration. Les tâches Docker,
+GHCR et SSH ont été retirées du workflow ; les fichiers Docker et scripts SSH
+restent disponibles comme alternative manuelle. Aucun secret SSH ni variable
+``DEPLOY_ENABLED`` n'est requis pour Community Cloud. Le lien public sera ajouté
+au README après déploiement et vérification effective des pages.
