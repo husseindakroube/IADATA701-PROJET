@@ -1,181 +1,231 @@
-# TGVision — SNCF TGV
+# TGVision — Comprendre la régularité des TGV
 
-Application Streamlit du projet IADATA701. L'interface TGVision intègre les analyses
-et fichiers de résultats du projet complémentaire de l'équipe.
+TGVision est une application Streamlit réalisée dans le cadre du projet **IADATA701**.
+Elle permet d'explorer la ponctualité des liaisons TGV, les causes de retard,
+la structure du réseau et les résultats de modèles de prédiction.
 
-Six pages : accueil, qualité, liaisons/réseau, profils/clusters, prédictions,
-conclusions. Les filtres descriptifs sont communs ; graphes, clusters et tests ML
-conservent leur propre périmètre explicite. Aucun notebook ne s'exécute au
-démarrage ; la page clusters recalcule la PCA et les ajustements K-Means du coude.
+**Problématique :** dans quelle mesure la structure du réseau TGV est-elle associée
+à la régularité des liaisons, et peut-on exploiter cette structure pour améliorer
+la prédiction des retards ?
 
-## Installation et lancement
+**État de livraison :** l'application fonctionne localement et dispose de tests,
+d'une documentation Sphinx et d'un workflow CI. La mise en ligne sur Streamlit
+Community Cloud reste à effectuer ; l'URL publique sera ajoutée ici après validation.
 
-Python 3.12 ou supérieur, avec `uv` :
+## Découvrir l'application
 
-```powershell
+| Page | Fonctionnalités |
+|---|---|
+| **Accueil** | Présentation de la problématique, chiffres clés et parcours d'exploration. |
+| **Qualité des données** | Signalements d'anomalies, valeurs manquantes, unicité des observations et étapes ETL. |
+| **Liaisons et réseau** | Carte interactive, filtres, détail d'une liaison, comparaison de deux trajets, séries mensuelles et centralités. |
+| **Profils et clusters** | Quatre profils de liaisons, comparaison des causes, projection PCA, courbe du coude et composition des groupes. |
+| **Prédictions** | Comparaison des modèles, MAE/RMSE/R², erreurs par cluster et exploration par liaison et modèle. |
+| **Conclusions** | Synthèse des résultats, réponse à la problématique et limites de l'étude. |
+
+Sur la carte, les couleurs représentent le cluster ou le taux de retard selon le
+mode choisi. Sur le graphe d'une gare, les couleurs des points identifient les gares :
+les noms figurent dans la légende. Les flèches rouges représentent les départs de
+la gare centrale et les bleues les arrivées, avec des courbes séparées pour les
+liaisons aller-retour.
+
+## Démarrer en local
+
+Prérequis : **Git**, **uv** et **Python 3.12**. La version de développement est fixée
+dans `.python-version` ; les dépendances sont déclarées dans `pyproject.toml`
+et verrouillées dans `uv.lock`.
+
+```bash
+git clone https://github.com/husseindakroube/IADATA701-PROJET.git
+cd IADATA701-PROJET
 uv sync --locked --dev
 uv run --locked streamlit run app/app.py
 ```
 
-Les chemins des ressources sont résolus par rapport au projet. Le démarrage depuis
-un autre dossier est possible en indiquant le chemin absolu de `app/app.py`.
+Ouvrir l'adresse locale affichée par Streamlit, généralement `http://localhost:8501`.
+Pour un dépôt déjà cloné, exécuter les deux dernières commandes depuis sa racine.
+Les ressources sont résolues par rapport au projet, et non au dossier de lancement.
 
-Les données et résultats importés sont déjà inclus. Ne pas régénérer les fichiers
-pour simplement consulter le site. Les fichiers bruts restent inchangés.
+Les données et résultats nécessaires sont inclus dans le dépôt. Aucun notebook
+n'est exécuté pour démarrer l'application. Les prédictions sont lues depuis les
+exports enregistrés ; la page clusters recalcule la PCA et les ajustements K-Means
+utilisés pour la courbe du coude.
 
-## Organisation
+## Données et méthode
+
+Le projet exploite le jeu public SNCF **Régularité mensuelle TGV AQST**. Les analyses
+portent sur des observations mensuelles par service, gare de départ et gare d'arrivée.
+
+Les fichiers présents dans le dépôt couvrent les périmètres suivants :
+
+| Produit | Périmètre |
+|---|---|
+| Observations traitées (`sncf.parquet`) | 12 907 observations, de janvier 2018 à septembre 2026 ; 59 gares et 146 combinaisons distinctes service/départ/arrivée. |
+| Agrégat de la carte (`liaisons_detail.csv`) | 130 liaisons orientées avec statistiques, clusters, coordonnées et prédictions agrégées. |
+| Clustering (`clusters_liaisons.csv`) | 65 paires de gares non orientées, réparties en quatre groupes. |
+| Comparaison des modèles | 1 857 observations communes de test, de juillet 2025 à septembre 2026. |
+
+Ces périmètres sont différents : les 130 lignes de la carte ne représentent pas
+la totalité des combinaisons du fichier d'observations. Les filtres descriptifs,
+les graphes, le clustering et les évaluations ML doivent être interprétés dans
+leur périmètre respectif.
+
+Le travail suit quatre étapes :
+
+1. **Préparation et qualité** : contrôle du schéma, des clés et des comptages ;
+   ajout de flags pour rendre les anomalies visibles sans les corriger silencieusement.
+2. **Analyse du réseau** : construction de graphes orientés et calcul des degrés,
+   de l'intermédiarité, de la proximité et du PageRank.
+3. **Clustering** : regroupement des paires de gares selon leurs caractéristiques,
+   avec standardisation, K-Means et visualisation des profils.
+4. **Prédiction** : comparaison d'un naïf historique et de quatre variantes :
+   A (baseline), B (+ graphe), C (+ cluster) et D (+ graphe et cluster).
+
+Les exports montrent des écarts faibles entre A/B/C/D. Le modèle A est retenu
+dans l'application pour sa simplicité ; il n'est pas le meilleur selon toutes
+les métriques. Le naïf historique obtient notamment un meilleur R² sur ce test.
+Les observations mensuelles et les associations de réseau ne permettent pas de
+conclure à une propagation causale des retards entre gares.
+
+Les notebooks `01` à `05` conservent les étapes d'exploration, de clustering et de
+comparaison. Les scripts associés sont disponibles dans `scripts/`. Ils ne forment
+pas encore une commande unique de régénération complète : consulter leurs paramètres
+et chemins avant exécution. Le manifeste d'import initial est conservé dans
+[docs/integration_manifest.json](docs/integration_manifest.json).
+
+## Organisation du dépôt
 
 ```text
-app/                       Interface Streamlit, pages, styles, composants
-images/                    Identité visuelle TGVision existante
-image/                     Illustration du projet complémentaire
-src/projet_kit_data/
-  ingestion/               Acquisition des sources
-  etl/                     Audit, types et flags non destructifs
-  eda/                     Analyses exploratoires
-  graph/                   Construction, centralités, rapports et figures
-  ml/                      Préparation, historique, modèles et évaluation
-  comparaison.py           Fonctions des expériences A/B/C/D de l’équipe
-  web_data.py              Lecture/validation pour le site
-data/
-  raw/                     Sources immuables
-  processed/               ETL, graphe, clustering et résultats de test ML
-  reports/                 Audits et rapports ; figures extraites du notebook 04
-notebooks/                 Travaux d'exploration et expériences de l'équipe
-scripts/
-  exploration/             Scripts d'analyse existants
-  experiments/             Scripts ML existants
-models/                    Modèle enregistré (non chargé par l'application)
-docs/                      Documentation et bilan d'intégration
-tests/                     Tests importés et tests d'intégration de l'application
-logs/                      Journal local de l'application
+app/                       Entrée Streamlit, six pages, composants et CSS
+src/projet_kit_data/        Code métier : ingestion, ETL, EDA, graphes et ML
+data/raw/                  Données sources et coordonnées des gares
+data/processed/            Tables traitées, graphes, clusters et prédictions
+data/reports/              Audits, rapports d'analyse et figures
+notebooks/                 Notebooks d'analyse 01 à 05
+scripts/exploration/       Analyses et génération des données de la carte
+scripts/experiments/       Comparaison, évaluation et réglage des modèles
+scripts/deployment/        Outils de vérification, exemples de logs et anciens outils SSH
+tests/                     Tests unitaires et tests d'intégration Streamlit
+docs/                      Sources Sphinx et documentation technique
+logs/examples/             Journaux simulés livrés avec le projet
+images/                    Ressources visuelles de l'application
+models/                    Modèles enregistrés, non chargés par l'interface
+.github/workflows/ci.yml    Contrôles automatisés GitHub Actions
 ```
 
-La mise à jour intègre les profils de clusters appris sur la période d’entraînement et
-les prédictions A/B/C/D sur les mêmes 1 857 observations de test, avec erreurs par cluster.
+La stack principale repose sur Streamlit, Pandas/Polars, Plotly, Folium,
+NetworkX et scikit-learn. Les versions exactes sont disponibles dans `uv.lock`.
 
-## Sources et génération des résultats
+## Qualité du code et tests
 
-Les scripts et notebooks importés restent disponibles pour étudier la génération
-originale ; ils ne constituent pas encore une chaîne unique entièrement harmonisée.
-Leurs paramètres et chemins de lancement sont documentés dans leurs sources.
-Les notebooks sources restent consultables dans le dossier `notebooks/` du dépôt.
+Depuis la racine du projet :
 
-`docs/integration_manifest.json` conserve les chemins et empreintes SHA-256 des
-fichiers importés. `data/reports/clustering/elbow.png`, `pca.png` et `pca.txt`
-sont extraits des sorties enregistrées du notebook 04, sans exécuter celui-ci.
-
-Le site expose les résultats compatibles. Il ne publie pas un taux global d'arrivée
-non validé et ne transforme pas les expériences historiques en conclusions vérifiées.
-Voir [le bilan complet et les manques](docs/INTEGRATION_GAPS.md).
-
-## Vérifications
-
-```powershell
-uv run --locked pytest -q
+```bash
 uv run --locked ruff check app src scripts tests docs/conf.py
 uv run --locked ruff format --check app src scripts tests docs/conf.py
 uv run --locked python -m compileall -q app src scripts
+uv run --locked pytest -q --cov=src/projet_kit_data --cov=app --cov-fail-under=90.1 --cov-report=term-missing --cov-report=html:reports/coverage
+```
+
+**Dernière validation complète locale, le 18 novembre 2026 : 172 tests réussis,
+91,95 % de couverture sur `app/` et `src/projet_kit_data/`.** Ce relevé ne remplace
+pas le résultat du dernier run GitHub Actions.
+
+Les tests couvrent notamment les règles de préparation, les calculs de graphes,
+les métriques ML, le chargement des six pages, les interactions de la carte,
+les courbes directionnelles et le fonctionnement des logs.
+
+Ruff vérifie le style (`E`, `W`), les erreurs (`F`) et la présence des docstrings
+publiques (`D1`). Le formatage est contrôlé séparément. Les textes et URL longs
+sont exemptés de `E501` ; les tests sont exemptés de `D1`.
+
+## Documentation Sphinx
+
+La documentation comprend un guide d'installation et d'utilisation, l'architecture,
+la journalisation et une référence API générée depuis les docstrings.
+
+```bash
 uv run --locked sphinx-build -W --keep-going -b html docs docs/_build/html
 ```
 
-Les tests d'intégration vérifient le chargement des six pages, les filtres, les clés
-métier et la correspondance des métriques avec les mêmes observations de test.
-La CI lance désormais la suite complète, publie les rapports et exige au moins
-90,1 % de couverture sur `app/` et `src/projet_kit_data/`. Le relevé local initial
-a été actualisé à 91,95 % (172 tests), le 18 novembre 2026. Les tests de déploiement sont également exécutés.
+Ouvrir ensuite `docs/_build/html/index.html`. Les fichiers HTML sont générés
+localement et ignorés par Git ; leurs sources sont dans `docs/`. La CI construit
+la documentation avec les avertissements traités comme des erreurs et conserve
+le résultat dans l'artefact **`sphinx-html-<commit>`**.
 
-Les vérifications de syntaxe, style et docstrings couvrent tous les scripts,
-y compris ceux de génération des coordonnées et des agrégats de liaisons.
-Les tests de l'interface vérifient aussi la sélection sur la carte et les courbes
-directionnelles du graphe. Les six pages sont chargées par les tests Streamlit
-dans la CI. GitHub Actions ne construit ni ne publie d'image Docker.
+## Journalisation
 
-## Documentation et déploiement
+Le module standard `logging` écrit automatiquement deux fichiers UTF-8 :
 
-Les documents Markdown importés sont dans `docs/` et `data/reports/`. La documentation
-Sphinx contient un guide d'installation, d'utilisation, de journalisation et une
-référence Python générée depuis les docstrings. Après la commande de construction
-ci-dessus, ouvrir `docs/_build/html/index.html`. La CI échoue en cas d'avertissement
-Sphinx et publie le HTML dans l'artefact `sphinx-html-<commit>`.
-Le lien d'application publique reste à renseigner après déploiement effectif.
-Le déploiement cible est Streamlit Community Cloud : dépôt
-`husseindakroube/IADATA701-PROJET`, branche `main`, entrée `app/app.py`, Python 3.12.
-Le parcours prévu est : branche de développement → CI → Pull Request vers `main`
-→ fusion après validation → mise à jour par Community Cloud. Ce service ne dépend
-pas du résultat de GitHub Actions : protéger `main` avec le contrôle obligatoire
-`Code, tests et couverture` pour imposer ce parcours. Cette protection doit être
-configurée dans GitHub ; le fichier YAML ne l'active pas.
-Voir [la configuration CI/CD](docs/CI_CD.md) pour la création de l'application et
-les règles de fusion. Aucun secret SSH ni `DEPLOY_ENABLED` n'est nécessaire.
-Le déploiement réel reste à valider ; la documentation Sphinx est construite localement.
+| Fichier | Contenu |
+|---|---|
+| `logs/debug.log` | DEBUG et niveaux supérieurs : initialisation, lectures de données, sélections, filtres et demandes de téléchargement. |
+| `logs/error.log` | ERROR et CRITICAL, avec les traces des exceptions journalisées. |
 
-## Équipe et dépôt
+Chaque fichier est limité à **5 Mio**, avec **trois sauvegardes**. Les événements
+d'erreur figurent aussi dans `debug.log`. Les actions utilisent un identifiant
+de session aléatoire et des détails JSON ; ce logger n'ajoute ni nom, ni email,
+ni adresse IP. Les sélections inchangées sont dédupliquées lors des reruns,
+tandis que chaque demande de téléchargement est enregistrée.
 
-Projet collectif IADATA701 : interface TGVision et analyses de l'équipe.
-Les noms et rôles détaillés restent à renseigner.
-[Dépôt du projet](https://github.com/husseindakroube/IADATA701-PROJET)
+Les journaux réels restent locaux. Les [exemples livrés](logs/examples/README.md)
+sont générés avec le même logger à partir d'actions et d'incidents **simulés**.
+Pour les reproduire dans un dossier neuf :
 
-## Journalisation (logging)
-
-L'application utilise le module standard `logging`. Les fichiers sont créés
-automatiquement dans `logs/`, indépendamment du répertoire de lancement :
-
-- `logs/debug.log` : DEBUG et niveaux supérieurs ; démarrage, chargement des
-  données (y compris carte et graphe), navigation, filtres, sélection de
-  liaison/gare/cluster, comparaison de deux liaisons, consultation d'une
-  prédiction et demandes de téléchargement encore proposées dans l'interface.
-- `logs/error.log` : uniquement ERROR et CRITICAL, avec la trace des exceptions
-  (fichier illisible, schéma invalide, métriques incohérentes ou erreur de page).
-  Ces événements sont également présents dans le journal debug pour le contexte.
-
-Chaque entrée indique la date, l'heure locale du processus, le niveau, le logger
-et le message. Les actions portent un identifiant de session aléatoire, sans nom,
-email ni adresse IP. Les sélections initiales et leurs changements sont journalisés ;
-un rerun Streamlit identique ne duplique pas l'événement. Un clic de téléchargement
-est enregistré comme une demande, pas comme la preuve d'un transfert terminé.
-
-La carte enregistre `carte_filters` (service, départ, arrivée, cluster, mode de
-couleur et nombre de liaisons), `carte_route_view` (liaison sélectionnée ou
-absence de sélection) et `download` pour `liaisons_selection.csv`, avec le
-périmètre exporté. `route_comparison` contient les deux liaisons comparées.
-Les événements existants `network_view`, `ego_graphe_view`, `station_view`,
-`cluster_view` et `prediction_view` restent actifs. Les boutons supprimés ne
-produisent plus de nouveaux événements ; les anciens journaux sont conservés.
-
-Streamlit calcule aussi le contenu des onglets masqués : les événements de
-sélection décrivent l'état des contrôles, pas la preuve qu'un onglet a été vu.
-Les chargements servis depuis le cache ne produisent pas une nouvelle ligne
-de lecture de fichier à chaque rerun.
-
-Ces fichiers capturent les loggers `projet_kit_data.*`. Les avertissements internes
-de Streamlit (par exemple une conversion Arrow) restent dans la console ou dans
-les fichiers `streamlit*.log` si la sortie du serveur est redirigée ; ils ne sont
-pas automatiquement copiés dans `error.log`.
-
-Configuration : `src/projet_kit_data/logging_config.py`. Chaque fichier est limité
-à 5 Mio avec trois sauvegardes (`.log.1` à `.log.3`), en UTF-8. La configuration
-est réutilisée à chaque rerun. Les fichiers de logs et leurs sauvegardes sont
-ignorés par Git, sauf les exemples simulés dans `logs/examples/`.
-L'ancien `app.log`, s'il existe, n'est plus alimenté.
-
-Les exemples `logs/examples/debug.log` et `logs/examples/error.log` sont générés
-avec le vrai logger, une session fictive et des incidents explicitement simulés.
-Ils ne proviennent pas des utilisateurs du site. Pour les reproduire dans un
-nouveau dossier, exécuter :
-
-```powershell
+```bash
 uv run --locked python scripts/deployment/generate_log_examples.py reports/log-examples
 ```
 
-Le générateur refuse d'écraser des journaux existants. La CI l'exécute dans un
-dossier neuf et conserve les exemples avec les rapports de test. Les anciens
-fichiers de sortie serveur cessent d'être suivis par Git, sans suppression locale.
+Le générateur refuse d'écraser des fichiers existants. Les avertissements internes
+de Streamlit restent dans la console et ne sont pas automatiquement copiés dans
+`error.log`. Les sélections enregistrées décrivent les contrôles calculés, y compris
+dans les onglets masqués ; elles ne constituent pas une mesure de fréquentation.
+Le dossier de logs doit être accessible en écriture. Sur un hébergement distant,
+les fichiers locaux ne constituent pas une archive durable.
 
-Le dossier doit être accessible en écriture. En cas d'échec, l'application affiche
-un message et envoie l'erreur à la console. Dans Docker, les fichiers résident dans
-`/app/logs` ; sans volume dédié, ils ne survivent pas au remplacement du conteneur.
-Pour les scripts hors interface, appeler `configure_logging()` au point d'entrée
-avant d'utiliser `logging.getLogger("projet_kit_data.nom_du_module")`.
+## CI et mise en ligne
 
-Tests dédiés : `uv run --locked pytest tests/test_logging.py -q`.
+Le workflow [CI](.github/workflows/ci.yml) s'exécute à chaque push, lors des Pull
+Requests vers `main` et sur lancement manuel. Il installe l'environnement verrouillé,
+vérifie le style, le formatage, les docstrings et la syntaxe, construit Sphinx,
+génère les logs d'exemple et exécute les tests avec un seuil de couverture de **90,1 %**.
+Les rapports et la documentation disponibles sont conservés **14 jours**.
+
+Le parcours de publication prévu est :
+
+**Branche de développement → CI → Pull Request → fusion dans `main` → Streamlit Community Cloud.**
+
+La configuration à utiliser sur Community Cloud est :
+
+| Champ | Valeur |
+|---|---|
+| Repository | `husseindakroube/IADATA701-PROJET` |
+| Branch | `main` |
+| Main file path | `app/app.py` |
+| Python version | `3.12` |
+
+La création de l'application sur Community Cloud et la protection de `main`
+sont des réglages externes au dépôt. Exiger le contrôle **Code, tests et couverture**
+avant fusion : Community Cloud n'attend pas lui-même la réussite de la CI pour
+actualiser l'application. Après déploiement, vérifier les six pages depuis une
+fenêtre privée puis ajouter l'URL publique en tête de ce README.
+
+La procédure détaillée et les points restant à configurer sont dans
+[docs/CI_CD.md](docs/CI_CD.md). Les tâches Docker, GHCR et SSH ont été retirées
+du workflow ; les fichiers correspondants restent disponibles comme alternative
+manuelle. Aucun secret SSH ni variable `DEPLOY_ENABLED` n'est requis pour le
+parcours Community Cloud.
+
+## Équipe et livraison
+
+Projet collectif réalisé dans le cadre d'IADATA701.
+**Les noms des membres et leurs responsabilités restent à renseigner par l'équipe.**
+
+Avant la remise finale :
+
+- Publier les derniers changements et vérifier la réussite de la CI sur GitHub.
+- Déployer l'application, vérifier son accès public et ajouter son URL au README.
+- Compléter les membres de l'équipe et la répartition du travail.
+- Fournir le dépôt public, la documentation Sphinx générée et les exemples de logs.
+
+[Dépôt GitHub du projet](https://github.com/husseindakroube/IADATA701-PROJET)
