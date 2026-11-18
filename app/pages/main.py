@@ -1,5 +1,6 @@
 from pathlib import Path
 import streamlit as st
+from utils.data import filters, observations, scope_metrics, table
 
 GLOBAL_Path = Path(__file__).resolve().parent
 IMAGES_PATH = GLOBAL_Path.parent.parent / "images"
@@ -109,24 +110,56 @@ st.header("Notre problématique")
 st.write("Dans quelle mesure la structure du réseau TGV est-elle associée à la régularité des liaisons, et peut-on exploiter cette structure pour améliorer la prédiction des retards ?")
 
 # Chaque carte ouvre une page déclarée dans app.py.
+st.subheader("Les données du projet")
+st.caption("Source : SNCF — Régularité mensuelle TGV AQST. "
+           "La date d'extraction n'est pas consignée dans les artefacts fournis.")
+data = filters(observations())
+scope_metrics(data)
+st.info("Le taux global d'arrivée en retard reste à valider : le contrat fourni "
+        "ne confirme pas encore son dénominateur. Les annulations mensuelles sont "
+        "consultables dans l'exploration des liaisons.")
+st.subheader("Trois repères issus des résultats disponibles")
+st.write(f"**{data.date.nunique()} mois observés dans le périmètre sélectionné** : "
+         "il s'agit d'observations mensuelles, pas d'horaires de trains individuels.")
+network = table("data/processed/graph/descriptive/network_summary.parquet", required=False)
+if not network.empty:
+    for row in network.itertuples():
+        st.write(f"**{row.service} : {row.node_count} gares et {row.edge_count} liaisons "
+                 "orientées** dans le graphe enregistré (2018-01 → 2026-09). "
+                 "Ce périmètre fixe décrit les services AQST, pas l'infrastructure ferroviaire.")
+
 # Les clés distinguent les boutons portant tous le même libellé.
 col1, col2, col3 = st.columns(3)
 
 with col1, st.container(border=True):
-    st.subheader("🚆 Exploration des données")
-    st.write("Analyse de la régularité des liaisons TGV et identification des principaux facteurs associés aux retards")
-    if st.button("Découvrir →", key="page1_button"):
-            st.switch_page("pages/page1.py")
+    st.subheader("Qualité des données")
+    st.write("Consulter les anomalies et les règles du prétraitement existant")
+    if st.button("Découvrir →", key="data_quality_button"):
+            st.switch_page("pages/data_quality.py")
 
 with col2, st.container(border=True):
-    st.subheader("🚉 Analyse du réseau TGV")
+    st.subheader("Liaisons et réseau")
     st.write("Étude de la structure du réseau ferroviaire et de ses relations avec la régularité des liaisons")
-    if st.button("Découvrir →", key="page2_button"):
-            st.switch_page("pages/page2.py")
+    if st.button("Découvrir →", key="routes_network_button"):
+            st.switch_page("pages/routes_network.py")
 
 with col3, st.container(border=True):
     st.subheader("🚅 Prédiction des retards")
     st.write("Comparaison des modèles de machine learning avec et sans caractéristiques du graphe pour évaluer leur apport prédictif")
-    if st.button("Découvrir →", key="page3_button"):
-        st.switch_page("pages/page3.py")
+    if st.button("Découvrir →", key="predictions_button"):
+        st.switch_page("pages/predictions.py")
+
+col4, col5 = st.columns(2)
+with col4, st.container(border=True):
+    st.subheader("Profils et clusters")
+    st.write("Explorer les groupes de liaisons déjà calculés")
+    st.page_link("pages/clusters.py", label="Consulter les profils →")
+with col5, st.container(border=True):
+    st.subheader("Conclusions et reproductibilité")
+    st.write("Consulter les limites, les sources et les fonctionnalités manquantes")
+    st.page_link("pages/conclusions.py", label="Consulter le bilan →")
+st.divider()
+st.caption("Projet collectif IADATA701 — interface TGVision et analyses de l'équipe. "
+           "Les noms et rôles détaillés de l'équipe restent à renseigner.")
+st.markdown("[Code du projet](https://github.com/husseindakroube/IADATA701-PROJET)")
 

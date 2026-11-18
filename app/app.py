@@ -1,6 +1,10 @@
 from base64 import b64encode
 from html import escape
 from pathlib import Path
+import sys
+import logging
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import streamlit as st
 from utils.styles import load_css
@@ -8,6 +12,13 @@ from utils.styles import load_css
 # Résoudre les ressources depuis ce fichier, indépendamment du dossier de lancement.
 BASE_PATH = Path(__file__).resolve().parent
 IMAGES_PATH = BASE_PATH.parent / "images"
+LOG_PATH = BASE_PATH.parent / "logs"
+try:
+    LOG_PATH.mkdir(exist_ok=True)
+    logging.basicConfig(filename=LOG_PATH / "app.log", level=logging.DEBUG,
+                        format="%(asctime)s %(levelname)s %(name)s %(message)s")
+except OSError:
+    logging.basicConfig(level=logging.INFO)
 
 st.set_page_config(
     page_title="TGVISION | SNCF TGV",
@@ -26,16 +37,24 @@ pages = [
         default=True
     ),
     st.Page(
-        "pages/page1.py",
-        title="Exploration des données"
+        "pages/data_quality.py",
+        title="Qualité des données"
     ),
     st.Page(
-        "pages/page2.py",
-        title="Analyse du réseau TGV"
+        "pages/routes_network.py",
+        title="Liaisons et réseau"
     ),
     st.Page(
-        "pages/page3.py",
-        title="Prédiction des retards"
+        "pages/clusters.py",
+        title="Profils et clusters"
+    ),
+    st.Page(
+        "pages/predictions.py",
+        title="Prédictions"
+    ),
+    st.Page(
+        "pages/conclusions.py",
+        title="Conclusions"
     ),
 ]
 

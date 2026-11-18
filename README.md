@@ -1,175 +1,92 @@
-# TGVision — Analyse de la ponctualité des TGV
+# TGVision — SNCF TGV
 
-Ce projet est réalisé dans le cadre du module IADATA701.
+Application Streamlit du projet IADATA701. L'interface TGVision intègre les analyses
+et fichiers de résultats du projet complémentaire de l'équipe.
 
-Développée avec Streamlit, l’application web TGVision vise à étudier la ponctualité des TGV à partir de données mensuelles de régularité. Les résultats ont vocation à être présentés de manière interactive.
-
-> **État du projet : développement en cours.**
-> L’interface et la navigation sont déjà en place. Le traitement des données et les pages consacrées aux analyses restent à développer.
-
-## Fonctionnalités et état d’avancement
-
-### Éléments en place
-
-- Une page d’accueil consacrée à la présentation du projet.
-- Une organisation en plusieurs pages, avec une navigation personnalisée.
-- Une identité visuelle définie dans les fichiers CSS.
-- Des contenus visuels : images et animation.
-- Un fichier CSV contenant les données de régularité mensuelle des TGV.
-- Un workflow GitHub Actions assurant les vérifications de base du code Python.
-
-### Étapes à venir
-
-- Définir plus précisément la problématique et les axes d’analyse.
-- Procéder à l’exploration et au nettoyage des données.
-- Construire les indicateurs et les visualisations.
-- Finaliser les pages qui sont encore provisoires.
-- Mettre en place des tests pour le chargement des pages et le traitement des données.
-- Préparer la mise en ligne de l’application.
-
-## Technologies utilisées
-
-| Outil | Utilisation |
-|---|---|
-| Python 3.12 | Développement de l’application |
-| Streamlit | Interface web et navigation |
-| HTML / CSS | Personnalisation de l’interface |
-| uv | Gestion de l’environnement et des dépendances |
-| Ruff | Analyse statique du code Python |
-| GitHub Actions | Intégration continue |
-
-Les dépendances de développement comprennent aussi `pytest` et `pytest-cov`, prévus pour les futurs tests automatisés.
-
-## Structure du projet
-
-```text
-IADATA701-PROJET/
-├── .github/
-│   └── workflows/
-│       └── ci.yml              # Workflow d’intégration continue
-├── .streamlit/
-│   └── config.toml             # Configuration Streamlit
-├── app/
-│   ├── app.py                  # Point d’entrée de l’application
-│   ├── pages/                  # Accueil et pages de l’application
-│   ├── styles/                 # Feuilles de style CSS
-│   └── utils/
-│       └── styles.py           # Chargement des styles
-├── data/
-│   └── initial/                # Données initiales au format CSV
-├── images/                     # Logos, icônes et animations
-├── src/
-│   └── projet_kit_data/        # Package Python du projet
-├── tests/                      # Emplacement prévu pour les tests
-├── .python-version             # Version Python utilisée
-├── pyproject.toml              # Configuration et dépendances
-├── uv.lock                     # Versions verrouillées des dépendances
-└── README.md
-```
+Six pages : accueil, qualité, liaisons/réseau, profils/clusters, prédictions,
+conclusions. Les filtres descriptifs sont communs ; graphes, clusters et tests ML
+conservent leur propre périmètre explicite. Aucun notebook ni entraînement ne
+s'exécute au démarrage.
 
 ## Installation et lancement
 
-### Prérequis
+Python 3.12 ou supérieur, avec `uv` :
 
-- Git
-- uv
-- Python 3.12, installable avec uv
-
-### 1. Cloner le dépôt
-
-```bash
-git clone https://github.com/husseindakroube/IADATA701-PROJET.git
-cd IADATA701-PROJET
-```
-
-### 2. Installer Python et les dépendances
-
-Exécuter les commandes suivantes à la racine du projet :
-
-```bash
-uv python install
+```powershell
 uv sync --locked --dev
+uv run --locked streamlit run app/app.py
 ```
 
-Le fichier `.python-version` indique la version de Python à utiliser. Quant au fichier `uv.lock`, il fixe les versions des dépendances installées.
+Les chemins des ressources sont résolus par rapport au projet. Le démarrage depuis
+un autre dossier est possible en indiquant le chemin absolu de `app/app.py`.
 
-### 3. Démarrer l’application
+Les données et résultats importés sont déjà inclus. Ne pas régénérer les fichiers
+pour simplement consulter le site. Les fichiers bruts restent inchangés.
 
-```bash
-uv run python -m streamlit run app/app.py
-```
-
-Une fois lancée, l’application est accessible à cette adresse :
-
-http://localhost:8501
-
-Pour arrêter le serveur, appuyer sur `Ctrl + C` dans le terminal.
-
-### Sous Windows
-
-Si une politique de sécurité empêche l’exécution directe de `streamlit.exe`, utiliser la commande ci-dessus, qui passe par `python -m streamlit`.
-
-## Données
-
-Les données initiales sont stockées dans le fichier suivant :
+## Organisation
 
 ```text
-data/initial/regularite-mensuelle-tgv-aqst.csv
+app/                       Interface Streamlit, pages, styles, composants
+images/                    Identité visuelle TGVision existante
+image/                     Illustration du projet complémentaire
+src/projet_kit_data/
+  ingestion/               Acquisition des sources
+  etl/                     Audit, types et flags non destructifs
+  eda/                     Analyses exploratoires
+  graph/                   Construction, centralités, rapports et figures
+  ml/                      Préparation, historique, modèles et évaluation
+  web_data.py              Lecture/validation pour le site
+data/
+  raw/                     Sources immuables
+  processed/               ETL, graphe, clustering et résultats de test ML
+  reports/                 Audits et rapports ; figures extraites du notebook 04
+notebooks/                 Travaux d'exploration et expériences de l'équipe
+scripts/
+  exploration/             Scripts d'analyse existants
+  experiments/             Scripts ML existants
+models/                    Modèle enregistré (non chargé par l'application)
+docs/                      Documentation et bilan d'intégration
+tests/                     Tests importés et tests d'intégration de l'application
+logs/                      Journal local de l'application
 ```
 
-Ce fichier servira de base aux analyses de régularité des TGV.
+## Sources et génération des résultats
 
-La documentation associée doit encore préciser les points suivants :
+Les scripts et notebooks importés restent disponibles pour étudier la génération
+originale ; ils ne constituent pas encore une chaîne unique entièrement harmonisée.
+Leurs paramètres et chemins de lancement sont documentés dans leurs sources.
+Les notebooks sont téléchargeables depuis la page Conclusions.
 
-- La source des données et leur lien de téléchargement.
-- La date de récupération et la période couverte.
-- La description des colonnes.
-- La licence et les conditions de réutilisation.
-- Les règles de nettoyage et le traitement des valeurs manquantes.
+`docs/integration_manifest.json` conserve les chemins et empreintes SHA-256 des
+102 fichiers importés. `data/reports/clustering/elbow.png`, `pca.png` et `pca.txt`
+sont extraits des sorties enregistrées du notebook 04, sans exécuter celui-ci.
 
-À ce stade, ni les traitements ni les résultats d’analyse ne sont intégrés à l’application.
+Le site expose les résultats compatibles. Il ne publie pas un taux global d'arrivée
+non validé et ne transforme pas les expériences historiques en conclusions vérifiées.
+Voir [le bilan complet et les manques](docs/INTEGRATION_GAPS.md).
 
-## Intégration continue — CI
+## Vérifications
 
-Le fichier `.github/workflows/ci.yml` définit le workflow d’intégration continue.
-
-Son exécution est prévue dans les cas suivants :
-
-- Un push est effectué sur `Test_Shihao` ou `main`.
-- Une pull request vers `main` est ouverte ou mise à jour.
-- Un lancement manuel est demandé via `workflow_dispatch`, à condition que le workflow soit disponible sur la branche par défaut.
-
-### Vérifications réalisées
-
-Le workflow suit ces étapes :
-
-1. Récupérer le code du dépôt.
-2. Installer uv et Python.
-3. Installer les dépendances à l’aide de `uv sync --locked --dev`.
-4. Rechercher certaines erreurs Python avec Ruff.
-5. Vérifier la syntaxe des fichiers Python.
-
-Les vérifications du code peuvent aussi être exécutées localement :
-
-```bash
+```powershell
+uv run --locked pytest -q
 uv run --locked ruff check app src --select E9,F63,F7,F82
 uv run --locked python -m compileall -q app src
 ```
 
-Ces contrôles ne lancent pas l’application et ne permettent pas encore de valider le comportement des pages. Le workflow n’exécute actuellement aucun test pytest.
+Les tests d'intégration vérifient le chargement des six pages, les filtres, les clés
+métier et la correspondance des métriques avec les mêmes observations de test.
+La CI existante contrôle la syntaxe et les erreurs critiques ; son exécution de
+pytest reste à ajouter. Une couverture supérieure à 90 % n'est pas certifiée.
 
-## Déploiement
+## Documentation et déploiement
 
-Le workflow actuel ne prévoit pas de déploiement automatique.
+Les documents Markdown importés sont dans `docs/` et `data/reports/`. Le projet ne
+fournit pas encore de construction Sphinx complète ni de lien d'application publique.
+Ces éléments restent à réaliser conformément au cahier des charges ; ils n'ont pas
+été inventés lors de l'intégration.
 
-Les instructions précédentes permettent de lancer l’application en local. La procédure de déploiement et l’adresse de la version en ligne seront documentées dès qu’elles seront disponibles.
+## Équipe et dépôt
 
-## Travail en équipe
-
-L’organisation proposée repose sur les étapes suivantes :
-
-1. Effectuer le développement sur une branche dédiée.
-2. Vérifier les changements en local.
-3. Pousser la branche sur GitHub.
-4. Créer une pull request vers `main`.
-5. Examiner les résultats de la CI et faire relire les modifications avant de les fusionner.
+Projet collectif IADATA701 : interface TGVision et analyses de l'équipe.
+Les noms et rôles détaillés restent à renseigner.
+[Dépôt du projet](https://github.com/husseindakroube/IADATA701-PROJET)

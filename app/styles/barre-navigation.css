@@ -125,8 +125,8 @@
     display: none;
 }
 
-/* À 768 px et moins, remplacer la barre de bureau par le menu repliable. */
-@media (max-width: 768px) {
+/* Les six pages nécessitent le menu compact sur tablette et petit ordinateur. */
+@media (max-width: 1280px) {
 
     .st-key-barre-navigation-haut {
         /* Mode de disposition : block occupe une ligne, flex aligne les enfants, grid crée une grille, none masque le bloc sans réserver d’espace. */
