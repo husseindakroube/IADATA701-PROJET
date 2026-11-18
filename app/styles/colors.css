@@ -1,12 +1,32 @@
+/* Repères de lecture :
+ * .nom cible une classe HTML ; .st-key-nom cible un conteneur créé avec key="nom".
+ * Un espace cible les descendants ; > cible les enfants directs.
+ * :hover = survol ; :focus-visible = focus visible, notamment au clavier.
+ * ::after ajoute un contenu visuel ; [open] sélectionne un volet details ouvert.
+ * px = pixels CSS ; rem = taille de police racine ; em = taille de police locale.
+ * vw = 1 % de la largeur de la fenêtre ; svh = 1 % de sa petite hauteur de référence.
+ * var(--nom) lit une variable de colors.css ; rgba(..., alpha) règle aussi l’opacité.
+ * clamp(min, valeur souple, max) encadre une dimension ; calc() calcule une dimension.
+ * @media applique des règles seulement lorsque la condition de largeur est remplie.
+ */
+/* Palette partagée : les autres feuilles consomment ces propriétés avec var(). */
 :root {
+    /* Gris foncé du récit et des passages mis en valeur sur la page d’accueil. */
     --couleur-texte: #374151;
+    /* Bleu-vert des petites étiquettes, notamment « LE RAIL À TRAVERS LES DONNÉES ». */
     --couleur-accent: #087F8C;
+    /* Bleu sombre du slogan principal « Au-delà des horaires… ». */
     --couleur-slogan: #25364A;
+    /* Gris bleuté de la phrase descriptive sous le slogan ; moins dominant que le titre. */
     --couleur-description: #64748B;
 
+    /* Fond gris très clair des encadrés .histoire-mise-en-valeur. */
     --couleur-panneau: #F3F6F8;
+    /* Couleur du trait qui délimite les passages mis en valeur. */
     --couleur-bordure: #D8E1E8;
 
+    /* Dégradés utilisés pour colorer les lettres des titres. */
+    /* Dégradé du grand titre TGVision : angle de 120°, bleu sombre à 0 %, bleu pétrole à 55 %, bleu-vert à 100 %. */
     --degrade-titre: linear-gradient(
         120deg,
         #16324F 0%,
@@ -14,6 +34,7 @@
         #087F8C 100%
     );
 
+    /* Dégradé du texte de bienvenue : angle de 90° (vers la droite), vert à 0 %, indigo à 35 %, cyan à 100 %. */
     --degrade-section: linear-gradient(
         90deg,
         #2C7D67 0%,
@@ -21,31 +42,48 @@
         #00D4FF 100%
     );
 
+    /* Cibler uniquement le titre du volet narratif de la page d’accueil. */
     .st-key-histoire_deroulante [data-testid="stExpander"] summary p {
+    /* Taille des caractères ; rem dépend de la taille racine, vw de la largeur de la fenêtre. */
     font-size: 2rem;
+    /* Épaisseur des caractères : 400 normal, 600 semi-gras, 700 gras, 800 très gras. */
     font-weight: 700;
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
     color: transparent;
+    /* Hauteur de ligne : un nombre sans unité multiplie la taille du texte. */
     line-height: 1.3;
+    /* Fond de l’élément : couleur, dégradé ou variable de la palette ; transparent laisse voir le fond parent. */
     background: linear-gradient(135deg, #c7e9fb, #a6defa, #80d4f9, #5bc9f8, #35bef7);
+    /* Avec text, limiter le fond aux contours des lettres pour obtenir du texte en dégradé. */
     background-clip: text;
+    /* Version préfixée du découpage du fond dans le texte pour les moteurs qui en ont besoin. */
     -webkit-background-clip: text;
+    /* Police choisie ; sans-serif sert de repli si la première police ne peut pas être chargée. */
     font-family: 'Inter', sans-serif;
     }
 
 
+    /* Couleurs de navigation : état normal, survol et page active. */
+    /* Fond presque noir commun aux barres de navigation de bureau et mobile. */
     --fond-barre-navigation: #050505;
+    /* Blanc des liens au repos et du texte de la marque dans la barre mobile. */
     --texte-barre-navigation: #ffffff;
+    /* Gris bleuté du petit slogan sous la marque dans la barre de bureau. */
     --texte-attenue-navigation: #a8b5c5;
 
+    /* Vert translucide au survol des liens ; également fond du bouton Menu mobile. Alpha 0.15 = 15 % d’opacité. */
     --fond-survol-navigation: rgba(63, 180, 170, 0.15);
+    /* Vert clair appliqué au texte d’un lien survolé. */
     --texte-survol-navigation: #45d6b3;
 
+    /* Fond du lien de la page courante : dégradé horizontal vert à 38 % d’opacité vers indigo à 20 %. */
     --fond-navigation-active: linear-gradient(
     90deg,
     rgba(44, 125, 103, 0.38),
     rgba(62, 62, 201, 0.20)
 );
 
+/* Vert clair du lien actif ; aussi utilisé pour le contour de focus du menu mobile. */
 --texte-navigation-active: #45d6b3;
 
 }

@@ -1,112 +1,195 @@
+/* Repères de lecture :
+ * .nom cible une classe HTML ; .st-key-nom cible un conteneur créé avec key="nom".
+ * Un espace cible les descendants ; > cible les enfants directs.
+ * :hover = survol ; :focus-visible = focus visible, notamment au clavier.
+ * ::after ajoute un contenu visuel ; [open] sélectionne un volet details ouvert.
+ * px = pixels CSS ; rem = taille de police racine ; em = taille de police locale.
+ * vw = 1 % de la largeur de la fenêtre ; svh = 1 % de sa petite hauteur de référence.
+ * var(--nom) lit une variable de colors.css ; rgba(..., alpha) règle aussi l’opacité.
+ * clamp(min, valeur souple, max) encadre une dimension ; calc() calcule une dimension.
+ * @media applique des règles seulement lorsque la condition de largeur est remplie.
+ */
+/* Mise en forme du bloc de présentation de la page d’accueil. */
 .principal {
+    /* Espace intérieur entre le contenu et les bords du bloc. Ordre des valeurs : haut/bas puis gauche/droite. */
     padding: 15px 0;
 }
 
 .etiquette-principale {
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
     color: var(--couleur-accent);
+    /* Taille des caractères ; rem dépend de la taille racine, vw de la largeur de la fenêtre. */
     font-size: 0.85rem;
+    /* Épaisseur des caractères : 400 normal, 600 semi-gras, 700 gras, 800 très gras. */
     font-weight: 600;
+    /* Espacement supplémentaire entre les lettres ; em est relatif à leur taille. */
     letter-spacing: 2px;
+    /* Avec uppercase, afficher en majuscules sans modifier le texte HTML. */
     text-transform: uppercase;
+    /* Espace extérieur séparant le bloc de ses voisins ; auto sur les côtés peut centrer un bloc de largeur limitée. Ordre des valeurs : haut, droite, bas, gauche. */
     margin: 0 0 5px 0;
+    /* Police choisie ; sans-serif sert de repli si la première police ne peut pas être chargée. */
     font-family: 'Inter', sans-serif;
 }
 
+/* Adapter la taille à l’écran et limiter le dégradé aux lettres. */
 .titre-principal {
+    /* Taille des caractères ; rem dépend de la taille racine, vw de la largeur de la fenêtre. clamp fixe le minimum, la valeur fluide et le maximum, dans cet ordre. */
     font-size: clamp(2.5rem, 7vw, 10rem);
+    /* Épaisseur des caractères : 400 normal, 600 semi-gras, 700 gras, 800 très gras. */
     font-weight: 800;
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
     color: transparent;
+    /* Hauteur de ligne : un nombre sans unité multiplie la taille du texte. */
     line-height: 1.1;
+    /* Fond de l’élément : couleur, dégradé ou variable de la palette ; transparent laisse voir le fond parent. */
     background: var(--degrade-titre);
+    /* Avec text, limiter le fond aux contours des lettres pour obtenir du texte en dégradé. */
     background-clip: text;
+    /* Version préfixée du découpage du fond dans le texte pour les moteurs qui en ont besoin. */
     -webkit-background-clip: text;
+    /* Espace extérieur séparant le bloc de ses voisins ; auto sur les côtés peut centrer un bloc de largeur limitée. Ordre des valeurs : haut, droite, bas, gauche. */
     margin: 0 0 10px 0;
+    /* Police choisie ; sans-serif sert de repli si la première police ne peut pas être chargée. */
     font-family: 'Inter', sans-serif;
 }
 
 .slogan-principal {
+    /* Taille des caractères ; rem dépend de la taille racine, vw de la largeur de la fenêtre. */
     font-size: 1.5rem;
+    /* Épaisseur des caractères : 400 normal, 600 semi-gras, 700 gras, 800 très gras. */
     font-weight: 600;
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
     color: var(--couleur-slogan);
+    /* Hauteur de ligne : un nombre sans unité multiplie la taille du texte. */
     line-height: 1.3;
+    /* Police choisie ; sans-serif sert de repli si la première police ne peut pas être chargée. */
     font-family: 'Inter', sans-serif;
 }
 
 .description-principale {
+    /* Taille des caractères ; rem dépend de la taille racine, vw de la largeur de la fenêtre. */
     font-size: 1.4rem;
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
     color: var(--couleur-description);
+    /* Hauteur de ligne : un nombre sans unité multiplie la taille du texte. */
     line-height: 1.6;
+    /* Limite supérieure de largeur ; none retire la limite, calc combine plusieurs dimensions. */
     max-width: 550px;
+    /* Marge extérieure au-dessus du contenu ou du bloc ; 0 supprime cet espace. */
     margin-top: 25px;
+    /* Police choisie ; sans-serif sert de repli si la première police ne peut pas être chargée. */
     font-family: 'Nunito', sans-serif;
 }
 
 
+/* Décaler les deux lignes du slogan sur les écrans larges. */
 .ligne-slogan {
+    /* Mode de disposition : block occupe une ligne, flex aligne les enfants, grid crée une grille, none masque le bloc sans réserver d’espace. */
     display: block;
+    /* Marge extérieure à gauche du contenu ou du bloc ; 0 supprime cet espace. */
     margin-left: 40px;
 }
 
 .decalage-slogan {
+    /* Marge extérieure à gauche du contenu ou du bloc ; 0 supprime cet espace. */
     margin-left: 160px;
 }
 
 
+/* Supprimer les retraits sur mobile pour conserver la largeur de lecture. */
 @media (max-width: 768px) {
     .ligne-slogan,
     .decalage-slogan {
+        /* Marge extérieure à gauche du contenu ou du bloc ; 0 supprime cet espace. */
         margin-left: 0;
     }
 }
 
 
 .titre-section {
+    /* Taille des caractères ; rem dépend de la taille racine, vw de la largeur de la fenêtre. */
     font-size: 24px;
+    /* Hauteur de ligne : un nombre sans unité multiplie la taille du texte. */
     line-height: 1.2;
+    /* Épaisseur des caractères : 400 normal, 600 semi-gras, 700 gras, 800 très gras. */
     font-weight: 700;
+    /* Fond de l’élément : couleur, dégradé ou variable de la palette ; transparent laisse voir le fond parent. */
     background: var(--degrade-section);
+    /* Avec text, limiter le fond aux contours des lettres pour obtenir du texte en dégradé. */
     background-clip: text;
+    /* Version préfixée du découpage du fond dans le texte pour les moteurs qui en ont besoin. */
     -webkit-background-clip: text;
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
     color: transparent;
+    /* Espace extérieur séparant le bloc de ses voisins ; auto sur les côtés peut centrer un bloc de largeur limitée. Ordre des valeurs : les quatre côtés. */
     margin: 0;
+    /* Police choisie ; sans-serif sert de repli si la première police ne peut pas être chargée. */
     font-family: 'Inter', sans-serif;
 }
 
 
+/* Texte narratif affiché à l’intérieur du volet déroulant. */
 .section-histoire {
+    /* Largeur du bloc : 100 % remplit le parent, fit-content s’adapte au contenu ; une valeur en px fixe la largeur. */
     width: 100%;
+    /* Limite supérieure de largeur ; none retire la limite, calc combine plusieurs dimensions. */
     max-width: none;
+    /* Espace intérieur entre le contenu et les bords du bloc. Ordre des valeurs : haut/bas puis gauche/droite. */
     padding: 15px 0;
+    /* Avec border-box, inclure les bordures et le padding dans les dimensions CSS annoncées. */
     box-sizing: border-box;
+    /* Police choisie ; sans-serif sert de repli si la première police ne peut pas être chargée. */
     font-family: 'Nunito', sans-serif;
 }
 
 .texte-histoire {
+    /* Taille des caractères ; rem dépend de la taille racine, vw de la largeur de la fenêtre. */
     font-size: 1.15rem;
+    /* Épaisseur des caractères : 400 normal, 600 semi-gras, 700 gras, 800 très gras. */
     font-weight: 400;
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
     color: var(--couleur-texte);
+    /* Hauteur de ligne : un nombre sans unité multiplie la taille du texte. */
     line-height: 1.6;
+    /* Alignement du texte : center le centre ; justify répartit les espaces pour aligner les deux bords. */
     text-align: justify;
+    /* Avec pretty, demander une répartition plus harmonieuse des mots entre les lignes, selon le navigateur. */
     text-wrap: pretty;
+    /* Avec auto, permettre la césure automatique ; elle dépend de la langue déclarée et du dictionnaire du navigateur. */
     hyphens: auto;
+    /* Marge extérieure au-dessous du contenu ou du bloc ; 0 supprime cet espace. */
     margin-bottom: 20px;
+    /* Police choisie ; sans-serif sert de repli si la première police ne peut pas être chargée. */
     font-family: 'Nunito', sans-serif;
 }
 
 .ligne-texte-histoire {
+    /* Mode de disposition : block occupe une ligne, flex aligne les enfants, grid crée une grille, none masque le bloc sans réserver d’espace. */
     display: block;
 }
 
 
+/* Distinguer les passages importants par un fond et une bordure. */
 .histoire-mise-en-valeur {
+    /* Taille des caractères ; rem dépend de la taille racine, vw de la largeur de la fenêtre. */
     font-size: 1.2rem;
+    /* Épaisseur des caractères : 400 normal, 600 semi-gras, 700 gras, 800 très gras. */
     font-weight: 600;
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
     color: var(--couleur-texte);
+    /* Hauteur de ligne : un nombre sans unité multiplie la taille du texte. */
     line-height: 1.65;
+    /* Espace intérieur entre le contenu et les bords du bloc. Ordre des valeurs : haut/bas puis gauche/droite. */
     padding: 12px 20px;
+    /* Marges sur l’axe du texte ; ici espaces au-dessus et au-dessous du passage. */
     margin-block: 1.5rem;
+    /* Couleur de remplissage derrière le contenu. */
     background-color: var(--couleur-panneau);
+    /* Contour complet : épaisseur, type de trait et couleur. */
     border: 1px solid var(--couleur-bordure);
+    /* Arrondi des coins ; 999px donne une forme de pilule. Quatre valeurs : haut gauche, haut droit, bas droit, bas gauche. */
     border-radius: 0 8px 8px 0;
+    /* Police choisie ; sans-serif sert de repli si la première police ne peut pas être chargée. */
     font-family: 'Nunito', sans-serif;
 }

@@ -14,7 +14,7 @@ Développée avec Streamlit, l’application web TGVision vise à étudier la po
 - Une page d’accueil consacrée à la présentation du projet.
 - Une organisation en plusieurs pages, avec une navigation personnalisée.
 - Une identité visuelle définie dans les fichiers CSS.
-- Des contenus multimédias : images, animation, audio et vidéo.
+- Des contenus visuels : images et animation.
 - Un fichier CSV contenant les données de régularité mensuelle des TGV.
 - Un workflow GitHub Actions assurant les vérifications de base du code Python.
 
@@ -52,11 +52,9 @@ IADATA701-PROJET/
 ├── app/
 │   ├── app.py                  # Point d’entrée de l’application
 │   ├── pages/                  # Accueil et pages de l’application
-│   ├── static/                 # Ressources statiques, dont la vidéo
 │   ├── styles/                 # Feuilles de style CSS
 │   └── utils/
 │       └── styles.py           # Chargement des styles
-├── audit/                      # Ressources audio
 ├── data/
 │   └── initial/                # Données initiales au format CSV
 ├── images/                     # Logos, icônes et animations

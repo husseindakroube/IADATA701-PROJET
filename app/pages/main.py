@@ -4,12 +4,14 @@ import streamlit as st
 GLOBAL_Path = Path(__file__).resolve().parent
 IMAGES_PATH = GLOBAL_Path.parent.parent / "images"
 
+# Répartir le texte et le visuel d’accueil sur deux colonnes de largeurs différentes.
 title_title, Logo_title = st.columns(
     [1, 1.5],
     gap="medium",
     vertical_alignment="center",
 )
 
+# Conserver le format GIF pour afficher l’animation du train.
 with Logo_title:
     with st.container(
         horizontal_alignment="right"
@@ -19,6 +21,7 @@ with Logo_title:
          width="content",
       )
 
+# Les classes HTML reprennent les styles de page-principal.css.
 with title_title:
     st.html(
         """
@@ -46,6 +49,7 @@ with title_title:
         """
     )
 
+# Séparer visuellement la présentation et le contenu détaillé.
 st.markdown(
     """
 <div style="
@@ -71,6 +75,7 @@ st.html(
 
 st.html('<p class="etiquette-principale">DÉCOUVRIR TGVISION</p>')
 
+# Replier le récit au départ ; la clé permet de cibler cet expander dans colors.css.
 with st.container(key="histoire_deroulante"):
     with st.expander("Et si chaque retard racontait une histoire ?", expanded=False):
         st.html(
@@ -103,6 +108,8 @@ with st.container(key="histoire_deroulante"):
 st.header("Notre problématique")
 st.write("Dans quelle mesure la structure du réseau TGV est-elle associée à la régularité des liaisons, et peut-on exploiter cette structure pour améliorer la prédiction des retards ?")
 
+# Chaque carte ouvre une page déclarée dans app.py.
+# Les clés distinguent les boutons portant tous le même libellé.
 col1, col2, col3 = st.columns(3)
 
 with col1, st.container(border=True):

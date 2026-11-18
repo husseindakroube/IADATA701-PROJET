@@ -5,9 +5,9 @@ from pathlib import Path
 import streamlit as st
 from utils.styles import load_css
 
+# Résoudre les ressources depuis ce fichier, indépendamment du dossier de lancement.
 BASE_PATH = Path(__file__).resolve().parent
 IMAGES_PATH = BASE_PATH.parent / "images"
-AUDIT_PATH = BASE_PATH.parent / "audit"
 
 st.set_page_config(
     page_title="TGVISION | SNCF TGV",
@@ -18,6 +18,7 @@ st.set_page_config(
 
 load_css()
 
+# Déclarer les pages communes aux menus de bureau et mobile.
 pages = [
     st.Page(
         "pages/main.py",
@@ -36,14 +37,12 @@ pages = [
         "pages/page3.py",
         title="Prédiction des retards"
     ),
-    st.Page(
-        "pages/page4.py",
-        title="A PROPRE"
-    ),
 ]
 
+# Masquer le menu natif pour utiliser les barres de navigation personnalisées.
 pg = st.navigation(pages, position="hidden")
 
+# Construire les liens mobiles ; aria-current signale la page active aux lecteurs d’écran.
 liens_navigation_mobile = []
 for page in pages:
     page_active = page.url_path == pg.url_path
@@ -52,12 +51,15 @@ for page in pages:
         classe_lien += " lien-navigation-active"
     attribut_page_courante = ' aria-current="page"' if page_active else ""
     adresse_page = f"./{page.url_path}" if page.url_path else "./"
+    # Échapper les valeurs avant de les insérer dans le HTML.
     liens_navigation_mobile.append(
         f'<a class="{classe_lien}" href="{escape(adresse_page, quote=True)}"{attribut_page_courante}>'
         f'{escape(page.title)}</a>'
     )
 
+# Intégrer le logo au HTML en base64, sans URL de fichier statique.
 logo_mobile = b64encode((IMAGES_PATH / "SNCF_logo.png").read_bytes()).decode("ascii")
+# La clé fournit un sélecteur CSS st-key ; details/summary gère le menu sans JavaScript.
 with st.container(key="barre-navigation-mobile"):
     st.html(f"""
         <nav class="barre-navigation-mobile" aria-label="Navigation principale">
@@ -74,6 +76,7 @@ with st.container(key="barre-navigation-mobile"):
 
 with st.container(key="barre-navigation-haut"):
 
+    # Donner davantage de largeur aux intitulés longs dans la barre de bureau.
     nav_columns = st.columns(
         [0.9, 2.4] + [max(0.9, len(page.title) / 10) for page in pages],
         gap="small",
@@ -123,83 +126,5 @@ with st.container(key="barre-navigation-haut"):
             )
 
 
-with st.container(key="audio-arriere-plan"):
-    st.audio(
-        AUDIT_PATH / "just keep tootin.mp3",
-        format="audio/mpeg",
-        autoplay=True,
-        loop=True
-    )
-
-st.html("""
-<script>
-(() => {
-    const KEY = "tgvision_audio_time";
-
-    function initializeAudio() {
-        const audio = document.querySelector(
-            ".st-key-audio-arriere-plan audio"
-        );
-
-        if (!audio) return false;
-        if (audio.dataset.tgvisionReady) return true;
-
-        audio.dataset.tgvisionReady = "true";
-
-        const savedTime = Number(
-            sessionStorage.getItem(KEY) || 0
-        );
-
-        function restore() {
-            if (
-                Number.isFinite(savedTime) &&
-                savedTime > 0 &&
-                Number.isFinite(audio.duration)
-            ) {
-                audio.currentTime = Math.min(
-                    savedTime,
-                    Math.max(0, audio.duration - 0.1)
-                );
-            }
-        }
-
-        if (audio.readyState >= 1) {
-            restore();
-        } else {
-            audio.addEventListener(
-                "loadedmetadata",
-                restore,
-                { once: true }
-            );
-        }
-
-        function save() {
-            sessionStorage.setItem(
-                KEY,
-                String(audio.currentTime)
-            );
-        }
-
-        audio.addEventListener("timeupdate", save);
-        window.addEventListener("pagehide", save);
-
-        return true;
-    }
-
-    if (!initializeAudio()) {
-        const observer = new MutationObserver(() => {
-            if (initializeAudio()) {
-                observer.disconnect();
-            }
-        });
-
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-    }
-})();
-</script>
-""", unsafe_allow_javascript=True)
-
+# Afficher la page sélectionnée après les éléments communs de l’application.
 pg.run()
