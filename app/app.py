@@ -8,6 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import streamlit as st
 from utils.styles import load_css
+from utils.footer import render_footer
 
 # Résoudre les ressources depuis ce fichier, indépendamment du dossier de lancement.
 BASE_PATH = Path(__file__).resolve().parent
@@ -147,3 +148,4 @@ with st.container(key="barre-navigation-haut"):
 
 # Afficher la page sélectionnée après les éléments communs de l’application.
 pg.run()
+render_footer()

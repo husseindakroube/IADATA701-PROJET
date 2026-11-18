@@ -158,8 +158,4 @@ with col5, st.container(border=True):
     st.subheader("Conclusions et reproductibilité")
     st.write("Consulter les limites, les sources et les fonctionnalités manquantes")
     st.page_link("pages/conclusions.py", label="Consulter le bilan →")
-st.divider()
-st.caption("Projet collectif IADATA701 — interface TGVision et analyses de l'équipe. "
-           "Les noms et rôles détaillés de l'équipe restent à renseigner.")
-st.markdown("[Code du projet](https://github.com/husseindakroube/IADATA701-PROJET)")
 
