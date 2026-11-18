@@ -196,14 +196,14 @@ def test_flags_have_boolean_types() -> None:
 def test_reserved_flag_column_is_not_overwritten() -> None:
     frame = make_frame().with_columns(pl.lit("source value").alias(FLAG_COLUMNS[0]))
 
-    with pytest.raises(ValueError, match="reserved diagnostic flag"):
+    with pytest.raises(ValueError, match="colonnes réservées aux indicateurs de diagnostic"):
         clean_data(frame)
 
 
 def test_non_numeric_required_count_column_raises() -> None:
     frame = make_frame().with_columns(pl.Series("nb_train_prevu", ["unknown"]))
 
-    with pytest.raises(ValueError, match="integer or all-null"):
+    with pytest.raises(ValueError, match="entières ou entièrement nulles"):
         clean_data(frame)
 
 
@@ -212,7 +212,7 @@ def test_float_count_column_raises() -> None:
         pl.Series("nb_train_prevu", [10.0], dtype=pl.Float64)
     )
 
-    with pytest.raises(ValueError, match="integer or all-null"):
+    with pytest.raises(ValueError, match="entières ou entièrement nulles"):
         clean_data(frame)
 
 

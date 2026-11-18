@@ -125,7 +125,7 @@ def test_construction_metadata_mismatch_is_visible() -> None:
     metadata = {
         "network_diagnostics_by_service": {"National": {"nodes": 99, "edges": 2}}
     }
-    with pytest.raises(ValueError, match="topology mismatch"):
+    with pytest.raises(ValueError, match="Incohérence topologique"):
         build_descriptive_summaries(*inputs, construction_metadata=metadata)
 
 

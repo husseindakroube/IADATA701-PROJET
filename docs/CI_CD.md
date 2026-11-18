@@ -8,7 +8,7 @@ Le processus est défini dans `.github/workflows/ci.yml`.
 2. L’environnement est installé à partir de `.python-version` et `uv.lock`, avec uv 0.12.13.
 3. Ruff recherche les erreurs critiques, Python vérifie la syntaxe et pytest exécute tous les tests, dont les six pages Streamlit. La couverture de `app/` et `src/projet_kit_data/` doit atteindre **90,1 %**, sans réduire le périmètre mesuré. Ce contrôle ne remplace pas une vérification complète du style.
 4. Les rapports JUnit et de couverture XML/HTML disponibles sont conservés pendant 14 jours, même en cas d’échec.
-5. Après validation, une image Docker `linux/amd64` est construite et un conteneur est réellement démarré pour contrôler son état de santé.
+5. Après validation, une image Docker `linux/amd64` est construite et un conteneur est réellement démarré pour contrôler son état de santé. Un second conteneur sans réseau exécute `scripts/deployment/smoke_app.py` : les six pages doivent se charger avec les dépendances et ressources de production avant publication.
 6. Seuls les envois ou lancements manuels sur `main` publient l’image dans GHCR. Une demande de fusion ne déclenche ni connexion au registre, ni publication, ni déploiement.
 7. Lorsque le déploiement est activé, l’image testée et publiée est déployée avec son empreinte SHA-256 immuable. L’étiquette `latest` ne sert pas de référence en production.
 
@@ -38,7 +38,7 @@ L’équipe peut imposer une approbation dans l’environnement production et ex
 - Les fichiers de déploiement sont placés dans `~/.local/share/tgvision/`. Un verrou empêche les modifications concurrentes.
 - L’application écoute uniquement sur `127.0.0.1:8501` du serveur. Un mandataire inverse Nginx ou Caddy doit rediriger les requêtes vers cette adresse et gérer le domaine, TLS et WebSocket. Aucun site public n’est créé automatiquement sans cette configuration.
 
-Le conteneur utilise un compte non privilégié. Il ne lance aucun carnet de calcul et n’entraîne aucun modèle. L’image contient le code, les données, les rapports, les ressources statiques et les carnets téléchargeables. Les modèles sérialisés, l’environnement de développement, les résultats des tests et l’ancien GIF d’accueil sont exclus.
+Le conteneur utilise un compte non privilégié. Il ne lance aucun carnet de calcul et lit les prédictions enregistrées ; la page clusters recalcule la PCA et les ajustements K-Means de la courbe du coude. L’image contient le code, les données, les rapports, les ressources statiques et les carnets sources. Les modèles sérialisés, l’environnement de développement, les résultats des tests et l’ancien GIF d’accueil sont exclus.
 
 ## Mise à jour et retour à la version précédente
 

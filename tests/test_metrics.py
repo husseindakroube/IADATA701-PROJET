@@ -189,7 +189,7 @@ def test_invalid_parameters_and_inconsistent_artifacts_raise(tmp_path) -> None:
     )
     bad_path = tmp_path / "bad-edges.parquet"
     bad_edges.write_parquet(bad_path)
-    with pytest.raises(ValueError, match="absent from nodes"):
+    with pytest.raises(ValueError, match="absents du fichier des nœuds"):
         run_graph_metrics_pipeline(
             paths[0], bad_path, paths[2], tmp_path / "out", tmp_path / "r.md"
         )

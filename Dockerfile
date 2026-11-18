@@ -19,6 +19,7 @@ COPY images ./images
 COPY data ./data
 COPY docs ./docs
 COPY notebooks ./notebooks
+COPY scripts/deployment/smoke_app.py ./scripts/deployment/smoke_app.py
 RUN useradd --create-home --uid 10001 appuser \
     && mkdir -p /app/logs && chown appuser:appuser /app/logs
 USER appuser

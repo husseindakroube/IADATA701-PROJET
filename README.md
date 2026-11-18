@@ -81,7 +81,14 @@ Les tests d'intégration vérifient le chargement des six pages, les filtres, le
 métier et la correspondance des métriques avec les mêmes observations de test.
 La CI lance désormais la suite complète, publie les rapports et exige au moins
 90,1 % de couverture sur `app/` et `src/projet_kit_data/`. Le relevé local initial
-a été actualisé à 90,47 % (162 tests), le 18 novembre 2026. Les tests de déploiement sont également exécutés.
+a été actualisé à 91,62 % (170 tests), le 18 novembre 2026. Les tests de déploiement sont également exécutés.
+
+Les vérifications de syntaxe et d'erreurs critiques couvrent tous les scripts,
+y compris ceux de génération des coordonnées et des agrégats de liaisons.
+Les tests de l'interface vérifient aussi la sélection sur la carte et les courbes
+directionnelles du graphe. Après le contrôle de santé Docker, la CI charge les
+six pages dans l'image de production, sans réseau, avec
+`scripts/deployment/smoke_app.py`, avant toute publication sur GHCR.
 
 ## Documentation et déploiement
 

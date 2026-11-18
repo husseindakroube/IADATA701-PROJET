@@ -189,7 +189,7 @@ def test_audit_includes_anomaly_examples_and_threshold_ordering(
         "nb_train_retard_sup_15 >= nb_train_retard_sup_30 >= nb_train_retard_sup_60"
     )
     assert ordering["record_count"] == 4
-    assert "competing with air travel" in ordering["note"]
+    assert "concurrence avec l’avion" in ordering["note"]
     assert (
         ordering["pairwise_checks"]["nb_train_retard_sup_30_ge_nb_train_retard_sup_60"][
             "record_count"
@@ -232,7 +232,7 @@ def test_audit_generates_readable_report_without_changing_raw_file(
     assert 'Exemples d’anomalies' in report
     assert "negative_nb_train_retard_sup_30" in report
     assert "Threshold ordering" in report
-    assert "No records or values were modified." in report
+    assert "Aucune observation ni valeur n’a été modifiée." in report
     assert input_path.read_bytes() == original_contents
 
 

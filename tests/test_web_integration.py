@@ -59,6 +59,36 @@ def test_all_pages_render(page):
     assert not app.exception
 
 
+def test_map_selected_route_displays_details_and_monthly_evolution():
+    app = AppTest.from_file(str(ROOT / "app/app.py"), default_timeout=30).run()
+    app.switch_page("pages/routes_network.py").run()
+    choice = app.selectbox(key="carte_selectbox_liaison")
+    choice.select(choice.options[1]).run()
+    assert not app.exception
+    metrics = {metric.label: metric.value for metric in app.metric}
+    assert "Durée moyenne" in metrics
+    assert "Taux prédit (modèle A)" in metrics
+    assert metrics["Durée moyenne"] != "N/A"
+    assert any("Causes de retard moyennes" in item.value for item in app.markdown)
+
+
+def test_ego_graph_has_separate_directional_curves_and_station_legend():
+    from utils.carte import construire_ego_graphe
+
+    fig = construire_ego_graphe("National", "ANGERS SAINT LAUD")
+    routes = {trace.name: trace for trace in fig.data if trace.mode == "lines+markers"}
+    outgoing, incoming = routes["Départs"], routes["Arrivées"]
+    assert (outgoing.x[15], outgoing.y[15]) != (incoming.x[15], incoming.y[15])
+    assert (outgoing.x[0], outgoing.y[0]) == (incoming.x[30], incoming.y[30])
+    assert outgoing.marker.symbol == incoming.marker.symbol == "arrow"
+    assert outgoing.marker.angleref == incoming.marker.angleref == "previous"
+    stations = [trace for trace in fig.data if trace.mode == "markers"]
+    assert len(stations) >= 2
+    assert len({trace.marker.color for trace in stations}) == len(stations)
+    assert all(trace.name and not trace.text for trace in stations)
+    assert fig.layout.legend.x > 1 and fig.layout.legend.y == 1
+
+
 def test_dependent_route_filters_and_test_month():
     app = AppTest.from_file(str(ROOT / "app/app.py"), default_timeout=30).run()
     app.switch_page("pages/routes_network.py").run()

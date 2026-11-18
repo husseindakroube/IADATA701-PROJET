@@ -210,9 +210,9 @@ def test_invalid_keys_duplicates_and_flagged_valid_observations() -> None:
 
 
 def test_missing_required_columns_and_wrong_key_types_raise() -> None:
-    with pytest.raises(ValueError, match="Missing required graph key columns"):
+    with pytest.raises(ValueError, match="Colonnes de clé du graphe requises absentes"):
         construct_graph_data(pl.DataFrame({"date": ["2024-01"]}))
-    with pytest.raises(TypeError, match="Polars String dtype"):
+    with pytest.raises(TypeError, match="type String de Polars"):
         construct_graph_data(
             pl.DataFrame(
                 {
@@ -262,9 +262,9 @@ def test_export_schemas_metadata_report_and_pipeline(tmp_path) -> None:
     assert metadata["node_count"] == 2
     assert metadata["service_aware_edge_count"] == 2
     report = report_path.read_text(encoding="utf-8")
-    assert "Network structure diagnostics by service" in report
-    assert "Temporal diagnostics" in report
-    assert "Data-quality diagnostics" in report
+    assert "Diagnostics structurels du réseau par service" in report
+    assert "Diagnostics temporels" in report
+    assert "Diagnostics de qualité des données" in report
 
     second = export_graph_artifacts(
         construct_graph_data(source, source_dataset_path=input_path),
