@@ -7,6 +7,10 @@ from projet_kit_data.graph.descriptive import (
     _write_report,
     build_descriptive_summaries,
 )
+from projet_kit_data.graph.presentation import (
+    METRIC_PRESENTATION,
+    format_metric_value,
+)
 
 
 def fixture_frames():
@@ -98,11 +102,17 @@ def test_descriptive_summaries_separate_services_and_use_station_names() -> None
         == 3
     )
     assert result.node_metric_summary.height == 2
+    degree_rows = result.node_rankings.filter(
+        pl.col("ranking_metric") == "connectivity_degree"
+    )
+    assert degree_rows.height == 5  # all stations tie for rank 1; cutoff ties survive
+    assert set(degree_rows["rank"]) == {1}
     assert (
         result.node_rankings.filter(
-            pl.col("ranking_metric") == "connectivity_degree"
-        ).height
-        == 4
+            pl.col("ranking_metric") == "betweenness_centrality"
+        )
+        .filter(pl.col("value") <= 0)
+        .is_empty()
     )
     assert set(result.node_rankings["station_name"]) <= {"Alpha", "Beta", "Gamma"}
     assert result.edge_rankings.height == 3
@@ -118,6 +128,33 @@ def test_descriptive_summaries_separate_services_and_use_station_names() -> None
     assert national["retard_moyen_tous_trains_arrivee_missing"] == 0
     assert national["cancellation_rate_missing"] == 1
     assert result.metadata["outlier_definition"].startswith("Tukey")
+    assert result.node_rankings.columns == [
+        "rank",
+        "service",
+        "ranking_metric",
+        "node_id",
+        "station_name",
+        "value",
+    ]
+    assert result.edge_rankings.columns == [
+        "service",
+        "edge_id",
+        "source",
+        "origin_name",
+        "target",
+        "destination_name",
+        "edge_betweenness",
+    ]
+
+
+def test_metric_presentation_and_display_format_do_not_change_numeric_values() -> None:
+    source_value = 0.123456789
+
+    assert (
+        METRIC_PRESENTATION["betweenness_centrality"].label == "Betweenness centrality"
+    )
+    assert format_metric_value("betweenness_centrality", source_value) == "0.1235"
+    assert source_value == 0.123456789
 
 
 def test_construction_metadata_mismatch_is_visible() -> None:
@@ -149,9 +186,14 @@ def test_unified_report_uses_french_human_tables_and_preserves_other_sections(
     _write_report(result, report)
     content = report.read_text(encoding="utf-8")
 
-    assert "## Structure des réseaux" in content
-    assert "## Degrés et centralité des gares" in content
-    assert "## Évolution mensuelle" in content
+    assert "## 2. Structure du réseau" in content
+    assert "### Importance des gares" in content
+    assert "## 3. Évolution temporelle" in content
+    assert "## 4. Régularité opérationnelle" in content
+    assert "Composantes fortement connexes" in content
+    assert (
+        "ne teste pas l’association entre structure du réseau et régularité" in content
+    )
     assert "![Réseau National](../../processed/graph/visualizations/" in content
     assert "Texte conservé." in content
     assert "node_id" not in content
@@ -160,3 +202,7 @@ def test_unified_report_uses_french_human_tables_and_preserves_other_sections(
     assert "node_count" not in content
     assert "retard_moyen_tous_trains_arrivee_" not in content
     assert "<!-- BEGIN GENERATED DESCRIPTIVE CONTENT -->" in content
+    assert "Degree" in content
+    assert "Betweenness centrality" in content
+    assert "node_id" not in content
+    assert "edge_id" not in content

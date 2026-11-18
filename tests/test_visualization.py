@@ -67,8 +67,7 @@ def test_visualizations_generate_reusable_service_specific_pngs(tmp_path) -> Non
         "degree_distributions",
         "node_centrality_distributions",
         "edge_betweenness_distribution",
-        "top10_station_rankings",
-        "top10_edge_rankings",
+        "leading_station_rankings",
         "monthly_network_evolution",
         "operational_outcome_distributions",
     }

@@ -14,6 +14,8 @@ import networkx as nx
 import numpy as np
 import polars as pl
 
+from projet_kit_data.graph.presentation import METRIC_PRESENTATION
+
 GRAPH_DIR = Path("data/processed/graph")
 DEFAULT_RESEARCH_PATH = Path("data/processed/research_dataset.parquet")
 DEFAULT_NODE_METRICS_PATH = GRAPH_DIR / "node_metrics.parquet"
@@ -153,12 +155,12 @@ def _network_chart(
             },
             arrowprops={"arrowstyle": "-", "color": "#64748b", "lw": 0.6},
         )
-    axis.set_title(f"Réseau de liaisons OD observées — {service}", fontsize=15, pad=22)
+    axis.set_title(f"Observed OD network — {service}", fontsize=15, pad=22)
     axis.margins(x=0.12, y=0.18)
     axis.text(
         0.01,
         0.01,
-        "Taille des nœuds : intermédiarité globale. Les liens ne représentent ni trafic, ni itinéraire complet.",
+        f"Node size: overall {METRIC_PRESENTATION['betweenness_centrality'].label}. OD links are not traffic volumes or complete itineraries.",
         transform=axis.transAxes,
         fontsize=9,
         color="#444444",
@@ -171,12 +173,8 @@ def _degree_chart(
     overall_nodes: pl.DataFrame, services: list[str], destination: Path
 ) -> Path:
     fig, axes = plt.subplots(1, 2, figsize=(15, 5.8), sharey=True)
-    for axis, column, title in zip(
-        axes,
-        ("in_degree", "out_degree"),
-        ("Degré entrant", "Degré sortant"),
-        strict=True,
-    ):
+    for axis, column in zip(axes, ("in_degree", "out_degree"), strict=True):
+        title = METRIC_PRESENTATION[column].label
         distributions = {}
         for service in services:
             frame = overall_nodes.filter(pl.col("service") == service)
@@ -202,11 +200,11 @@ def _degree_chart(
                 alpha=0.88,
             )
         axis.set_title(title)
-        axis.set_xlabel("Nombre de voisins distincts")
+        axis.set_xlabel("Distinct neighbours")
         axis.set_xticks(degrees, [str(value) for value in degrees], rotation=90)
         axis.grid(axis="y", alpha=0.22)
         axis.legend(frameon=False)
-    axes[0].set_ylabel("Part des gares (%)")
+    axes[0].set_ylabel("Share of stations (%)")
     path = destination / "degree_distributions.png"
     _finish(fig, path)
     return path
@@ -227,12 +225,8 @@ def _centrality_chart(
     overall_nodes: pl.DataFrame, services: list[str], destination: Path
 ) -> Path:
     fig, axes = plt.subplots(1, 2, figsize=(13, 5.4))
-    for axis, column, title in zip(
-        axes,
-        ("betweenness_centrality", "pagerank"),
-        ("Intermédiarité des gares", "PageRank des gares"),
-        strict=True,
-    ):
+    for axis, column in zip(axes, ("betweenness_centrality", "pagerank"), strict=True):
+        title = METRIC_PRESENTATION[column].label
         for service in services:
             frame = overall_nodes.filter(pl.col("service") == service)
             values = frame[column].drop_nulls().to_list()
@@ -245,16 +239,16 @@ def _centrality_chart(
                 axis,
                 values,
                 color=SERVICE_COLORS.get(service),
-                label=f"{service} (zéro : {zero_share:.1f} %)",
+                label=f"{service} (zero: {zero_share:.1f}%)",
                 linewidth=1.8,
             )
         axis.set_title(title)
-        axis.set_xlabel("Valeur")
-        axis.set_ylabel("Proportion cumulée")
+        axis.set_xlabel("Metric value")
+        axis.set_ylabel("Cumulative proportion")
         axis.set_ylim(0, 1.02)
         axis.grid(alpha=0.22)
         axis.legend(frameon=False)
-    fig.suptitle("Distributions empiriques des centralités globales")
+    fig.suptitle("Empirical distributions of node centrality metrics")
     path = destination / "node_centrality_distributions.png"
     _finish(fig, path)
     return path
@@ -283,27 +277,27 @@ def _edge_betweenness_chart(
         axes[0].text(
             0.02,
             0.96 - 0.12 * list(services).index(service),
-            f"{service}: médiane={median:.3f}; P90={percentile_90:.3f}",
+            f"{service}: median={median:.4f}; P90={percentile_90:.4f}",
             transform=axes[0].transAxes,
             va="top",
             fontsize=8,
             color=color,
         )
     axes[0].set(
-        title="Fonction de répartition empirique",
-        xlabel="Intermédiarité des liaisons",
-        ylabel="Proportion cumulée",
+        title="Empirical cumulative distribution",
+        xlabel=METRIC_PRESENTATION["edge_betweenness"].label,
+        ylabel="Cumulative proportion",
     )
     axes[1].set(
-        title="Histogramme complémentaire",
-        xlabel="Intermédiarité des liaisons",
-        ylabel="Nombre de liaisons",
+        title="Supplementary histogram",
+        xlabel=METRIC_PRESENTATION["edge_betweenness"].label,
+        ylabel="Number of OD links",
     )
     for axis in axes:
         axis.grid(alpha=0.2)
         axis.legend(frameon=False)
     fig.suptitle(
-        "Intermédiarité des liaisons — mesure topologique, pas un volume de trafic"
+        f"{METRIC_PRESENTATION['edge_betweenness'].label} — a topological measure, not a traffic volume"
     )
     path = destination / "edge_betweenness_distribution.png"
     _finish(fig, path)
@@ -312,35 +306,42 @@ def _edge_betweenness_chart(
 
 def _ranking_charts(
     overall_nodes: pl.DataFrame,
-    overall_edges: pl.DataFrame,
     nodes: pl.DataFrame,
-    edges: pl.DataFrame,
     services: list[str],
     destination: Path,
 ) -> dict[str, Path]:
     paths: dict[str, Path] = {}
     node_names = dict(zip(nodes["node_id"].to_list(), nodes["station_name"].to_list()))
     metrics = (
-        ("degree", "Degré"),
-        ("betweenness_centrality", "Intermédiarité"),
-        ("pagerank", "PageRank"),
+        ("degree", METRIC_PRESENTATION["degree"].label),
+        (
+            "betweenness_centrality",
+            METRIC_PRESENTATION["betweenness_centrality"].label,
+        ),
+        ("pagerank", METRIC_PRESENTATION["pagerank"].label),
     )
-    fig, axes = plt.subplots(3, 2, figsize=(15, 14))
+    fig, axes = plt.subplots(3, len(services), figsize=(14, 11), squeeze=False)
     for row, (metric, title) in enumerate(metrics):
         for column, service in enumerate(services):
             axis = axes[row, column]
+            precision = METRIC_PRESENTATION[metric].precision
             subset = (
-                overall_nodes.filter(pl.col("service") == service)
-                .sort(metric, descending=True)
-                .head(10)
+                overall_nodes.filter(
+                    (pl.col("service") == service) & (pl.col(metric) > 0)
+                )
+                .with_columns(pl.col(metric).round(precision).alias("_display_value"))
+                .with_columns(
+                    pl.col("_display_value")
+                    .rank(method="dense", descending=True)
+                    .alias("_rank")
+                )
+                .filter(pl.col("_rank") <= 3)
+                .sort("_rank")
             )
             names = (
                 subset["station_name"].to_list()
                 if "station_name" in subset.columns
-                else [
-                    node_names.get(value, value)
-                    for value in subset["node_id"].to_list()
-                ]
+                else [node_names.get(node_id, node_id) for node_id in subset["node_id"]]
             )
             values = subset[metric].to_list()
             positions = np.arange(len(names))
@@ -349,53 +350,13 @@ def _ranking_charts(
             axis.invert_yaxis()
             axis.set_title(f"{service} — {title}")
             axis.grid(axis="x", alpha=0.2)
-            axis.set_xlabel("Valeur de la mesure")
-    fig.suptitle("Dix premières gares selon trois mesures distinctes", fontsize=15)
-    path = destination / "top10_station_rankings.png"
+            axis.set_xlabel(title)
+            if not names:
+                axis.text(0.5, 0.5, "No positive values", ha="center", va="center")
+    fig.suptitle("Leading stations by metric (three dense ranks; ties included)")
+    path = destination / "leading_station_rankings.png"
     _finish(fig, path)
-    paths["top10_station_rankings"] = path
-
-    named_edges = (
-        overall_edges.join(
-            edges.select("edge_id", "service", "source", "target"),
-            on=["edge_id", "service"],
-            how="left",
-        )
-        .join(nodes, left_on="source", right_on="node_id", how="left")
-        .rename({"station_name": "origin"})
-        .join(nodes, left_on="target", right_on="node_id", how="left")
-        .rename({"station_name": "destination"})
-    )
-    fig, axes = plt.subplots(
-        1, len(services), figsize=(16, max(6, len(services) * 4)), squeeze=False
-    )
-    for column, service in enumerate(services):
-        subset = (
-            named_edges.filter(pl.col("service") == service)
-            .sort("edge_betweenness", descending=True)
-            .head(10)
-        )
-        labels = [
-            f"{origin} → {target}"
-            for origin, target in zip(
-                subset["origin"].to_list(), subset["destination"].to_list(), strict=True
-            )
-        ]
-        values = subset["edge_betweenness"].to_list()
-        positions = np.arange(len(labels))
-        axis = axes[0, column]
-        axis.barh(positions, values, color=SERVICE_COLORS.get(service), alpha=0.88)
-        axis.set_yticks(positions, labels, fontsize=8)
-        axis.invert_yaxis()
-        axis.set_title(service)
-        axis.set_xlabel("Intermédiarité de liaison")
-        axis.grid(axis="x", alpha=0.2)
-    fig.suptitle(
-        "Dix premières liaisons selon l’intermédiarité topologique", fontsize=15
-    )
-    path = destination / "top10_edge_rankings.png"
-    _finish(fig, path)
-    paths["top10_edge_rankings"] = path
+    paths["leading_station_rankings"] = path
     return paths
 
 
@@ -424,14 +385,19 @@ def _monthly_chart(
     monthly = monthly_nodes.join(monthly_edges, on=["period", "service"], how="left")
     fig, axes = plt.subplots(2, 2, figsize=(14, 9))
     series = (
-        (axes[0, 0], "nodes", "Gares observées", "Nombre de gares"),
-        (axes[0, 1], "edges", "Liaisons dirigées observées", "Nombre de liaisons"),
-        (axes[1, 0], "max_pagerank", "Maximum mensuel du PageRank", "PageRank maximal"),
+        (axes[0, 0], "nodes", "Observed stations", "Number of stations"),
+        (axes[0, 1], "edges", "Observed directed OD links", "Number of links"),
+        (
+            axes[1, 0],
+            "max_pagerank",
+            f"Monthly maximum {METRIC_PRESENTATION['pagerank'].label}",
+            METRIC_PRESENTATION["pagerank"].label,
+        ),
         (
             axes[1, 1],
             "max_betweenness",
-            "Maximum mensuel de l’intermédiarité",
-            "Intermédiarité maximale",
+            f"Monthly maximum {METRIC_PRESENTATION['betweenness_centrality'].label}",
+            METRIC_PRESENTATION["betweenness_centrality"].label,
         ),
     )
     for service in services:
@@ -479,7 +445,7 @@ def _monthly_chart(
                 zorder=5,
             )
             axes[0, 0].annotate(
-                f"{period}: {nodes_count[index]} gares",
+                f"{period}: {nodes_count[index]} stations",
                 (index, nodes_count[index]),
                 xytext=(4, 8),
                 textcoords="offset points",
@@ -494,7 +460,7 @@ def _monthly_chart(
                 zorder=5,
             )
             axes[0, 1].annotate(
-                f"{period}: {edges_count[index]} liaisons",
+                f"{period}: {edges_count[index]} links",
                 (index, edges_count[index]),
                 xytext=(4, 8),
                 textcoords="offset points",
@@ -503,7 +469,7 @@ def _monthly_chart(
             )
     axes[0, 0].legend(frameon=False)
     fig.suptitle(
-        "Évolution mensuelle — les deux centralités sont des maxima, pas des moyennes",
+        "Monthly network evolution — centrality series are maxima, not averages",
         fontsize=14,
     )
     path = destination / "monthly_network_evolution.png"
@@ -796,11 +762,7 @@ def generate_visualizations(
     paths["edge_betweenness_distribution"] = _edge_betweenness_chart(
         overall_edges, services, destination
     )
-    paths.update(
-        _ranking_charts(
-            overall_nodes, overall_edges, nodes, edges, services, destination
-        )
-    )
+    paths.update(_ranking_charts(overall_nodes, nodes, services, destination))
     paths["monthly_network_evolution"] = _monthly_chart(
         node_metrics, edge_metrics, services, destination
     )

@@ -28,11 +28,16 @@ only its marked descriptive section, preserving other report content.
 - `node_metric_summary.parquet`: one row per service and the overall node
   metric distributions (non-null count, missing count, mean, standard
   deviation, median, 25th/75th percentiles, minimum, maximum).
-- `node_rankings.parquet`: up to ten rows per service and ranking measure
+- `node_rankings.parquet`: positive-value leaders per service and measure
   (`connectivity_degree`, `betweenness_centrality`, `pagerank`), with rank,
-  station ID, station name, and value.
-- `edge_rankings.parquet`: up to ten overall directed liaison rows per service
+  station ID, station name, and the full-precision value. Ties at the `top_n`
+  cutoff are included; rank ties use the metric's displayed precision. Zero
+  values are excluded from rankings while their proportions remain reported in
+  the distribution chart.
+- `edge_rankings.parquet`: positive-value directed liaison leaders per service
   by edge betweenness, with edge ID and readable origin/destination names.
+  Display-precision ties at the `top_n` cutoff are included. Detailed output
+  keeps full-precision values and the original column schema.
 - `monthly_summary.parquet`: one row per month/service with observed node and
   edge counts, mean degree, maximum PageRank, maximum/median node betweenness,
   and mean/maximum edge betweenness.
@@ -48,6 +53,13 @@ metrics. Monthly summaries use only monthly metric rows. Operational outcome
 summaries use the Phase 2 monthly research dataset and are not mixed with
 overall graph metrics.
 
+`graph/presentation.py` is the single display dictionary for graph metrics. It
+maps each internal column to an English label, a short French explanation, a
+unit, and a display precision. Display formatting never changes stored
+numeric values. The unified French research report is intentionally concise;
+complete machine-readable rankings remain in Parquet, with identifiers there
+and station names in reader-facing summaries.
+
 ### Output schemas
 
 All tables are Parquet files. Identifier, station, service, period, and metric
@@ -58,8 +70,8 @@ nulls where the source metrics are missing.
 | --- | --- | --- |
 | `network_summary.parquet` | 1 per service | `service` (String); `node_count`, `edge_count`, `weakly_connected_components`, `strongly_connected_components`, `largest_weak_component`, `nodes_multiple_incoming`, `nodes_multiple_outgoing`, `self_loops` (Int64) |
 | `node_metric_summary.parquet` | 1 per service | `service` (String); for each node metric: `*_count` and `*_missing` (UInt32), and `*_mean`, `*_std`, `*_median`, `*_q25`, `*_q75`, `*_min`, `*_max` (numeric; degree extrema retain integer type) |
-| `node_rankings.parquet` | Up to 10 per service and ranking measure | `rank` (UInt32), `service`, `ranking_metric`, `node_id`, `station_name` (String), `value` (Float64) |
-| `edge_rankings.parquet` | Up to 10 per service | `service`, `edge_id`, `source`, `origin_name`, `target`, `destination_name` (String), `edge_betweenness` (Float64) |
+| `node_rankings.parquet` | Positive-value leaders per service and ranking measure, including cutoff ties | `rank` (UInt32), `service`, `ranking_metric`, `node_id`, `station_name` (String), `value` (Float64) |
+| `edge_rankings.parquet` | Positive-value leaders per service, including cutoff ties | `service`, `edge_id`, `source`, `origin_name`, `target`, `destination_name` (String), `edge_betweenness` (Float64) |
 | `monthly_summary.parquet` | 1 per month/service | `period`, `service` (String); `node_count`, `edge_count` (UInt32); mean/max metric summaries (Float64) |
 | `operational_summary.parquet` | 1 per service | `service` (String); each outcome's count, missing, and outlier count (UInt32), plus summary statistics (Float64) |
 | `quality_flag_summary.parquet` | 1 per service | `service` (String); one UInt32 count for each existing Boolean quality flag |
@@ -75,18 +87,21 @@ Generated PNGs are:
 - `network_national.png`, `network_international.png`: full directed OD graphs;
   reciprocal directions curve separately, International weak components are
   arranged independently, and node size represents overall node betweenness.
-- `degree_distributions.png`: grouped, normalized in-degree/out-degree bars;
+- `degree_distributions.png`: grouped, normalized In-degree/Out-degree bars;
   each panel shows integer degree values and the service node count.
-- `node_centrality_distributions.png`: separate empirical CDFs for node
-  betweenness and PageRank, with zero-valued proportions in the legend.
-- `top10_station_rankings.png`: readable station labels for the ten highest
-  values of degree, betweenness and PageRank by service.
+- `node_centrality_distributions.png`: separate empirical CDFs for
+  Betweenness centrality and PageRank, with zero-valued proportions in the
+  legend.
+- `leading_station_rankings.png`: readable station labels for the first three
+  dense rank levels of Degree, Betweenness centrality and PageRank. Ties are
+  included, values at zero are omitted, and underlying values are unchanged.
 - `edge_betweenness_distribution.png`: empirical CDF and supplementary
-  histogram, annotated with median and 90th percentile.
-- `top10_edge_rankings.png`: ten highest-betweenness directed liaisons per
-  service, using origin/destination names.
-- `monthly_network_evolution.png`: node/edge counts and maximum monthly
-  PageRank/betweenness, with 2025 International topology change annotations.
+  histogram, annotated with median and 90th percentile. The former Top 10 edge
+  chart was removed because it selected only half of the 20 International
+  edges tied at the maximum; all tied leaders remain in the Parquet ranking.
+- `monthly_network_evolution.png`: node/edge counts and monthly maximum
+  PageRank/Betweenness centrality, with 2025 International topology changes.
+  Centrality series show monthly maxima, not network averages.
 - `operational_outcome_distributions.png`: primary arrival delay, supplementary
   delayed-train arrival delay, and cancellation-rate distributions by service.
   The flagged all-train delays below -15 minutes are omitted from that central
