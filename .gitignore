@@ -11,3 +11,6 @@ wheels/
 .uv-cache/
 .pytest_cache/
 logs/*.log
+reports/
+.coverage*
+.env

@@ -1,8 +1,8 @@
-name: CI
+name: CI / CD
 
 on:
   push:
-    branches: [Test_Shihao, main]
+    branches: ['**']
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -10,29 +10,142 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: cicd-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  UV_VERSION: '0.12.13'
+  MPLBACKEND: Agg
+  STREAMLIT_BROWSER_GATHER_USAGE_STATS: 'false'
+
 jobs:
-  check:
-    name: Python checks
+  checks:
+    name: Code, tests and coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v7.0.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked environment
+        run: uv sync --locked --dev
+      - name: Check critical Python errors
+        run: uv run --locked ruff check app src tests scripts/deployment --select E9,F63,F7,F82
+      - name: Check Python syntax
+        run: uv run --locked python -m compileall -q app src scripts/deployment
+      - name: Run all tests, including six Streamlit pages
+        run: >-
+          uv run --locked pytest -q
+          --cov=src/projet_kit_data --cov=app
+          --cov-fail-under=90.1 --cov-report=term-missing:skip-covered
+          --cov-report=xml:reports/coverage.xml
+          --cov-report=html:reports/coverage
+          --junitxml=reports/pytest.xml
+      - name: Save test reports even on failure
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: test-reports-${{ github.sha }}
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 14
+
+  image:
+    name: Build and verify Docker image
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      reference: ${{ steps.publish.outputs.reference }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Image name
+        id: name
+        env:
+          REPOSITORY: ${{ github.repository }}
+        run: echo "tag=ghcr.io/${REPOSITORY,,}:${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          push: false
+          platforms: linux/amd64
+          tags: ${{ steps.name.outputs.tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Check actual container health
+        env:
+          IMAGE: ${{ steps.name.outputs.tag }}
+        run: |
+          set -euo pipefail
+          docker run -d --name tgvision-smoke "$IMAGE"
+          trap 'docker logs tgvision-smoke; docker rm -f tgvision-smoke' EXIT
+          for attempt in $(seq 1 60); do
+            status=$(docker inspect --format '{{.State.Health.Status}}' tgvision-smoke)
+            if [ "$status" = healthy ]; then exit 0; fi
+            if [ "$status" = unhealthy ]; then exit 1; fi
+            sleep 2
+          done
+          exit 1
+      - name: Authenticate to GHCR
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish the exact tested image
+        id: publish
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          IMAGE: ${{ steps.name.outputs.tag }}
+        run: |
+          set -euo pipefail
+          docker push "$IMAGE"
+          digest=$(docker image inspect --format '{{index .RepoDigests 0}}' "$IMAGE")
+          echo "reference=$digest" >> "$GITHUB_OUTPUT"
+          echo "Published: $digest" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    name: Deploy to production server
+    needs: image
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      github.event_name != 'pull_request' &&
+      vars.DEPLOY_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
+    environment: production
+    concurrency:
+      group: tgvision-production
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      packages: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7.0.0
+      - uses: actions/checkout@v7.0.1
         with:
-          enable-cache: true
-
-      - name: Install Python
-        run: uv python install
-
-      - name: Install dependencies
-        run: uv sync --locked --dev
-
-      - name: Check critical Python errors
-        run: uv run --locked ruff check app src --select E9,F63,F7,F82
-
-      - name: Check Python syntax
-        run: uv run --locked python -m compileall -q app src
+          persist-credentials: false
+      - name: Deploy immutable image over verified SSH
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_IMAGE: ${{ needs.image.outputs.reference }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/deployment/deploy.py

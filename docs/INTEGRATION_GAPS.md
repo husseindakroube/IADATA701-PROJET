@@ -59,7 +59,8 @@ de chargement, de validation et d'affichage nécessaire à l'intégration.
 
 Pas de déploiement public fourni ; pas de manifeste complet par modèle (version,
 variables, split, environnement) ; pas de documentation Sphinx construite ; pas de
-preuve de couverture supérieure à 90 %. La CI existante contrôle syntaxe et erreurs
-Python critiques mais ne lance pas pytest. Ces éléments restent à réaliser, ainsi que
+validation distante de la couverture. La CI lance maintenant pytest avec un seuil de
+90,1 % (mesure locale initiale : 90,19 %). La chaîne Docker/SSH est configurée, mais
+son activation serveur reste à faire ; voir `docs/CI_CD.md`. Restent également
 la validation scientifique des points ci-dessus. Ils ne sont pas développés dans cette
 intégration, conformément au périmètre demandé. La prévision future est également absente.

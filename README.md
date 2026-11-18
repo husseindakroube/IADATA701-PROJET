@@ -75,15 +75,19 @@ uv run --locked python -m compileall -q app src
 
 Les tests d'intégration vérifient le chargement des six pages, les filtres, les clés
 métier et la correspondance des métriques avec les mêmes observations de test.
-La CI existante contrôle la syntaxe et les erreurs critiques ; son exécution de
-pytest reste à ajouter. Une couverture supérieure à 90 % n'est pas certifiée.
+La CI lance désormais la suite complète, publie les rapports et exige au moins
+90,1 % de couverture sur `app/` et `src/projet_kit_data/`. Le relevé local initial
+est de 90,19 % (147 tests). Les tests de déploiement sont également exécutés.
 
 ## Documentation et déploiement
 
 Les documents Markdown importés sont dans `docs/` et `data/reports/`. Le projet ne
 fournit pas encore de construction Sphinx complète ni de lien d'application publique.
-Ces éléments restent à réaliser conformément au cahier des charges ; ils n'ont pas
-été inventés lors de l'intégration.
+Le workflow construit et vérifie une image Docker, la publie sur GHCR depuis main,
+puis peut la déployer par SSH avec contrôle de santé et retour à la version précédente
+en cas d’échec. Configurer les Secrets de production et `DEPLOY_ENABLED` avant activation.
+Voir [la configuration CI/CD](docs/CI_CD.md) pour le serveur, le proxy et les commandes.
+Le déploiement réel et la construction Sphinx restent à valider.
 
 ## Équipe et dépôt
 
