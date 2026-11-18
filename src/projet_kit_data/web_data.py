@@ -1,4 +1,4 @@
-"""Read-only adapters for the team's saved analysis artifacts."""
+'Adaptateurs en lecture seule pour les résultats d’analyse enregistrés par l’équipe.'
 
 import json
 import logging
@@ -18,26 +18,28 @@ LOGGER = logging.getLogger(__name__)
 
 
 def load_table(relative: str) -> pd.DataFrame:
-    """Load a project-owned table and record failures without modifying it."""
+    'Charge une table du projet et journalise les échecs sans modifier le fichier.'
     path = ROOT / relative
     try:
         frame = (
             pd.read_parquet(path) if path.suffix == ".parquet" else pd.read_csv(path)
         )
-        LOGGER.debug("Loaded %s: %d rows", relative, len(frame))
+        LOGGER.debug('Fichier chargé %s : %d lignes', relative, len(frame))
         return frame
     except Exception:
-        LOGGER.exception("Cannot load artifact %s", relative)
+        LOGGER.exception('Impossible de charger le fichier %s', relative)
         raise
 
 
 def load_json(relative: str) -> dict:
-    """Load saved metadata; no model deserialization or training."""
-    return json.loads((ROOT / relative).read_text(encoding="utf-8"))
+    'Charge les métadonnées enregistrées, sans désérialisation ni entraînement de modèle.'
+    result = json.loads((ROOT / relative).read_text(encoding="utf-8"))
+    LOGGER.debug('Métadonnées chargées : %s', relative)
+    return result
 
 
 def validate_observations(frame: pd.DataFrame) -> pd.DataFrame:
-    """Validate the shared key before exposing observations in the UI."""
+    'Valide la clé commune avant d’afficher les observations dans l’interface.'
     required = {
         *KEYS,
         *FLAGS,
@@ -58,7 +60,7 @@ def validate_observations(frame: pd.DataFrame) -> pd.DataFrame:
 def filter_observations(
     frame: pd.DataFrame, start, end, service=None, departure=None, arrival=None
 ) -> pd.DataFrame:
-    """Apply the same inclusive date and directed-route filters on each page."""
+    'Applique les mêmes filtres de dates inclusives et de liaisons orientées sur chaque page.'
     mask = frame["date"].between(pd.Timestamp(start), pd.Timestamp(end))
     for column, value in [
         ("service", service),

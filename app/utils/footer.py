@@ -1,4 +1,4 @@
-"""Shared footer with locally stored logos and institutional contact details."""
+'Pied de page commun avec logos locaux et coordonnées des institutions.'
 
 from base64 import b64encode
 from pathlib import Path
@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def render_footer() -> None:
-    """Display the project footer without requesting remote assets at runtime."""
+    'Affiche le pied de page sans télécharger de ressources pendant l’exécution.'
     telecom = b64encode((ROOT / "images/telecom_paris.svg").read_bytes()).decode(
         "ascii"
     )

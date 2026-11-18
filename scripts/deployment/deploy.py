@@ -1,4 +1,4 @@
-"""Send a deployment payload via SSH stdin; never interpolate secrets into commands."""
+'Transmet les données de déploiement par l’entrée standard SSH sans insérer de secrets dans les commandes.'
 
 import json
 import os
@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def main() -> None:
-    """Deploy only when all required environment values have been supplied."""
+    'Déploie uniquement si toutes les variables d’environnement requises sont renseignées.'
     required = [
         "DEPLOY_HOST",
         "DEPLOY_USER",
@@ -23,18 +23,18 @@ def main() -> None:
     ]
     missing = [name for name in required if not os.environ.get(name)]
     if missing:
-        raise SystemExit("Missing deployment secrets/settings: " + ", ".join(missing))
+        raise SystemExit('Secrets ou paramètres de déploiement manquants : ' + ", ".join(missing))
     host, user = os.environ["DEPLOY_HOST"], os.environ["DEPLOY_USER"]
     port = os.environ.get("DEPLOY_PORT") or "22"
     image = os.environ["DEPLOY_IMAGE"]
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9.-]*", host):
-        raise SystemExit("DEPLOY_HOST must be a hostname or IPv4 address")
+        raise SystemExit('DEPLOY_HOST doit être un nom d’hôte ou une adresse IPv4')
     if not re.fullmatch(r"[a-z_][a-z0-9_-]*", user):
-        raise SystemExit("Invalid SSH user")
+        raise SystemExit('Utilisateur SSH invalide')
     if not port.isdecimal() or not 1 <= int(port) <= 65535:
-        raise SystemExit("Invalid SSH port")
+        raise SystemExit('Port SSH invalide')
     if not re.fullmatch(r"ghcr\.io/[a-z0-9_./-]+@sha256:[a-f0-9]{64}", image):
-        raise SystemExit("An immutable GHCR digest is required")
+        raise SystemExit('Une empreinte GHCR immuable est requise')
     payload = {
         "image": image,
         "registry_user": os.environ["GHCR_USER"],
@@ -42,7 +42,7 @@ def main() -> None:
         "compose": (ROOT / "compose.yaml").read_text(encoding="utf-8"),
     }
     remote_source = (ROOT / "scripts/deployment/remote.py").read_text(encoding="utf-8")
-    # repr encodes data as a Python string literal, not executable shell text.
+    # repr encode les données dans une chaîne Python littérale, pas dans du code de commande exécutable.
     source = "import json\nCONFIG = json.loads(" + repr(json.dumps(payload)) + ")\n"
     source += remote_source
     with tempfile.TemporaryDirectory(prefix="tgvision-ssh-") as directory:

@@ -1,4 +1,4 @@
-"""Create descriptive network and outcome charts as reusable PNG files."""
+'Crée des graphiques descriptifs réutilisables du réseau et des résultats au format PNG.'
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ SERVICE_ORDER = ("National", "International")
 def _require(frame: pl.DataFrame, columns: set[str], label: str) -> None:
     missing = sorted(columns.difference(frame.columns))
     if missing:
-        raise ValueError(f"{label} is missing columns: {', '.join(missing)}")
+        raise ValueError(f"{label} ne contient pas les colonnes : {', '.join(missing)}")
 
 
 def _finish(fig: plt.Figure, path: Path) -> None:
@@ -38,7 +38,7 @@ def _finish(fig: plt.Figure, path: Path) -> None:
 
 
 def _component_layout(graph: nx.DiGraph) -> dict[str, np.ndarray]:
-    """Lay out weak components independently in a compact grid."""
+    'Dispose les composantes faiblement connexes indépendamment dans une grille compacte.'
     components = sorted(nx.weakly_connected_components(graph), key=len, reverse=True)
     columns = (
         len(components)
@@ -716,29 +716,29 @@ def generate_visualizations(
     edges: pl.DataFrame,
     output_dir: str | os.PathLike[str] = DEFAULT_OUTPUT_DIR,
 ) -> dict[str, Path]:
-    """Generate comparative distribution, topology, and outcome charts.
-
-    :param research_data: Monthly research dataset with operational outcomes.
-    :type research_data: polars.DataFrame
-    :param node_metrics: Existing overall and monthly node metrics.
-    :type node_metrics: polars.DataFrame
-    :param edge_metrics: Existing overall and monthly edge metrics.
-    :type edge_metrics: polars.DataFrame
-    :param nodes: Existing station ID/name mapping.
-    :type nodes: polars.DataFrame
-    :param edges: Existing service-aware directed edge table.
-    :type edges: polars.DataFrame
-    :param output_dir: Destination directory for PNG files.
-    :type output_dir: str | os.PathLike[str]
-    :returns: Mapping of descriptive chart names to saved paths.
-    :rtype: dict[str, pathlib.Path]
-    :raises TypeError: If any input is not a Polars DataFrame.
-    :raises ValueError: If required chart fields are missing.
-    :raises OSError: If chart files cannot be written.
-    """
+    """Génère les graphiques comparatifs de distribution, de topologie et de résultats.
+    
+        :param research_data: Données de recherche mensuelles avec résultats opérationnels.
+        :type research_data: polars.DataFrame
+        :param node_metrics: Métriques globales et mensuelles existantes des nœuds.
+        :type node_metrics: polars.DataFrame
+        :param edge_metrics: Métriques globales et mensuelles existantes des arêtes.
+        :type edge_metrics: polars.DataFrame
+        :param nodes: Correspondance existante entre identifiants et noms des gares.
+        :type nodes: polars.DataFrame
+        :param edges: Table existante des arêtes orientées distinguant les services.
+        :type edges: polars.DataFrame
+        :param output_dir: Dossier de destination des fichiers PNG.
+        :type output_dir: str | os.PathLike[str]
+        :returns: Correspondance entre noms des graphiques descriptifs et chemins enregistrés.
+        :rtype: dict[str, pathlib.Path]
+        :raises TypeError: Si une entrée n’est pas un DataFrame Polars.
+        :raises ValueError: Si des champs requis pour les graphiques sont absents.
+        :raises OSError: Si les fichiers des graphiques ne peuvent pas être écrits.
+        """
     frames = (research_data, node_metrics, edge_metrics, nodes, edges)
     if any(not isinstance(frame, pl.DataFrame) for frame in frames):
-        raise TypeError("all visualization inputs must be Polars DataFrames")
+        raise TypeError('Toutes les entrées des visualisations doivent être des DataFrames Polars')
     _require(
         research_data,
         {
@@ -818,25 +818,25 @@ def run_visualization_pipeline(
     edges_path: str | os.PathLike[str] = DEFAULT_EDGES_PATH,
     output_dir: str | os.PathLike[str] = DEFAULT_OUTPUT_DIR,
 ) -> dict[str, Path]:
-    """Load existing artifacts and generate descriptive PNG visualizations.
-
-    :param research_data_path: Monthly research dataset path.
-    :type research_data_path: str | os.PathLike[str]
-    :param node_metrics_path: Existing node metrics path.
-    :type node_metrics_path: str | os.PathLike[str]
-    :param edge_metrics_path: Existing edge metrics path.
-    :type edge_metrics_path: str | os.PathLike[str]
-    :param nodes_path: Existing station mapping path.
-    :type nodes_path: str | os.PathLike[str]
-    :param edges_path: Existing directed edges path.
-    :type edges_path: str | os.PathLike[str]
-    :param output_dir: Destination directory for charts.
-    :type output_dir: str | os.PathLike[str]
-    :returns: Chart names mapped to generated PNG paths.
-    :rtype: dict[str, pathlib.Path]
-    :raises OSError: If inputs cannot be read or charts cannot be saved.
-    :raises ValueError: If required input fields are absent.
-    """
+    """Charge les résultats existants et génère les visualisations descriptives PNG.
+    
+        :param research_data_path: Chemin des données de recherche mensuelles.
+        :type research_data_path: str | os.PathLike[str]
+        :param node_metrics_path: Chemin des métriques existantes des nœuds.
+        :type node_metrics_path: str | os.PathLike[str]
+        :param edge_metrics_path: Chemin des métriques existantes des arêtes.
+        :type edge_metrics_path: str | os.PathLike[str]
+        :param nodes_path: Chemin de la correspondance existante des gares.
+        :type nodes_path: str | os.PathLike[str]
+        :param edges_path: Chemin des arêtes orientées existantes.
+        :type edges_path: str | os.PathLike[str]
+        :param output_dir: Dossier de destination des graphiques.
+        :type output_dir: str | os.PathLike[str]
+        :returns: Noms des graphiques associés aux chemins PNG générés.
+        :rtype: dict[str, pathlib.Path]
+        :raises OSError: Si les entrées ne peuvent pas être lues ou les graphiques enregistrés.
+        :raises ValueError: Si des champs d’entrée requis sont absents.
+        """
     return generate_visualizations(
         pl.read_parquet(research_data_path),
         pl.read_parquet(node_metrics_path),

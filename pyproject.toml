@@ -1,7 +1,7 @@
 [project]
 name = "projet-kit-data"
 version = "0.1.0"
-description = "Add your description here"
+description = "Application interactive d’analyse de la régularité des TGV SNCF"
 readme = "README.md"
 authors = [
     { name = "mianzha", email = "144988642+mianzha@users.noreply.github.com" }

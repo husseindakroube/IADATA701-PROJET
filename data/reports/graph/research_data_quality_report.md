@@ -1,29 +1,29 @@
-# Research Dataset Quality Report
+# Rapport qualité du jeu de recherche
 
-- Input observation rows: 12,907
-- Input monthly edge metric rows: 12,907
-- Input node metric rows (including overall): 6,385
-- Output rows: 12,907
-- Output columns: 56
-- Date coverage: 2018-01 to 2026-09
+- Observations en entrée : 12,907
+- Lignes de métriques mensuelles des arêtes en entrée : 12,907
+- Lignes de métriques des nœuds en entrée, globales comprises : 6,385
+- Lignes en sortie : 12,907
+- Colonnes en sortie : 56
+- Couverture temporelle : 2018-01 to 2026-09
 - Services: International, National
-- Unique business key `('date', 'service', 'gare_depart', 'gare_arrivee')`: True
-- Overall graph metrics excluded: True
-- Row count preserved after every join: True
-- Edge endpoint mismatches: 0
+- Clé métier unique `('date', 'service', 'gare_depart', 'gare_arrivee')`: True
+- Métriques globales exclues : True
+- Effectif conservé après chaque jointure : True
+- Extrémités d’arêtes incohérentes : 0
 
-## Cancellation rate validity
+## Validité du taux d’annulation
 
-- Valid rates: 12,834
-- Null rates: 73
-- Invalid reasons: `[{"cancellation_rate_invalid_reason": "planned_count_not_positive", "len": 73}]`
+- Taux valides : 12,834
+- Taux absents : 73
+- Motifs d’invalidité : `[{"cancellation_rate_invalid_reason": "planned_count_not_positive", "len": 73}]`
 
-## Primary arrival delay
+## Retard principal à l’arrivée
 
-- Negative values (preserved): 122
-- Values below -15 minutes (flagged and preserved): 11
+- Valeurs négatives conservées : 122
+- Valeurs sous -15 minutes, signalées et conservées : 11
 
-## Missing graph metrics
+## Métriques de graphe manquantes
 
 - `edge_betweenness`: 0
 - `source_in_degree`: 0
@@ -45,7 +45,7 @@
 - `target_out_closeness`: 0
 - `target_pagerank`: 0
 
-## Quality flags
+## Indicateurs qualité
 
 - `flag_negative_count`: 43
 - `flag_sup30_lt_sup60`: 354
@@ -53,9 +53,9 @@
 - `flag_cancellations_gt_planned`: 63
 - `flag_primary_arrival_delay_below_minus_15`: 11
 
-## Output schema
+## Schéma de sortie
 
-| Column | Polars dtype |
+| Colonne | Type Polars |
 |---|---|
 | `edge_id` | String |
 | `date` | String |

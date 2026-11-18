@@ -1,7 +1,7 @@
 name: tgvision
 services:
   web:
-    image: ${TGVISION_IMAGE:?Set TGVISION_IMAGE to the published image digest}
+    image: ${TGVISION_IMAGE:?Définissez TGVISION_IMAGE avec l’empreinte de l’image publiée}
     restart: unless-stopped
     init: true
     ports:

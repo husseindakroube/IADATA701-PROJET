@@ -1,4 +1,4 @@
-"""Tests for deterministic SNCF service-aware graph construction."""
+'Tests de construction déterministe des graphes SNCF distinguant les services.'
 
 import json
 
@@ -15,7 +15,7 @@ from projet_kit_data.graph import (
 
 
 def make_data(rows: list[dict[str, object]]) -> pl.DataFrame:
-    """Create graph-key and representative-measure fixtures."""
+    'Crée des données de test pour les clés du graphe et des mesures représentatives.'
     schema = {
         "date": pl.String,
         "service": pl.String,

@@ -1,6 +1,7 @@
-"""Route exploration and saved network analysis."""
+'Exploration des liaisons et analyse du réseau enregistrée.'
 
 import streamlit as st
+from utils.activity import log_selection
 from utils.data import filters, observations, report, scope_metrics, table
 
 from projet_kit_data.web_data import ROOT
@@ -19,6 +20,7 @@ with routes:
         scope_metrics(data)
     labels = data.service + " · " + data.gare_depart + " → " + data.gare_arrivee
     route = st.selectbox("Liaison à explorer", sorted(labels.unique()))
+    log_selection("route_view", route=route)
     selected = data.loc[labels.eq(route)].sort_values("date")
     with st.container(border=True):
         st.subheader(
@@ -83,6 +85,7 @@ with network:
     if not summary.empty:
         st.dataframe(summary, hide_index=True)
     service = st.selectbox("Réseau pré-calculé", ["National", "International"])
+    log_selection("network_view", service=service)
     path = ROOT / f"data/processed/graph/visualizations/network_{service.lower()}.png"
     if path.is_file():
         st.image(
@@ -96,6 +99,7 @@ with network:
         station = st.selectbox(
             "Détails d'une gare", sorted(nodes.station_name.unique())
         )
+        log_selection("station_view", service=service, station=station)
         st.dataframe(nodes.loc[nodes.station_name.eq(station)], hide_index=True)
     ranking = table(
         "data/processed/graph/descriptive/node_rankings.parquet", required=False

@@ -1,7 +1,8 @@
-"""Quality audit with dedicated indicators and progressive detail."""
+'Audit qualité avec indicateurs dédiés et détails progressifs.'
 
 import pandas as pd
 import streamlit as st
+from utils.activity import log_action
 from utils.data import filters, observations, report, table
 
 from projet_kit_data.web_data import FLAGS, KEYS, ROOT
@@ -61,6 +62,8 @@ with rules:
         data.loc[flagged].to_csv(index=False).encode("utf-8-sig"),
         "anomalies_perimetre.csv",
         "text/csv",
+        on_click=log_action, args=("download",),
+        kwargs={"file": "anomalies_perimetre.csv", "observations": int(flagged.sum())},
     )
 with completeness:
     st.subheader("Quelles informations manquent ?")

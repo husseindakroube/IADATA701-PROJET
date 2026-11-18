@@ -1,4 +1,4 @@
-"""Tests for overall and monthly graph metric calculation."""
+'Tests du calcul des métriques de graphe globales et mensuelles.'
 
 import json
 

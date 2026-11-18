@@ -13,13 +13,15 @@ from utils.footer import render_footer
 # Résoudre les ressources depuis ce fichier, indépendamment du dossier de lancement.
 BASE_PATH = Path(__file__).resolve().parent
 IMAGES_PATH = BASE_PATH.parent / "images"
-LOG_PATH = BASE_PATH.parent / "logs"
+from projet_kit_data.logging_config import configure_logging
+from utils.activity import log_selection
+
 try:
-    LOG_PATH.mkdir(exist_ok=True)
-    logging.basicConfig(filename=LOG_PATH / "app.log", level=logging.DEBUG,
-                        format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    LOGGER = configure_logging()
 except OSError:
-    logging.basicConfig(level=logging.INFO)
+    logging.getLogger(__name__).exception('Impossible d’initialiser les fichiers de journalisation')
+    st.error("Impossible de créer les journaux. Vérifiez les droits du dossier logs/.")
+    st.stop()
 
 st.set_page_config(
     page_title="TGVISION | SNCF TGV",
@@ -147,5 +149,10 @@ with st.container(key="barre-navigation-haut"):
 
 
 # Afficher la page sélectionnée après les éléments communs de l’application.
-pg.run()
-render_footer()
+log_selection("page_view", page=pg.title)
+try:
+    pg.run()
+    render_footer()
+except Exception:
+    LOGGER.exception('Échec de l’exécution de la page : %s', pg.title)
+    raise

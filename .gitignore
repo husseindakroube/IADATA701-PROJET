@@ -1,4 +1,4 @@
-# Python-generated files
+# Fichiers générés par Python
 __pycache__/
 *.py[oc]
 build/
@@ -6,11 +6,11 @@ dist/
 wheels/
 *.egg-info
 
-# Virtual environments
+# Environnements virtuels
 .venv
 .uv-cache/
 .pytest_cache/
-logs/*.log
+logs/*.log*
 reports/
 .coverage*
 .env

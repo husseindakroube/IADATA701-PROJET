@@ -1,4 +1,4 @@
-"""Regression checks for integration boundaries and saved predictions."""
+'Tests de non-régression des limites d’intégration et des prédictions enregistrées.'
 
 import sys
 

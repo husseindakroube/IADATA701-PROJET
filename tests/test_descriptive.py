@@ -1,4 +1,4 @@
-"""Tests for descriptive summaries without inferential analysis."""
+'Tests des synthèses descriptives sans analyse inférentielle.'
 
 import polars as pl
 import pytest

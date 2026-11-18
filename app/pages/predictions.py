@@ -1,9 +1,14 @@
-"""Read saved held-out predictions, never deserialize or retrain a model."""
+'Lit les prédictions réservées au test sans désérialiser ni réentraîner de modèle.'
+
+import logging
 
 import pandas as pd
 import streamlit as st
 from sklearn.metrics import r2_score
 from utils.data import report, table
+from utils.activity import log_selection
+
+LOGGER = logging.getLogger("projet_kit_data.predictions")
 
 from projet_kit_data.ml.evaluation import compute_metrics
 from projet_kit_data.web_data import load_json
@@ -35,6 +40,7 @@ required = {
     "cluster",
 }
 if not required.issubset(predictions.columns):
+    LOGGER.error('Champs absents du schéma des prédictions : %s', sorted(required - set(predictions.columns)))
     st.error("Schéma de prédictions incompatible avec cette page.")
     st.stop()
 predictions["date"] = pd.to_datetime(predictions.date)
@@ -71,6 +77,7 @@ models = {
 try:
     metrics = load_json("data/processed/ml/comparaison_metrics.json")
 except (OSError, ValueError):
+    LOGGER.exception('Impossible de lire les métriques de comparaison')
     metrics = {}
     st.warning("Métriques enregistrées indisponibles ; calcul depuis les prédictions.")
 checked_metrics = {}
@@ -84,6 +91,7 @@ for name, column in models.items():
         abs(checked[k] - metrics[name].get(k, float("inf"))) > 1e-8
         for k in checked
     ):
+        LOGGER.error('Les métriques enregistrées ne correspondent pas aux prédictions : %s', name)
         st.warning(f"Métriques enregistrées incohérentes : {name}.")
 display = pd.DataFrame(checked_metrics).T
 for column in ["mae", "rmse", "weighted_mae"]:
@@ -103,6 +111,7 @@ selected = predictions.loc[labels.eq(route)].sort_values("date")
 month = st.selectbox("Mois du test", selected.date.dt.strftime("%Y-%m").tolist())
 model_name = st.selectbox("Modèle à consulter", list(models)[1:])
 model_column = models[model_name]
+log_selection("prediction_view", route=route, month=month, model=model_name)
 row = selected.loc[selected.date.dt.strftime("%Y-%m").eq(month)].iloc[0]
 cols = st.columns(4)
 for col, label, value in zip(

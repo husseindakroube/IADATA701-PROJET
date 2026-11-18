@@ -1,4 +1,4 @@
-"""Validate SSH inputs and deployment rollback without contacting a server."""
+'Valide les entrées SSH et la restauration du déploiement sans contacter de serveur.'
 
 import importlib.util
 import subprocess

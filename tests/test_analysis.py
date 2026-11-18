@@ -1,4 +1,4 @@
-"""Tests for research dataset joins and derived cancellation rates."""
+'Tests des jointures de recherche et des taux d’annulation calculés.'
 
 import json
 

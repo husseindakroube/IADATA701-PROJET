@@ -1,4 +1,4 @@
-"""Descriptive summaries of SNCF graph topology, metrics, and outcomes."""
+'Synthèses descriptives de la topologie, des métriques et des résultats opérationnels SNCF.'
 
 from __future__ import annotations
 
@@ -40,18 +40,17 @@ OUTCOMES = (
 
 @dataclass
 class DescriptiveResult:
-    """Tables produced by the descriptive analysis.
-
-    :ivar network_summary: Overall topology by service.
-    :ivar node_metric_summary: Distribution statistics for overall node metrics.
-    :ivar node_rankings: Overall top station tables.
-    :ivar edge_rankings: Overall top directed liaison tables.
-    :ivar monthly_summary: Month/service topology and selected metric summaries.
-    :ivar operational_summary: Outcome distribution statistics by service.
-    :ivar quality_flag_summary: Counts of existing Boolean quality flags by service.
-    :ivar metadata: Input sources and analysis configuration.
-    :ivar output_paths: Paths written by the file-based pipeline.
-    """
+    """Tables produites par l’analyse descriptive.
+    
+    :ivar network_summary: Topologie globale par service.
+    :ivar node_metric_summary: Statistiques de distribution des métriques globales des nœuds.
+    :ivar node_rankings: Classements globaux des gares.
+    :ivar edge_rankings: Classements globaux des liaisons orientées.
+    :ivar monthly_summary: Topologie par mois et service et synthèses des métriques retenues.
+    :ivar operational_summary: Statistiques des résultats opérationnels par service.
+    :ivar quality_flag_summary: Effectifs des indicateurs qualité booléens par service.
+    :ivar metadata: Sources et configuration de l’analyse.
+    :ivar output_paths: Chemins écrits par la chaîne de traitement."""
 
     network_summary: pl.DataFrame
     node_metric_summary: pl.DataFrame
@@ -67,7 +66,7 @@ class DescriptiveResult:
 def _check_columns(frame: pl.DataFrame, required: set[str], label: str) -> None:
     missing = required.difference(frame.columns)
     if missing:
-        raise ValueError(f"{label} is missing columns: {', '.join(sorted(missing))}")
+        raise ValueError(f"{label} ne contient pas les colonnes : {', '.join(sorted(missing))}")
 
 
 def _stats_by_group(
@@ -115,37 +114,35 @@ def build_descriptive_summaries(
     construction_metadata: dict[str, Any] | None = None,
     top_n: int = 10,
 ) -> DescriptiveResult:
-    """Build reusable descriptive tables from existing Phase 1/2 artifacts.
-
-    Existing graph metrics are summarized as provided; this function does not
-    recalculate them. Network component counts are derived from the existing
-    directed edge table solely to verify and describe topology.
-
-    :param research_data: Phase 2 monthly research dataset.
+    """Construit des tables descriptives réutilisables à partir des résultats des phases 1 et 2.
+    
+    Les métriques existantes sont résumées sans être recalculées. Le nombre de
+    composantes est calculé à partir des arêtes orientées existantes uniquement pour
+    vérifier et décrire la topologie.
+    
+    :param research_data: Données mensuelles de recherche de la phase 2.
     :type research_data: polars.DataFrame
-    :param node_metrics: Phase 1 overall and monthly node metrics.
+    :param node_metrics: Métriques globales et mensuelles des nœuds de la phase 1.
     :type node_metrics: polars.DataFrame
-    :param edge_metrics: Phase 1 overall and monthly edge metrics.
+    :param edge_metrics: Métriques globales et mensuelles des arêtes de la phase 1.
     :type edge_metrics: polars.DataFrame
-    :param nodes: Phase 1 node identifier/name mapping.
+    :param nodes: Correspondance entre identifiants et noms des nœuds de la phase 1.
     :type nodes: polars.DataFrame
-    :param edges: Phase 1 overall service-aware directed edges.
+    :param edges: Arêtes orientées globales distinguées par service de la phase 1.
     :type edges: polars.DataFrame
-    :param construction_metadata: Optional original construction metadata for
-        cross-checking topology counts.
+    :param construction_metadata: Métadonnées d’origine facultatives pour contrôler les effectifs topologiques.
     :type construction_metadata: dict[str, Any] | None
-    :param top_n: Number of stations/routes per ranking and service.
+    :param top_n: Nombre de gares ou liaisons par classement et service.
     :type top_n: int
-    :returns: Descriptive tables and provenance metadata.
+    :returns: Tables descriptives et métadonnées de provenance.
     :rtype: DescriptiveResult
-    :raises TypeError: If any input is not a Polars DataFrame.
-    :raises ValueError: If required fields are absent or top_n is invalid.
-    """
+    :raises TypeError: Si une entrée n’est pas un DataFrame Polars.
+    :raises ValueError: Si un champ requis manque ou si top_n est invalide."""
     frames = (research_data, node_metrics, edge_metrics, nodes, edges)
     if any(not isinstance(frame, pl.DataFrame) for frame in frames):
-        raise TypeError("all tabular inputs must be Polars DataFrames")
+        raise TypeError('Toutes les entrées tabulaires doivent être des DataFrames Polars')
     if top_n < 1:
-        raise ValueError("top_n must be positive")
+        raise ValueError('top_n doit être strictement positif')
     _check_columns(
         research_data,
         {"date", "service", "gare_depart", "gare_arrivee", *OUTCOMES},
@@ -203,7 +200,7 @@ def build_descriptive_summaries(
                 or reported.get("edges") != row["edge_count"]
             ):
                 raise ValueError(
-                    f"construction metadata topology mismatch for {row['service']}"
+                    f"Incohérence topologique des métadonnées de construction pour {row['service']}"
                 )
 
     overall_nodes = node_metrics.filter(pl.col("period") == "overall")
@@ -309,11 +306,11 @@ def build_descriptive_summaries(
         "overall_edge_metric_rows": overall_edges.height,
         "monthly_graph_count": monthly_summary.height,
         "metric_columns": {"node": list(NODE_METRICS), "edge": ["edge_betweenness"]},
-        "outlier_definition": "Tukey 1.5*IQR, descriptive only; observations are not removed.",
+        "outlier_definition": 'Tukey 1,5 écart interquartile, uniquement descriptif ; aucune observation n’est supprimée.',
         "limitations": [
-            "OD liaisons are not necessarily train itineraries or physical track segments.",
-            "Centrality is not passenger traffic, train frequency, or delay propagation.",
-            "Overall graph metrics are separate from monthly metrics and outcomes.",
+            'Les liaisons origine-destination ne sont pas nécessairement des itinéraires ou tronçons physiques.',
+            'La centralité ne mesure ni trafic voyageurs, ni fréquence des trains, ni propagation des retards.',
+            'Les métriques globales sont distinctes des métriques et résultats mensuels.',
         ],
     }
     return DescriptiveResult(
@@ -329,11 +326,10 @@ def build_descriptive_summaries(
 
 
 def _write_report(result: DescriptiveResult, path: Path) -> None:
-    """Maintain the generated descriptive passage in the unified report.
-
-    Human-authored material outside the marked passage is retained so later
-    research can extend the report without being overwritten on regeneration.
-    """
+    """Met à jour le passage descriptif généré dans le rapport commun.
+    
+    Le contenu rédigé manuellement hors de la zone délimitée est conservé pour
+    permettre de compléter la recherche sans écrasement lors d’une régénération."""
     begin = "<!-- BEGIN GENERATED DESCRIPTIVE CONTENT -->"
     end = "<!-- END GENERATED DESCRIPTIVE CONTENT -->"
     image_dir = "../../processed/graph/visualizations"
@@ -590,31 +586,31 @@ def run_descriptive_analysis(
     report_path: str | os.PathLike[str] = DEFAULT_REPORT_PATH,
     top_n: int = 10,
 ) -> DescriptiveResult:
-    """Summarize existing research and graph artifacts, writing tables/report.
-
-    :param research_data_path: Phase 2 research Parquet path.
-    :type research_data_path: str | os.PathLike[str]
-    :param node_metrics_path: Existing Phase 1 node metric Parquet path.
-    :type node_metrics_path: str | os.PathLike[str]
-    :param edge_metrics_path: Existing Phase 1 edge metric Parquet path.
-    :type edge_metrics_path: str | os.PathLike[str]
-    :param nodes_path: Existing node mapping Parquet path.
-    :type nodes_path: str | os.PathLike[str]
-    :param edges_path: Existing overall edge Parquet path.
-    :type edges_path: str | os.PathLike[str]
-    :param construction_metadata_path: Existing construction metadata JSON path.
-    :type construction_metadata_path: str | os.PathLike[str]
-    :param output_dir: Destination directory for descriptive Parquet tables.
-    :type output_dir: str | os.PathLike[str]
-    :param report_path: Destination Markdown report path.
-    :type report_path: str | os.PathLike[str]
-    :param top_n: Number of ranked stations/routes to retain per service.
-    :type top_n: int
-    :returns: Descriptive tables, metadata, and output paths.
-    :rtype: DescriptiveResult
-    :raises OSError: If inputs cannot be read or outputs cannot be written.
-    :raises ValueError: If schemas, metadata counts, or top_n are invalid.
-    """
+    """Résume les résultats existants de recherche et de graphe, puis écrit les tables et le rapport.
+    
+        :param research_data_path: Chemin Parquet de recherche de la phase 2.
+        :type research_data_path: str | os.PathLike[str]
+        :param node_metrics_path: Existing Chemin Parquet des métriques de nœuds de la phase 1.
+        :type node_metrics_path: str | os.PathLike[str]
+        :param edge_metrics_path: Existing Chemin Parquet des métriques d’arêtes de la phase 1.
+        :type edge_metrics_path: str | os.PathLike[str]
+        :param nodes_path: Chemin Parquet de la correspondance existante des nœuds.
+        :type nodes_path: str | os.PathLike[str]
+        :param edges_path: Chemin Parquet existant des arêtes globales.
+        :type edges_path: str | os.PathLike[str]
+        :param construction_metadata_path: Chemin JSON des métadonnées de construction existantes.
+        :type construction_metadata_path: str | os.PathLike[str]
+        :param output_dir: Dossier de destination des tables descriptives Parquet.
+        :type output_dir: str | os.PathLike[str]
+        :param report_path: Chemin de destination du rapport Markdown.
+        :type report_path: str | os.PathLike[str]
+        :param top_n: Nombre de gares ou liaisons classées à conserver par service.
+        :type top_n: int
+        :returns: Tables descriptives, métadonnées et chemins de sortie.
+        :rtype: DescriptiveResult
+        :raises OSError: Si les entrées ne peuvent pas être lues ou les sorties écrites.
+        :raises ValueError: Si les schémas, effectifs des métadonnées ou top_n sont invalides.
+        """
     input_paths = {
         "research_data": Path(research_data_path),
         "node_metrics": Path(node_metrics_path),

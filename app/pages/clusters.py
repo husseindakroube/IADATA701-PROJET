@@ -1,7 +1,8 @@
-"""Display saved descriptive clusters without fitting any model."""
+'Affiche les groupes descriptifs enregistrés sans ajuster de modèle.'
 
 import streamlit as st
 from utils.data import report, table
+from utils.activity import log_selection
 
 from projet_kit_data.web_data import ROOT
 
@@ -25,6 +26,7 @@ st.caption(
     "Le taux de retard n'est pas une variable de ce clustering."
 )
 cluster = st.selectbox("Cluster", sorted(clusters.cluster.unique()))
+log_selection("cluster_view", cluster=int(cluster))
 st.dataframe(clusters.loc[clusters.cluster.eq(cluster)], hide_index=True)
 profiles = table("data/processed/ml/clusters_profils.parquet", required=False)
 summary = table("data/processed/ml/clusters_resume.parquet", required=False)

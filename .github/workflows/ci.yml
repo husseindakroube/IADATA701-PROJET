@@ -21,7 +21,7 @@ env:
 
 jobs:
   checks:
-    name: Code, tests and coverage
+    name: Code, tests et couverture
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -33,13 +33,13 @@ jobs:
           version: ${{ env.UV_VERSION }}
           enable-cache: true
           cache-dependency-glob: uv.lock
-      - name: Install locked environment
+      - name: Installation de l’environnement verrouillé
         run: uv sync --locked --dev
-      - name: Check critical Python errors
+      - name: Vérification des erreurs Python critiques
         run: uv run --locked ruff check app src tests scripts/deployment --select E9,F63,F7,F82
-      - name: Check Python syntax
+      - name: Vérification de la syntaxe Python
         run: uv run --locked python -m compileall -q app src scripts/deployment
-      - name: Run all tests, including six Streamlit pages
+      - name: Exécution des tests, dont les six pages Streamlit
         run: >-
           uv run --locked pytest -q
           --cov=src/projet_kit_data --cov=app
@@ -47,7 +47,7 @@ jobs:
           --cov-report=xml:reports/coverage.xml
           --cov-report=html:reports/coverage
           --junitxml=reports/pytest.xml
-      - name: Save test reports even on failure
+      - name: Conservation des rapports même en cas d’échec
         if: always()
         uses: actions/upload-artifact@v6
         with:
@@ -57,7 +57,7 @@ jobs:
           retention-days: 14
 
   image:
-    name: Build and verify Docker image
+    name: Construction et vérification de l’image Docker
     needs: checks
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -70,7 +70,7 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - name: Image name
+      - name: Nom de l’image
         id: name
         env:
           REPOSITORY: ${{ github.repository }}
@@ -85,7 +85,7 @@ jobs:
           tags: ${{ steps.name.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Check actual container health
+      - name: Vérification réelle de la santé du conteneur
         env:
           IMAGE: ${{ steps.name.outputs.tag }}
         run: |
@@ -99,14 +99,14 @@ jobs:
             sleep 2
           done
           exit 1
-      - name: Authenticate to GHCR
+      - name: Authentification auprès de GHCR
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Publish the exact tested image
+      - name: Publication de l’image exacte testée
         id: publish
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         env:
@@ -116,10 +116,10 @@ jobs:
           docker push "$IMAGE"
           digest=$(docker image inspect --format '{{index .RepoDigests 0}}' "$IMAGE")
           echo "reference=$digest" >> "$GITHUB_OUTPUT"
-          echo "Published: $digest" >> "$GITHUB_STEP_SUMMARY"
+          echo "Image publiée : $digest" >> "$GITHUB_STEP_SUMMARY"
 
   deploy:
-    name: Deploy to production server
+    name: Déploiement sur le serveur de production
     needs: image
     if: >-
       github.ref == 'refs/heads/main' &&
@@ -138,7 +138,7 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - name: Deploy immutable image over verified SSH
+      - name: Déploiement de l’image immuable par SSH vérifié
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}

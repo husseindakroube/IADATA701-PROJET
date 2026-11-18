@@ -98,3 +98,34 @@ Le déploiement réel et la construction Sphinx restent à valider.
 Projet collectif IADATA701 : interface TGVision et analyses de l'équipe.
 Les noms et rôles détaillés restent à renseigner.
 [Dépôt du projet](https://github.com/husseindakroube/IADATA701-PROJET)
+
+## Journalisation (logging)
+
+L'application utilise le module standard `logging`. Les fichiers sont créés
+automatiquement dans `logs/`, indépendamment du répertoire de lancement :
+
+- `logs/debug.log` : DEBUG et niveaux supérieurs ; démarrage, chargement des
+  données, navigation, filtres, sélection de liaison/gare/cluster, consultation
+  d'une prédiction et clic sur le téléchargement d'un rapport.
+- `logs/error.log` : uniquement ERROR et CRITICAL, avec la trace des exceptions
+  (fichier illisible, schéma invalide, métriques incohérentes ou erreur de page).
+  Ces événements sont également présents dans le journal debug pour le contexte.
+
+Chaque entrée indique la date, l'heure locale du processus, le niveau, le logger
+et le message. Les actions portent un identifiant de session aléatoire, sans nom,
+email ni adresse IP. Les sélections initiales et leurs changements sont journalisés ;
+un rerun Streamlit identique ne duplique pas l'événement. Un clic de téléchargement
+est enregistré comme une demande, pas comme la preuve d'un transfert terminé.
+
+Configuration : `src/projet_kit_data/logging_config.py`. Chaque fichier est limité
+à 5 Mio avec trois sauvegardes (`.log.1` à `.log.3`), en UTF-8. La configuration
+est réutilisée à chaque rerun. Les fichiers de logs et leurs sauvegardes sont
+ignorés par Git. L'ancien `app.log`, s'il existe, n'est plus alimenté.
+
+Le dossier doit être accessible en écriture. En cas d'échec, l'application affiche
+un message et envoie l'erreur à la console. Dans Docker, les fichiers résident dans
+`/app/logs` ; sans volume dédié, ils ne survivent pas au remplacement du conteneur.
+Pour les scripts hors interface, appeler `configure_logging()` au point d'entrée
+avant d'utiliser `logging.getLogger("projet_kit_data.nom_du_module")`.
+
+Tests dédiés : `uv run --locked pytest tests/test_logging.py -q`.

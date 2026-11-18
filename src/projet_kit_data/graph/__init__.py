@@ -1,4 +1,4 @@
-"""Public APIs for constructing and exporting SNCF route graphs."""
+'Interfaces publiques de construction et d’export des graphes de liaisons SNCF.'
 
 from projet_kit_data.graph.analysis import (
     ResearchDataResult,

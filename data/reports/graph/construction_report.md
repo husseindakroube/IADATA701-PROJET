@@ -1,33 +1,33 @@
-# SNCF Graph Construction Report
+# Rapport de construction des graphes SNCF
 
-## Dataset overview
+## Aperçu du jeu de données
 
 - Source: `data\processed\sncf.parquet`
-- Source rows: 12,907
-- Valid monthly observations: 12,907
-- Excluded rows: 0
-- Excluded reasons: `{}`
-- Date coverage: 2018-01 to 2026-09 (105 distinct months)
+- Lignes sources : 12,907
+- Observations mensuelles valides : 12,907
+- Lignes exclues : 0
+- Motifs d’exclusion : `{}`
+- Couverture temporelle : 2018-01 to 2026-09 (105 mois distincts)
 - Services: International, National
-- Stations: 59
-- Service-aware directed edges: 146
-- Monthly observations: 12,907
+- Gares : 59
+- Arêtes orientées distinguées par service : 146
+- Observations mensuelles : 12,907
 
-## Network structure diagnostics by service
+## Diagnostics structurels du réseau par service
 
-All counts refer to each service-specific observed topology. Isolated nodes are zero where a service graph has edges because nodes are introduced from its observed edges.
+Les effectifs décrivent la topologie observée de chaque service. Aucun nœud n’est isolé lorsqu’il existe des arêtes, car les nœuds proviennent des arêtes observées.
 
-| Service | Nodes | Edges | Isolated | Self-loops | Weak components | Strong components | Largest weak component | Multiple incoming | Multiple outgoing |
+| Service | Nœuds | Arêtes | Isolés | Boucles | Composantes faibles | Composantes fortes | Plus grande composante faible | Entrées multiples | Sorties multiples |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | International | 18 | 30 | 0 | 0 | 3 | 3 | 11 | 3 | 3 |
 | National | 52 | 116 | 0 | 0 | 1 | 1 | 52 | 15 | 15 |
 
-## Temporal diagnostics
+## Diagnostics temporels
 
-- Distinct observed months: 105
-- Gaps in overall monthly coverage: none
+- Mois distincts observés : 105
+- Lacunes de couverture mensuelle globale : none
 
-| Month | Observations | Unique edges | New edges vs previous month | No longer observed vs previous month |
+| Mois | Observations | Arêtes uniques | Nouvelles arêtes depuis le mois précédent | Arêtes non observées depuis le mois précédent |
 |---|---:|---:|---:|---:|
 | 2018-01 | 130 | 130 | 130 | 0 |
 | 2018-02 | 130 | 130 | 0 | 0 |
@@ -135,16 +135,16 @@ All counts refer to each service-specific observed topology. Isolated nodes are 
 | 2026-08 | 121 | 121 | 0 | 0 |
 | 2026-09 | 121 | 121 | 0 | 0 |
 
-## Data-quality diagnostics
+## Diagnostics de qualité des données
 
-- Duplicate business-key records: 0
-- Exclusion counts by reason: `{}`
-- Existing diagnostic flags set in the source (these observations remain included when graph keys are valid):
+- Observations à clé métier dupliquée : 0
+- Effectifs exclus par motif : `{}`
+- Indicateurs de diagnostic actifs dans la source ; observations conservées si les clés du graphe sont valides :
   - `flag_negative_count`: 43
   - `flag_sup30_lt_sup60`: 354
   - `flag_sup15_lt_sup30`: 3
   - `flag_cancellations_gt_planned`: 63
 
-## Interpretation and warnings
+## Interprétation et avertissements
 
-- A liaison is an observed origin-destination pair, not necessarily a physical adjacent railway segment, a consecutive train leg, or a confirmed train connection. Graph adjacency does not establish train movement or delay propagation.
+- Une liaison est une paire origine-destination observée, pas nécessairement un tronçon physique adjacent, une étape consécutive ou une correspondance confirmée. L’adjacence ne prouve ni mouvement réel ni propagation des retards.

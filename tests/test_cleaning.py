@@ -1,4 +1,4 @@
-"""Tests for non-destructive row-level cleaning flags."""
+'Tests des indicateurs qualité non destructifs par observation.'
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from projet_kit_data.etl.cleaning import COUNT_COLUMNS, FLAG_COLUMNS, clean_data
 def make_frame(
     rows: list[dict[str, int | None]] | None = None,
 ) -> pl.DataFrame:
-    """Build a small input frame with the required count columns."""
+    'Construit une petite table avec les colonnes de comptage requises.'
     if rows is None:
         rows = [
             {

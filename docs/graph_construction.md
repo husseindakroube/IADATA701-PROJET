@@ -1,44 +1,27 @@
-# SNCF Graph Construction Handoff
+# Construction des graphes SNCF
 
-This module exports reusable directed graphs and monthly edge observations for
-the Streamlit and Graph Analysis work. It constructs topology only; it does not
-calculate centrality, test associations, or interpret delay propagation.
+Ce module exporte des graphes orientés réutilisables et les observations mensuelles des arêtes pour l’interface et l’analyse de réseau. Il construit uniquement la topologie : il ne calcule pas les centralités, ne teste pas les associations et n’interprète pas la propagation des retards.
 
-## Model and limitations
+## Modèle et limites
 
-- A node is one exact source station label. Its `node_id` is derived from the
-  UTF-8 station name using SHA-256; spelling is preserved and labels are never
-  fuzzy-matched or normalized.
-- An edge points from `gare_depart` to `gare_arrivee`. Direction preserves the
-  source route orientation. Reverse routes have a different edge identity.
-- The edge identity is `(service, origin station, destination station)`. The
-  same station nodes are shared across services, while edge identifiers keep
-  services separate. The combined in-memory object is a NetworkX `MultiDiGraph`
-  keyed by `edge_id`; `service_graphs` provides a directed topology per service.
-- Every eligible source row is kept in `edge_observations.parquet`, so users can
-  filter a selected service and month to build a snapshot. Edges and their
-  summary dates do not replace these monthly records.
+- Un nœud correspond au libellé exact d’une gare source. Son `node_id` est calculé par SHA-256 sur le nom UTF-8. Aucune normalisation ni correspondance approximative n’est appliquée.
+- Une arête va de `gare_depart` à `gare_arrivee`. La direction inverse conserve une identité distincte.
+- L’identité d’arête est `(service, gare d’origine, gare de destination)`. Les nœuds sont communs aux services mais les identifiants d’arête les distinguent. Le graphe combiné en mémoire est un `MultiDiGraph` NetworkX indexé par `edge_id`. `service_graphs` fournit une topologie orientée par service.
+- Chaque ligne source admissible est conservée dans `edge_observations.parquet` pour reconstruire un état par service et mois. Les arêtes et leurs dates récapitulatives ne remplacent pas ces observations.
 
-A liaison is an observed origin-destination pair. It is not necessarily a
-physical adjacent railway segment, consecutive train leg, or confirmed train
-connection. Graph adjacency does not prove actual train movement or delay
-propagation.
+Une liaison est une paire origine-destination observée. Elle ne correspond pas nécessairement à un tronçon physique adjacent, à une étape consécutive de trajet ou à une correspondance confirmée. L’adjacence ne prouve ni circulation réelle ni propagation des retards.
 
-Null measurements stay null. Existing diagnostic flags and anomalous operational
-values do not exclude otherwise valid graph keys. Rows with missing, empty, or
-invalid graph keys are reported as exclusions. To ensure unique observation
-business keys, every row in a duplicated `(date, service, gare_depart,
-gare_arrivee)` group is excluded and counted; no arbitrary duplicate is chosen.
+Les mesures nulles restent nulles. Les indicateurs qualité et valeurs opérationnelles anormales n’excluent pas une clé de graphe valide. Les clés absentes, vides ou invalides sont signalées comme exclusions. Toutes les lignes d’un groupe dupliqué `(date, service, gare_depart, gare_arrivee)` sont exclues et comptées ; aucun doublon n’est choisi arbitrairement.
 
-## Run the pipeline
+## Exécution
 
-From the repository root:
+Depuis la racine du dépôt :
 
 ```powershell
 uv run python -c "from projet_kit_data.graph import run_graph_construction_pipeline; result = run_graph_construction_pipeline()"
 ```
 
-Defaults read `data/processed/sncf.parquet` and write:
+Par défaut, l’entrée est `data/processed/sncf.parquet` et les sorties sont :
 
 ```text
 data/processed/graph/nodes.parquet
@@ -48,7 +31,7 @@ data/processed/graph/graph_metadata.json
 data/reports/graph/construction_report.md
 ```
 
-Paths are configurable:
+Les chemins sont configurables :
 
 ```python
 from projet_kit_data.graph import run_graph_construction_pipeline
@@ -60,42 +43,36 @@ result = run_graph_construction_pipeline(
 )
 ```
 
-For a caller that already has a Polars frame, use
-`construct_graph_data(frame)` and optionally `export_graph_artifacts(result)`.
-The returned `GraphConstructionResult` exposes the Polars tables, combined
-NetworkX graph, per-service graphs, metadata, and output paths.
+Pour une table Polars déjà chargée, utiliser `construct_graph_data(frame)`, puis éventuellement `export_graph_artifacts(result)`. Le résultat `GraphConstructionResult` expose les tables Polars, le graphe NetworkX combiné, les graphes par service, les métadonnées et les chemins de sortie.
 
-## Artifact schemas
+## Schémas des fichiers
 
 ### `nodes.parquet`
 
-| Column | Polars type | Meaning |
+| Colonne | Type Polars | Signification |
 |---|---|---|
-| `node_id` | String | Stable `node_<24 hex chars>` identifier |
-| `station_name` | String | Exact original station label |
+| `node_id` | String | Identifiant stable : préfixe `node_` suivi de 24 caractères hexadécimaux |
+| `station_name` | String | Libellé exact de la gare source |
 
-One row represents each unique station label.
+Une ligne par libellé unique de gare.
 
 ### `edges.parquet`
 
-| Column | Polars type | Meaning |
+| Colonne | Type Polars | Signification |
 |---|---|---|
-| `edge_id` | String | Stable `edge_<24 hex chars>` identifier |
-| `service` | String | Original service category |
-| `source` | String | Origin `node_id` |
-| `target` | String | Destination `node_id` |
-| `n_months_observed` | UInt32 | Distinct observed months for the edge |
-| `first_date` | String | Earliest `YYYY-MM` observation |
-| `last_date` | String | Latest `YYYY-MM` observation |
+| `edge_id` | String | Identifiant stable : préfixe `edge_` suivi de 24 caractères hexadécimaux |
+| `service` | String | Catégorie de service d’origine |
+| `source` | String | `node_id` de départ |
+| `target` | String | `node_id` d’arrivée |
+| `n_months_observed` | UInt32 | Nombre de mois distincts observés |
+| `first_date` | String | Première observation au format `YYYY-MM` |
+| `last_date` | String | Dernière observation au format `YYYY-MM` |
 
-`(service, source, target)` uniquely identifies an edge. Opposite directions
-and different services remain distinct.
+La clé `(service, source, target)` est unique. Les directions opposées et les services différents restent distincts.
 
 ### `edge_observations.parquet`
 
-The first five fields are `edge_id` (String), `date` (String, `YYYY-MM`),
-`service` (String), `source` (String node ID), and `target` (String node ID).
-The current 30-column ETL output produces this exact 33-column table schema:
+Les cinq premiers champs sont `edge_id`, `date` (format `YYYY-MM`), `service`, `source` et `target`, tous de type String. La sortie ETL actuelle à 30 colonnes produit cette table à 33 colonnes :
 
 ```text
 edge_id: String
@@ -133,22 +110,11 @@ flag_sup15_lt_sup30: Boolean
 flag_cancellations_gt_planned: Boolean
 ```
 
-For a compatible input frame, every non-key source column is retained with its
-original Polars dtype and values. The source `date` and `service` columns are
-also the output date and service fields; they are not duplicated. Extra source
-columns, if present, are preserved after the listed fields. The table retains
-source route labels, operational measurements, comments, nulls, and diagnostic
-flags. One row is one unique monthly business key after explicit exclusions.
+Chaque colonne source hors clé conserve son type Polars et ses valeurs. `date` et `service` ne sont pas dupliquées. Les colonnes supplémentaires sont conservées après les champs listés. La table conserve les noms de liaisons, mesures, commentaires, valeurs nulles et indicateurs. Une ligne correspond à une clé métier mensuelle unique après les exclusions explicites.
 
-`graph_metadata.json` records schema version, source and row counts, exclusion
-reasons, graph identities, service categories, date coverage, temporal counts,
-service-level directed network diagnostics, flagged source-record counts,
-configuration, and interpretation warnings. `construction_report.md` presents
-the same key facts for human review, including monthly observations, monthly
-unique edge counts and coverage changes, gaps, and weak/strong component
-statistics.
+`graph_metadata.json` consigne la version du schéma, la source, les effectifs, les motifs d’exclusion, les identités, services, dates, comptages temporels, diagnostics topologiques, effectifs signalés, configuration et réserves d’interprétation. `construction_report.md` présente les mêmes éléments, y compris les changements de couverture mensuelle, les lacunes et les composantes faiblement ou fortement connexes.
 
-## Load and use the artifacts
+## Chargement et utilisation
 
 ### Polars
 
@@ -180,13 +146,6 @@ snapshot = observations.loc[
 ]
 ```
 
-To use NetworkX from Pandas, join snapshot rows to `nodes` on `source` and
-`target`, or load `edge_observations.parquet` with Polars and call
-`reconstruct_monthly_graph`. The helper retains station names and original
-observation fields as node and edge attributes. For Streamlit, load artifacts
-once, use the service/date columns for selectors, filter monthly observations,
-and reconstruct the snapshot without parsing the Markdown report. Join future
-node metrics on `node_id` and edge metrics on `edge_id`.
+Avec Pandas et NetworkX, joindre les lignes sélectionnées à `nodes` sur `source` et `target`, ou charger les observations avec Polars et appeler `reconstruct_monthly_graph`. Cette fonction conserve les noms et attributs sources. Dans Streamlit, charger les résultats une fois, filtrer par service et date et reconstruire le graphe sans analyser le rapport Markdown. Joindre les métriques de nœuds sur `node_id` et celles d’arêtes sur `edge_id`.
 
-The code intentionally does not add future `node_metrics.parquet`,
-`edge_metrics.parquet`, analysis summaries, visualizations, or Streamlit pages.
+Ce module de construction ne génère pas les fichiers de métriques, les synthèses d’analyse, les visualisations ni les pages Streamlit, qui relèvent d’autres modules.

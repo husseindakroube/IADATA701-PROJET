@@ -1,4 +1,4 @@
-"""Evidence boundaries and reproducibility of the imported work."""
+'Portée des résultats et reproductibilité des travaux importés.'
 
 import streamlit as st
 from utils.data import report, table

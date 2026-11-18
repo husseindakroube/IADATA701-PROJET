@@ -1,9 +1,10 @@
-"""Shared Streamlit presentation helpers for imported artifacts."""
+'Fonctions de présentation Streamlit communes aux résultats importés.'
 
 import logging
 
 import pandas as pd
 import streamlit as st
+from utils.activity import log_action, log_selection
 
 from projet_kit_data.web_data import (
     ROOT,
@@ -15,16 +16,16 @@ from projet_kit_data.web_data import (
 
 @st.cache_data(show_spinner=False)
 def cached_table(relative: str, modified: int) -> pd.DataFrame:
-    """Cache an artifact until its modification timestamp changes."""
+    'Met un résultat en cache jusqu’à modification de sa date de mise à jour.'
     return load_table(relative)
 
 
 def table(relative: str, required: bool = True) -> pd.DataFrame:
-    """Show a usable message when an artifact is absent or unreadable."""
+    'Affiche un message compréhensible si un fichier est absent ou illisible.'
     try:
         return cached_table(relative, (ROOT / relative).stat().st_mtime_ns)
     except Exception:
-        logging.getLogger(__name__).exception("Artifact unavailable: %s", relative)
+        logging.getLogger("projet_kit_data.web").exception('Résultat indisponible : %s', relative)
         st.warning(f"Résultat indisponible : {relative}")
         if required:
             st.stop()
@@ -32,11 +33,11 @@ def table(relative: str, required: bool = True) -> pd.DataFrame:
 
 
 def observations() -> pd.DataFrame:
-    """Load the team's non-destructive ETL output."""
+    'Charge le résultat de l’ETL non destructif de l’équipe.'
     try:
         return validate_observations(table("data/processed/sncf.parquet"))
     except (ValueError, TypeError):
-        logging.getLogger(__name__).exception("Invalid observation schema")
+        logging.getLogger("projet_kit_data.web").exception('Schéma des observations invalide')
         st.error("Le fichier ne respecte pas le contrat des observations mensuelles.")
         st.stop()
 
@@ -47,7 +48,7 @@ def filters(
     label: str = "Périmètre des données",
     expanded: bool = True,
 ) -> pd.DataFrame:
-    """Persist common filters across descriptive pages, with dependent options."""
+    'Conserve les filtres communs aux pages descriptives et leurs options dépendantes.'
     if frame.empty:
         st.info("Aucune observation disponible.")
         st.stop()
@@ -78,6 +79,7 @@ def filters(
             if value is not None:
                 narrowed = narrowed[narrowed[col].eq(value)]
         st.session_state["description_filters"] = {"months": dates, **selected}
+    log_selection("filters", **st.session_state["description_filters"], observations=len(narrowed))
     if narrowed.empty:
         st.info("Aucune observation pour ces filtres.")
         st.stop()
@@ -90,7 +92,7 @@ def filters(
 
 
 def scope_metrics(frame: pd.DataFrame) -> None:
-    """Display counts whose meanings are established in the shared contract."""
+    'Affiche les effectifs définis dans le contrat commun.'
     cols = st.columns(3)
     cols[0].metric(
         "Gares", pd.concat([frame.gare_depart, frame.gare_arrivee]).nunique()
@@ -103,9 +105,12 @@ def scope_metrics(frame: pd.DataFrame) -> None:
 
 
 def report(relative: str, label: str) -> None:
-    """Offer an existing report without executing its analysis."""
+    'Propose un rapport existant sans exécuter son analyse.'
     path = ROOT / relative
     if path.is_file():
-        st.download_button(label, path.read_bytes(), file_name=path.name, key=relative)
+        st.download_button(
+            label, path.read_bytes(), file_name=path.name, key=relative,
+            on_click=log_action, args=("download",), kwargs={"file": relative},
+        )
     else:
         st.caption(f"Document non fourni : {path.name}")
