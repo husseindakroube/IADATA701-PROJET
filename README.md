@@ -105,8 +105,9 @@ L'application utilise le module standard `logging`. Les fichiers sont créés
 automatiquement dans `logs/`, indépendamment du répertoire de lancement :
 
 - `logs/debug.log` : DEBUG et niveaux supérieurs ; démarrage, chargement des
-  données, navigation, filtres, sélection de liaison/gare/cluster, consultation
-  d'une prédiction et clic sur le téléchargement d'un rapport.
+  données (y compris carte et graphe), navigation, filtres, sélection de
+  liaison/gare/cluster, comparaison de deux liaisons, consultation d'une
+  prédiction et demandes de téléchargement encore proposées dans l'interface.
 - `logs/error.log` : uniquement ERROR et CRITICAL, avec la trace des exceptions
   (fichier illisible, schéma invalide, métriques incohérentes ou erreur de page).
   Ces événements sont également présents dans le journal debug pour le contexte.
@@ -116,6 +117,24 @@ et le message. Les actions portent un identifiant de session aléatoire, sans no
 email ni adresse IP. Les sélections initiales et leurs changements sont journalisés ;
 un rerun Streamlit identique ne duplique pas l'événement. Un clic de téléchargement
 est enregistré comme une demande, pas comme la preuve d'un transfert terminé.
+
+La carte enregistre `carte_filters` (service, départ, arrivée, cluster, mode de
+couleur et nombre de liaisons), `carte_route_view` (liaison sélectionnée ou
+absence de sélection) et `download` pour `liaisons_selection.csv`, avec le
+périmètre exporté. `route_comparison` contient les deux liaisons comparées.
+Les événements existants `network_view`, `ego_graphe_view`, `station_view`,
+`cluster_view` et `prediction_view` restent actifs. Les boutons supprimés ne
+produisent plus de nouveaux événements ; les anciens journaux sont conservés.
+
+Streamlit calcule aussi le contenu des onglets masqués : les événements de
+sélection décrivent l'état des contrôles, pas la preuve qu'un onglet a été vu.
+Les chargements servis depuis le cache ne produisent pas une nouvelle ligne
+de lecture de fichier à chaque rerun.
+
+Ces fichiers capturent les loggers `projet_kit_data.*`. Les avertissements internes
+de Streamlit (par exemple une conversion Arrow) restent dans la console ou dans
+les fichiers `streamlit*.log` si la sortie du serveur est redirigée ; ils ne sont
+pas automatiquement copiés dans `error.log`.
 
 Configuration : `src/projet_kit_data/logging_config.py`. Chaque fichier est limité
 à 5 Mio avec trois sauvegardes (`.log.1` à `.log.3`), en UTF-8. La configuration

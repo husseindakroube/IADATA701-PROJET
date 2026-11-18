@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from utils.activity import log_selection
+from utils.activity import log_action, log_selection
 from utils.carte import (
     afficher_bandeau_clusters,
     afficher_legende_taux,
@@ -18,7 +18,7 @@ from utils.carte import (
     libelle_liaison,
     LIBELLES_CLUSTERS,
 )
-from utils.data import filters, observations, report, scope_metrics, table
+from utils.data import filters, observations, scope_metrics, table
 from projet_kit_data.web_data import ROOT
 
 
@@ -90,6 +90,12 @@ with carte_onglet:
         num_c = int(cluster_choisi.split(" ")[1])
         lf = lf[lf["cluster"] == num_c]
 
+    log_selection(
+        "carte_filters", service=service_choisi, departure=gare_dep,
+        arrival=gare_arr, cluster=cluster_choisi, color_mode=mode_code,
+        routes=len(lf),
+    )
+
     with col_tel:
         st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
         st.download_button(
@@ -97,6 +103,10 @@ with carte_onglet:
             data=lf.to_csv(index=False).encode("utf-8-sig"),
             file_name="liaisons_selection.csv", mime="text/csv",
             width="stretch", disabled=lf.empty,
+            on_click=log_action, args=("download",),
+            kwargs={"file": "liaisons_selection.csv", "routes": len(lf),
+                    "service": service_choisi, "departure": gare_dep,
+                    "arrival": gare_arr, "cluster": cluster_choisi},
         )
 
     st.caption(
@@ -138,7 +148,7 @@ with carte_onglet:
                             & (liaisons_detail["gare_arrivee"] == arr)]
         if not m.empty:
             liaison_sel = m.iloc[0].to_dict()
-            log_selection("carte_route_view", route=choix)
+    log_selection("carte_route_view", route=choix if liaison_sel else None)
 
     gares_actives = set(lf["gare_depart"].unique()) | set(lf["gare_arrivee"].unique())
     coords_filtrees = coords[coords["gare"].isin(gares_actives)]
@@ -349,6 +359,8 @@ with comparer:
     lA = _get(choix_A)
     lB = _get(choix_B)
 
+    log_selection("route_comparison", route_a=choix_A, route_b=choix_B)
+
     if lA is None or lB is None:
         st.warning("Une des liaisons choisies n'a pas été trouvée.")
     elif choix_A == choix_B:
@@ -374,6 +386,8 @@ with comparer:
              "Liaison A": int(lA["nb_observations"]),
              "Liaison B": int(lB["nb_observations"])},
         ])
+        # Les colonnes mélangent libellés et nombres : ce tableau est textuel.
+        comparatif = comparatif.astype("string")
         st.markdown("### Vue comparative")
         st.dataframe(comparatif, hide_index=True, width="stretch")
 
@@ -562,4 +576,3 @@ with network:
             detail = nodes_s.loc[nodes_s.station_name.eq(station)]
             st.dataframe(detail, hide_index=True, width="stretch")
 
-    report("data/reports/graph/research_report.md", "Rapport réseau complet")

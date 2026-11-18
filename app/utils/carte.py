@@ -10,7 +10,7 @@ from folium.features import DivIcon
 
 import networkx as nx
 
-from projet_kit_data.web_data import ROOT
+from projet_kit_data.web_data import load_table
 
 
 # =============================================================================
@@ -69,19 +69,19 @@ GRADIENT_TAUX = [
 @st.cache_data(show_spinner=False)
 def charger_liaisons_detail() -> pd.DataFrame:
     'Charge le fichier agrégé des 130 liaisons orientées.'
-    return pd.read_csv(ROOT / "data" / "processed" / "liaisons_detail.csv")
+    return load_table("data/processed/liaisons_detail.csv")
 
 
 @st.cache_data(show_spinner=False)
 def charger_coordonnees_gares() -> pd.DataFrame:
     'Charge les coordonnées GPS des gares utilisées dans le projet.'
-    return pd.read_csv(ROOT / "data" / "raw" / "coordonnees_gares.csv")
+    return load_table("data/raw/coordonnees_gares.csv")
 
 
 @st.cache_data(show_spinner=False)
 def charger_sncf_mensuel() -> pd.DataFrame:
     'Charge les observations mensuelles pour l évolution temporelle.'
-    df = pd.read_parquet(ROOT / "data" / "processed" / "sncf.parquet")
+    df = load_table("data/processed/sncf.parquet")
     df["date"] = pd.to_datetime(df["date"] + "-01", errors="coerce")
     return df
 
@@ -313,19 +313,19 @@ def afficher_trajet_retour(liaisons: pd.DataFrame, liaison: dict) -> None:
 @st.cache_data(show_spinner=False)
 def charger_edges() -> pd.DataFrame:
     'Charge les arêtes du graphe.'
-    return pd.read_parquet(ROOT / "data" / "processed" / "graph" / "edges.parquet")
+    return load_table("data/processed/graph/edges.parquet")
 
 
 @st.cache_data(show_spinner=False)
 def charger_nodes() -> pd.DataFrame:
     'Charge les nœuds du graphe.'
-    return pd.read_parquet(ROOT / "data" / "processed" / "graph" / "nodes.parquet")
+    return load_table("data/processed/graph/nodes.parquet")
 
 
 @st.cache_data(show_spinner=False)
 def charger_metriques_noeuds() -> pd.DataFrame:
     'Charge les métriques de centralité par nœud.'
-    return pd.read_parquet(ROOT / "data" / "processed" / "graph" / "node_metrics.parquet")
+    return load_table("data/processed/graph/node_metrics.parquet")
 
 
 def gares_du_service(service: str) -> list[str]:
@@ -389,82 +389,65 @@ def construire_ego_graphe(service: str, gare_centrale: str) -> go.Figure:
         angle = 2 * math.pi * i / n - math.pi / 2  # commence en haut
         positions[nom] = (math.cos(angle), math.sin(angle))
 
-    # Traces d arêtes
-    xs_sortantes, ys_sortantes = [], []
-    for v in voisins:
-        if v in sortantes:
-            x0, y0 = positions[gare_centrale]
-            x1, y1 = positions[v]
-            xs_sortantes.extend([x0, x1, None])
-            ys_sortantes.extend([y0, y1, None])
-    xs_entrantes, ys_entrantes = [], []
-    for v in voisins:
-        if v in entrantes:
-            x0, y0 = positions[v]
-            x1, y1 = positions[gare_centrale]
-            xs_entrantes.extend([x0, x1, None])
-            ys_entrantes.extend([y0, y1, None])
-
+    # Courbes de Bézier : chaque sens se courbe à sa gauche, séparant l'aller
+    # du retour. Les flèches restent au milieu pour être visibles hors des gares.
     fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=xs_sortantes, y=ys_sortantes, mode="lines",
-        line=dict(color="#C0392B", width=1.5),
-        hoverinfo="none", name="Départs", showlegend=True,
-    ))
-    fig.add_trace(go.Scatter(
-        x=xs_entrantes, y=ys_entrantes, mode="lines",
-        line=dict(color="#2E86DE", width=1.5),
-        hoverinfo="none", name="Arrivées", showlegend=True,
-    ))
+    for destinations, depart, couleur, nom_trace, rang in [
+        (sortantes, True, "#C0392B", "Départs", 2000),
+        (entrantes, False, "#2E86DE", "Arrivées", 2001),
+    ]:
+        xs, ys, tailles = [], [], []
+        for voisin in voisins:
+            if voisin not in destinations:
+                continue
+            origine, destination = (
+                (gare_centrale, voisin) if depart else (voisin, gare_centrale)
+            )
+            x0, y0 = positions[origine]
+            x1, y1 = positions[destination]
+            dx, dy = x1 - x0, y1 - y0
+            cx = (x0 + x1) / 2 - 0.22 * dy
+            cy = (y0 + y1) / 2 + 0.22 * dx
+            for i in range(31):
+                t = i / 30
+                xs.append((1 - t) ** 2 * x0 + 2 * (1 - t) * t * cx + t ** 2 * x1)
+                ys.append((1 - t) ** 2 * y0 + 2 * (1 - t) * t * cy + t ** 2 * y1)
+                tailles.append(12 if i == 18 else 0)
+            xs.append(None)
+            ys.append(None)
+            tailles.append(0)
+        if xs:
+            fig.add_trace(go.Scatter(
+                x=xs, y=ys, mode="lines+markers",
+                line=dict(color=couleur, width=2),
+                marker=dict(symbol="arrow", angleref="previous",
+                            size=tailles, color=couleur),
+                hoverinfo="none", name=nom_trace, showlegend=True, legendrank=rang,
+            ))
 
-    # Voisins
-    vx, vy, vn, vs, vc, vh = [], [], [], [], [], []
+    # Une trace par gare permet une légende nominative et des couleurs stables.
+    couleurs_gares = {
+        nom: f"hsl({(i * 137.508) % 360:.3f}, 65%, 48%)"
+        for i, nom in enumerate(sorted(nodes["station_name"].dropna().unique()))
+    }
     for nom in voisins:
         x, y = positions[nom]
-        vx.append(x)
-        vy.append(y)
-        vn.append(nom)
+        taille = 16
+        survol = f"<b>{nom}</b>"
         if nom in metriques_s.index:
             m = metriques_s.loc[nom]
             bet = float(m["betweenness_centrality"])
-            deg = int(m["degree"])
-            pr = float(m["pagerank"])
-            vs.append(16 + math.sqrt(max(bet, 0)) * 30)
-            vc.append(pr)
-            vh.append(
-                f"<b>{nom}</b><br>Degré : {deg}<br>"
-                f"Betweenness : {bet:.3f}<br>PageRank : {pr:.3f}"
+            taille += math.sqrt(max(bet, 0)) * 30
+            survol += (
+                f"<br>Degré : {int(m['degree'])}<br>"
+                f"Betweenness : {bet:.3f}<br>PageRank : {float(m['pagerank']):.3f}"
             )
-        else:
-            vs.append(16)
-            vc.append(0)
-            vh.append(f"<b>{nom}</b>")
-
-    # Position du texte : à l'extérieur du cercle pour ne pas cacher le marker
-    text_positions = []
-    for i in range(n):
-        angle = 2 * math.pi * i / n - math.pi / 2
-        # côté haut/bas/gauche/droite selon l'angle
-        if -math.pi / 4 <= angle < math.pi / 4:
-            text_positions.append("middle right")
-        elif math.pi / 4 <= angle < 3 * math.pi / 4:
-            text_positions.append("bottom center")
-        elif 3 * math.pi / 4 <= angle or angle < -3 * math.pi / 4:
-            text_positions.append("middle left")
-        else:
-            text_positions.append("top center")
-
-    fig.add_trace(go.Scatter(
-        x=vx, y=vy, mode="markers+text", text=vn,
-        textposition=text_positions,
-        textfont=dict(size=11, color="#2C3E50"),
-        marker=dict(
-            size=vs, color=vc, colorscale="YlOrRd", showscale=True,
-            colorbar=dict(title="PageRank", thickness=10, len=0.5, x=1.08),
-            line=dict(color="#2C3E50", width=1),
-        ),
-        hovertext=vh, hoverinfo="text", name="Voisines", showlegend=True,
-    ))
+        fig.add_trace(go.Scatter(
+            x=[x], y=[y], mode="markers",
+            marker=dict(size=taille, color=couleurs_gares[nom],
+                        line=dict(color="#2C3E50", width=1)),
+            hovertext=[survol], hoverinfo="text", name=nom, showlegend=True,
+        ))
 
     # Gare centrale
     if gare_centrale in metriques_s.index:
@@ -476,19 +459,18 @@ def construire_ego_graphe(service: str, gare_centrale: str) -> go.Figure:
         hover_c = f"<b>{gare_centrale}</b>"
 
     fig.add_trace(go.Scatter(
-        x=[0], y=[0], mode="markers+text",
-        text=[gare_centrale], textposition="middle center",
-        textfont=dict(size=13, color="#FFFFFF", family="Arial Black"),
+        x=[0], y=[0], mode="markers",
         marker=dict(
             size=70, color="#2C3E50",
             line=dict(color="#1A1A1A", width=2),
         ),
         hovertext=[hover_c], hoverinfo="text",
-        name="Gare centrale", showlegend=True,
+        name=f"{gare_centrale} (gare centrale)", showlegend=True, legendrank=0,
     ))
 
     fig.update_layout(
-        height=600, margin=dict(l=20, r=20, t=70, b=20),
+        height=max(600, 140 + 23 * (len(voisins) + 3)),
+        margin=dict(l=20, r=330, t=70, b=20),
         xaxis=dict(visible=False, range=[-1.5, 1.5],
                    scaleanchor="y", scaleratio=1),
         yaxis=dict(visible=False, range=[-1.4, 1.4]),
@@ -500,8 +482,9 @@ def construire_ego_graphe(service: str, gare_centrale: str) -> go.Figure:
             font=dict(size=14),
         ),
         legend=dict(
-            orientation="h", yanchor="top", y=-0.02,
-            xanchor="center", x=0.5,
+            orientation="v", yanchor="top", y=1,
+            xanchor="left", x=1.02, itemsizing="constant",
+            font=dict(size=11),
         ),
     )
     return fig
