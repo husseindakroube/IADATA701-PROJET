@@ -1,4 +1,4 @@
-'Page d accueil de TGVision : présentation du projet, chiffres clés et navigation.'
+"Page d accueil de TGVision : présentation du projet, chiffres clés et navigation."
 
 from pathlib import Path
 from html import escape
@@ -17,7 +17,9 @@ IMAGES_PATH = GLOBAL_Path.parent.parent / "images"
 # =============================================================================
 
 title_title, Logo_title = st.columns(
-    [1, 1.5], gap="medium", vertical_alignment="center",
+    [1, 1.5],
+    gap="medium",
+    vertical_alignment="center",
 )
 
 with Logo_title:
@@ -117,9 +119,7 @@ clusters_liaisons = table("data/processed/clusters_liaisons.csv", required=False
 
 nb_observations = len(donnees)
 nb_gares = pd.concat([donnees.gare_depart, donnees.gare_arrivee]).nunique()
-nb_liaisons = len(
-    donnees[["service", "gare_depart", "gare_arrivee"]].drop_duplicates()
-)
+nb_liaisons = len(donnees[["service", "gare_depart", "gare_arrivee"]].drop_duplicates())
 nb_mois = donnees.date.nunique()
 nb_clusters = clusters_liaisons.cluster.nunique() if not clusters_liaisons.empty else 4
 
@@ -173,21 +173,41 @@ with col_r3, st.container(border=True):
 st.subheader("Explorer le projet")
 
 cards = [
-    ("🔍", "Qualité des données",
-     "Audit des 12 907 observations, règles de nettoyage et indicateurs de fiabilité",
-     "data_quality", "Découvrir →"),
-    ("🗺️", "Liaisons et réseau",
-     "Carte interactive des 130 liaisons et analyse structurelle du réseau TGV",
-     "routes_network", "Explorer la carte →"),
-    ("👥", "Profils et clusters",
-     "Exploration des 4 profils de liaisons issus du clustering non supervisé",
-     "clusters", "Consulter les profils →"),
-    ("🤖", "Prédiction des retards",
-     "Comparaison de cinq modèles de machine learning et modèle retenu",
-     "predictions", "Voir les modèles →"),
-    ("📊", "Conclusions et méthodologie",
-     "Synthèse des résultats, limites de l'étude et ressources de reproductibilité",
-     "conclusions", "Lire la synthèse →"),
+    (
+        "🔍",
+        "Qualité des données",
+        "Audit des 12 907 observations, règles de nettoyage et indicateurs de fiabilité",
+        "data_quality",
+        "Découvrir →",
+    ),
+    (
+        "🗺️",
+        "Liaisons et réseau",
+        "Carte interactive des 130 liaisons et analyse structurelle du réseau TGV",
+        "routes_network",
+        "Explorer la carte →",
+    ),
+    (
+        "👥",
+        "Profils et clusters",
+        "Exploration des 4 profils de liaisons issus du clustering non supervisé",
+        "clusters",
+        "Consulter les profils →",
+    ),
+    (
+        "🤖",
+        "Prédiction des retards",
+        "Comparaison de cinq modèles de machine learning et modèle retenu",
+        "predictions",
+        "Voir les modèles →",
+    ),
+    (
+        "📊",
+        "Conclusions et méthodologie",
+        "Synthèse des résultats, limites de l'étude et ressources de reproductibilité",
+        "conclusions",
+        "Lire la synthèse →",
+    ),
 ]
 
 cards_html = []
@@ -195,11 +215,14 @@ for icon, title, description, page, button in cards:
     cards_html.append(
         '<article class="exploration-card">'
         f'<h3><span class="exploration-card-icon" aria-hidden="true">{icon}</span>'
-        f'<span>{escape(title)}</span></h3>'
-        f'<p>{escape(description)}</p>'
+        f"<span>{escape(title)}</span></h3>"
+        f"<p>{escape(description)}</p>"
         f'<a class="exploration-card-button" href="./{page}" '
         f'aria-label="{escape(button)} — {escape(title)}">{escape(button)}</a>'
-        '</article>'
+        "</article>"
     )
-st.html('<section class="exploration-cards" aria-label="Explorer le projet">'
-        + ''.join(cards_html) + '</section>')
+st.html(
+    '<section class="exploration-cards" aria-label="Explorer le projet">'
+    + "".join(cards_html)
+    + "</section>"
+)

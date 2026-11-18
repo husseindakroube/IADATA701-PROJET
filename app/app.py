@@ -1,3 +1,5 @@
+"""Point d’entrée Streamlit : navigation, styles et journalisation des pages."""
+
 from base64 import b64encode
 from html import escape
 from pathlib import Path
@@ -9,17 +11,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import streamlit as st
 from utils.styles import load_css
 from utils.footer import render_footer
+from projet_kit_data.logging_config import configure_logging
+from utils.activity import log_selection
 
 # Résoudre les ressources depuis ce fichier, indépendamment du dossier de lancement.
 BASE_PATH = Path(__file__).resolve().parent
 IMAGES_PATH = BASE_PATH.parent / "images"
-from projet_kit_data.logging_config import configure_logging
-from utils.activity import log_selection
 
 try:
     LOGGER = configure_logging()
 except OSError:
-    logging.getLogger(__name__).exception('Impossible d’initialiser les fichiers de journalisation')
+    logging.getLogger(__name__).exception(
+        "Impossible d’initialiser les fichiers de journalisation"
+    )
     st.error("Impossible de créer les journaux. Vérifiez les droits du dossier logs/.")
     st.stop()
 
@@ -34,31 +38,12 @@ load_css()
 
 # Déclarer les pages communes aux menus de bureau et mobile.
 pages = [
-    st.Page(
-        "pages/main.py",
-        title="Accueil",
-        default=True
-    ),
-    st.Page(
-        "pages/data_quality.py",
-        title="Qualité des données"
-    ),
-    st.Page(
-        "pages/routes_network.py",
-        title="Liaisons et réseau"
-    ),
-    st.Page(
-        "pages/clusters.py",
-        title="Profils et clusters"
-    ),
-    st.Page(
-        "pages/predictions.py",
-        title="Prédictions"
-    ),
-    st.Page(
-        "pages/conclusions.py",
-        title="Conclusions"
-    ),
+    st.Page("pages/main.py", title="Accueil", default=True),
+    st.Page("pages/data_quality.py", title="Qualité des données"),
+    st.Page("pages/routes_network.py", title="Liaisons et réseau"),
+    st.Page("pages/clusters.py", title="Profils et clusters"),
+    st.Page("pages/predictions.py", title="Prédictions"),
+    st.Page("pages/conclusions.py", title="Conclusions"),
 ]
 
 # Masquer le menu natif pour utiliser les barres de navigation personnalisées.
@@ -76,7 +61,7 @@ for page in pages:
     # Échapper les valeurs avant de les insérer dans le HTML.
     liens_navigation_mobile.append(
         f'<a class="{classe_lien}" href="{escape(adresse_page, quote=True)}"{attribut_page_courante}>'
-        f'{escape(page.title)}</a>'
+        f"{escape(page.title)}</a>"
     )
 
 # Intégrer le logo au HTML en base64, sans URL de fichier statique.
@@ -91,25 +76,21 @@ with st.container(key="barre-navigation-mobile"):
             </a>
             <details class="menu-navigation-mobile">
                 <summary>Menu</summary>
-                <div class="liens-navigation-mobile">{''.join(liens_navigation_mobile)}</div>
+                <div class="liens-navigation-mobile">{"".join(liens_navigation_mobile)}</div>
             </details>
         </nav>
     """)
 
 with st.container(key="barre-navigation-haut"):
-
     # Donner davantage de largeur aux intitulés longs dans la barre de bureau.
     nav_columns = st.columns(
         [0.9, 2.4] + [max(0.9, len(page.title) / 10) for page in pages],
         gap="small",
-        vertical_alignment="center"
+        vertical_alignment="center",
     )
 
     with nav_columns[0]:
-        st.image(
-            str(IMAGES_PATH / "SNCF_logo.png"),
-            width=85
-        )
+        st.image(str(IMAGES_PATH / "SNCF_logo.png"), width=85)
 
     with nav_columns[1]:
         st.html("""
@@ -124,9 +105,7 @@ with st.container(key="barre-navigation-haut"):
         """)
 
     for column, page in zip(nav_columns[2:], pages):
-
         with column:
-
             is_active = page.url_path == pg.url_path
 
             link_class = (
@@ -135,16 +114,12 @@ with st.container(key="barre-navigation-haut"):
                 else "lien-navigation"
             )
 
-            href = (
-                f"./{page.url_path}"
-                if page.url_path
-                else "./"
-            )
+            href = f"./{page.url_path}" if page.url_path else "./"
 
             st.html(
                 f'<a class="{link_class}" href="{escape(href, quote=True)}">'
-                f'{escape(page.title)}'
-                '</a>'
+                f"{escape(page.title)}"
+                "</a>"
             )
 
 
@@ -154,5 +129,5 @@ try:
     pg.run()
     render_footer()
 except Exception:
-    LOGGER.exception('Échec de l’exécution de la page : %s', pg.title)
+    LOGGER.exception("Échec de l’exécution de la page : %s", pg.title)
     raise

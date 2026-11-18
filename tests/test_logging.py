@@ -1,4 +1,4 @@
-'Vérifie le routage par gravité, les réexécutions et les enregistrements d’activité.'
+"Vérifie le routage par gravité, les réexécutions et les enregistrements d’activité."
 
 import logging
 
@@ -10,7 +10,7 @@ from projet_kit_data.logging_config import configure_logging
 
 @pytest.fixture
 def log_directory(tmp_path):
-    'Isole les journaux de test et libère ensuite les fichiers ouverts sous Windows.'
+    "Isole les journaux de test et libère ensuite les fichiers ouverts sous Windows."
     configure_logging(tmp_path)
     yield tmp_path
     logger = logging.getLogger("projet_kit_data")
@@ -24,7 +24,13 @@ def test_severity_routing_traceback_and_rerun(log_directory):
     logger = logging.getLogger("projet_kit_data.test")
     original = list(configure_logging(log_directory).handlers)
     assert configure_logging(log_directory).handlers == original
-    for level in [logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL]:
+    for level in [
+        logging.DEBUG,
+        logging.INFO,
+        logging.WARNING,
+        logging.ERROR,
+        logging.CRITICAL,
+    ]:
         logger.log(level, "marker-%s", logging.getLevelName(level))
     try:
         raise ValueError("invalid artifact")
@@ -39,7 +45,9 @@ def test_severity_routing_traceback_and_rerun(log_directory):
     assert "ValueError: invalid artifact" in error
 
 
-def test_actions_deduplicated_per_session_and_downloads_not_deduplicated(log_directory, monkeypatch):
+def test_actions_deduplicated_per_session_and_downloads_not_deduplicated(
+    log_directory, monkeypatch
+):
     state = {}
     monkeypatch.setattr(activity.st, "session_state", state)
     activity.log_selection("page_view", page="Qualité")
@@ -96,13 +104,18 @@ def test_map_loading_records_success_and_failure(log_directory, monkeypatch):
     charger_liaisons_detail.clear()
     try:
         assert len(charger_liaisons_detail()) == 1
-        assert "liaisons_detail.csv : 1 lignes" in (log_directory / "debug.log").read_text(encoding="utf-8")
+        assert "liaisons_detail.csv : 1 lignes" in (
+            log_directory / "debug.log"
+        ).read_text(encoding="utf-8")
         path.unlink()
         charger_liaisons_detail.clear()
         with pytest.raises(FileNotFoundError):
             charger_liaisons_detail()
         error = (log_directory / "error.log").read_text(encoding="utf-8")
-        assert "Impossible de charger le fichier data/processed/liaisons_detail.csv" in error
+        assert (
+            "Impossible de charger le fichier data/processed/liaisons_detail.csv"
+            in error
+        )
         assert "FileNotFoundError" in error
     finally:
         charger_liaisons_detail.clear()
@@ -113,7 +126,9 @@ def test_map_and_comparison_changes_logged_without_rerun_duplicates(monkeypatch)
     from projet_kit_data.web_data import ROOT
 
     events = []
-    monkeypatch.setattr(activity, "log_action", lambda event, **details: events.append((event, details)))
+    monkeypatch.setattr(
+        activity, "log_action", lambda event, **details: events.append((event, details))
+    )
     app = AppTest.from_file(str(ROOT / "app/app.py"), default_timeout=30).run()
     app.switch_page("pages/routes_network.py").run()
     assert not app.exception
@@ -124,7 +139,9 @@ def test_map_and_comparison_changes_logged_without_rerun_duplicates(monkeypatch)
     assert [entry for entry in events if entry[0] in watched] == initial
     app.radio(key="carte_mode").set_value("Taux de retard").run()
     assert not app.exception
-    assert [details for event, details in events if event == "carte_filters"][-1]["color_mode"] == "taux"
+    assert [details for event, details in events if event == "carte_filters"][-1][
+        "color_mode"
+    ] == "taux"
     selection = app.selectbox(key="cmp_B")
     selection.select(selection.options[-1]).run()
     assert not app.exception

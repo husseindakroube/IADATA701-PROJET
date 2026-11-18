@@ -10,10 +10,17 @@ sys.path.insert(0, str(ROOT / "app"))
 
 
 def main() -> None:
+    """Charge les six pages et lève RuntimeError si une page échoue."""
     app = AppTest.from_file(str(ROOT / "app/app.py"), default_timeout=60).run()
     if app.exception:
         raise RuntimeError(f"Accueil : {app.exception}")
-    for page in ["data_quality", "routes_network", "clusters", "predictions", "conclusions"]:
+    for page in [
+        "data_quality",
+        "routes_network",
+        "clusters",
+        "predictions",
+        "conclusions",
+    ]:
         app.switch_page(f"pages/{page}.py").run()
         if app.exception:
             raise RuntimeError(f"{page} : {app.exception}")

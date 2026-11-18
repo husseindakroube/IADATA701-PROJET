@@ -1,4 +1,4 @@
-'Synthèses descriptives de la topologie, des métriques et des résultats opérationnels SNCF.'
+"Synthèses descriptives de la topologie, des métriques et des résultats opérationnels SNCF."
 
 from __future__ import annotations
 
@@ -41,7 +41,7 @@ OUTCOMES = (
 @dataclass
 class DescriptiveResult:
     """Tables produites par l’analyse descriptive.
-    
+
     :ivar network_summary: Topologie globale par service.
     :ivar node_metric_summary: Statistiques de distribution des métriques globales des nœuds.
     :ivar node_rankings: Classements globaux des gares.
@@ -66,7 +66,9 @@ class DescriptiveResult:
 def _check_columns(frame: pl.DataFrame, required: set[str], label: str) -> None:
     missing = required.difference(frame.columns)
     if missing:
-        raise ValueError(f"{label} ne contient pas les colonnes : {', '.join(sorted(missing))}")
+        raise ValueError(
+            f"{label} ne contient pas les colonnes : {', '.join(sorted(missing))}"
+        )
 
 
 def _stats_by_group(
@@ -115,11 +117,11 @@ def build_descriptive_summaries(
     top_n: int = 10,
 ) -> DescriptiveResult:
     """Construit des tables descriptives réutilisables à partir des résultats des phases 1 et 2.
-    
+
     Les métriques existantes sont résumées sans être recalculées. Le nombre de
     composantes est calculé à partir des arêtes orientées existantes uniquement pour
     vérifier et décrire la topologie.
-    
+
     :param research_data: Données mensuelles de recherche de la phase 2.
     :type research_data: polars.DataFrame
     :param node_metrics: Métriques globales et mensuelles des nœuds de la phase 1.
@@ -140,9 +142,11 @@ def build_descriptive_summaries(
     :raises ValueError: Si un champ requis manque ou si top_n est invalide."""
     frames = (research_data, node_metrics, edge_metrics, nodes, edges)
     if any(not isinstance(frame, pl.DataFrame) for frame in frames):
-        raise TypeError('Toutes les entrées tabulaires doivent être des DataFrames Polars')
+        raise TypeError(
+            "Toutes les entrées tabulaires doivent être des DataFrames Polars"
+        )
     if top_n < 1:
-        raise ValueError('top_n doit être strictement positif')
+        raise ValueError("top_n doit être strictement positif")
     _check_columns(
         research_data,
         {"date", "service", "gare_depart", "gare_arrivee", *OUTCOMES},
@@ -306,11 +310,11 @@ def build_descriptive_summaries(
         "overall_edge_metric_rows": overall_edges.height,
         "monthly_graph_count": monthly_summary.height,
         "metric_columns": {"node": list(NODE_METRICS), "edge": ["edge_betweenness"]},
-        "outlier_definition": 'Tukey 1,5 écart interquartile, uniquement descriptif ; aucune observation n’est supprimée.',
+        "outlier_definition": "Tukey 1,5 écart interquartile, uniquement descriptif ; aucune observation n’est supprimée.",
         "limitations": [
-            'Les liaisons origine-destination ne sont pas nécessairement des itinéraires ou tronçons physiques.',
-            'La centralité ne mesure ni trafic voyageurs, ni fréquence des trains, ni propagation des retards.',
-            'Les métriques globales sont distinctes des métriques et résultats mensuels.',
+            "Les liaisons origine-destination ne sont pas nécessairement des itinéraires ou tronçons physiques.",
+            "La centralité ne mesure ni trafic voyageurs, ni fréquence des trains, ni propagation des retards.",
+            "Les métriques globales sont distinctes des métriques et résultats mensuels.",
         ],
     }
     return DescriptiveResult(
@@ -327,7 +331,7 @@ def build_descriptive_summaries(
 
 def _write_report(result: DescriptiveResult, path: Path) -> None:
     """Met à jour le passage descriptif généré dans le rapport commun.
-    
+
     Le contenu rédigé manuellement hors de la zone délimitée est conservé pour
     permettre de compléter la recherche sans écrasement lors d’une régénération."""
     begin = "<!-- BEGIN GENERATED DESCRIPTIVE CONTENT -->"
@@ -587,30 +591,30 @@ def run_descriptive_analysis(
     top_n: int = 10,
 ) -> DescriptiveResult:
     """Résume les résultats existants de recherche et de graphe, puis écrit les tables et le rapport.
-    
-        :param research_data_path: Chemin Parquet de recherche de la phase 2.
-        :type research_data_path: str | os.PathLike[str]
-        :param node_metrics_path: Existing Chemin Parquet des métriques de nœuds de la phase 1.
-        :type node_metrics_path: str | os.PathLike[str]
-        :param edge_metrics_path: Existing Chemin Parquet des métriques d’arêtes de la phase 1.
-        :type edge_metrics_path: str | os.PathLike[str]
-        :param nodes_path: Chemin Parquet de la correspondance existante des nœuds.
-        :type nodes_path: str | os.PathLike[str]
-        :param edges_path: Chemin Parquet existant des arêtes globales.
-        :type edges_path: str | os.PathLike[str]
-        :param construction_metadata_path: Chemin JSON des métadonnées de construction existantes.
-        :type construction_metadata_path: str | os.PathLike[str]
-        :param output_dir: Dossier de destination des tables descriptives Parquet.
-        :type output_dir: str | os.PathLike[str]
-        :param report_path: Chemin de destination du rapport Markdown.
-        :type report_path: str | os.PathLike[str]
-        :param top_n: Nombre de gares ou liaisons classées à conserver par service.
-        :type top_n: int
-        :returns: Tables descriptives, métadonnées et chemins de sortie.
-        :rtype: DescriptiveResult
-        :raises OSError: Si les entrées ne peuvent pas être lues ou les sorties écrites.
-        :raises ValueError: Si les schémas, effectifs des métadonnées ou top_n sont invalides.
-        """
+
+    :param research_data_path: Chemin Parquet de recherche de la phase 2.
+    :type research_data_path: str | os.PathLike[str]
+    :param node_metrics_path: Existing Chemin Parquet des métriques de nœuds de la phase 1.
+    :type node_metrics_path: str | os.PathLike[str]
+    :param edge_metrics_path: Existing Chemin Parquet des métriques d’arêtes de la phase 1.
+    :type edge_metrics_path: str | os.PathLike[str]
+    :param nodes_path: Chemin Parquet de la correspondance existante des nœuds.
+    :type nodes_path: str | os.PathLike[str]
+    :param edges_path: Chemin Parquet existant des arêtes globales.
+    :type edges_path: str | os.PathLike[str]
+    :param construction_metadata_path: Chemin JSON des métadonnées de construction existantes.
+    :type construction_metadata_path: str | os.PathLike[str]
+    :param output_dir: Dossier de destination des tables descriptives Parquet.
+    :type output_dir: str | os.PathLike[str]
+    :param report_path: Chemin de destination du rapport Markdown.
+    :type report_path: str | os.PathLike[str]
+    :param top_n: Nombre de gares ou liaisons classées à conserver par service.
+    :type top_n: int
+    :returns: Tables descriptives, métadonnées et chemins de sortie.
+    :rtype: DescriptiveResult
+    :raises OSError: Si les entrées ne peuvent pas être lues ou les sorties écrites.
+    :raises ValueError: Si les schémas, effectifs des métadonnées ou top_n sont invalides.
+    """
     input_paths = {
         "research_data": Path(research_data_path),
         "node_metrics": Path(node_metrics_path),

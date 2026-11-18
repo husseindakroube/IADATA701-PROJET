@@ -33,7 +33,11 @@ BASELINE_NUMERIC_FEATURES = [
     "historical_observations",
 ]
 BASELINE_FEATURES = [
-    "service", "departure", "arrival", "month", *BASELINE_NUMERIC_FEATURES
+    "service",
+    "departure",
+    "arrival",
+    "month",
+    *BASELINE_NUMERIC_FEATURES,
 ]
 
 

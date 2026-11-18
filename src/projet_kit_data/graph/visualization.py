@@ -1,4 +1,4 @@
-'Crée des graphiques descriptifs réutilisables du réseau et des résultats au format PNG.'
+"Crée des graphiques descriptifs réutilisables du réseau et des résultats au format PNG."
 
 from __future__ import annotations
 
@@ -38,7 +38,7 @@ def _finish(fig: plt.Figure, path: Path) -> None:
 
 
 def _component_layout(graph: nx.DiGraph) -> dict[str, np.ndarray]:
-    'Dispose les composantes faiblement connexes indépendamment dans une grille compacte.'
+    "Dispose les composantes faiblement connexes indépendamment dans une grille compacte."
     components = sorted(nx.weakly_connected_components(graph), key=len, reverse=True)
     columns = (
         len(components)
@@ -717,28 +717,30 @@ def generate_visualizations(
     output_dir: str | os.PathLike[str] = DEFAULT_OUTPUT_DIR,
 ) -> dict[str, Path]:
     """Génère les graphiques comparatifs de distribution, de topologie et de résultats.
-    
-        :param research_data: Données de recherche mensuelles avec résultats opérationnels.
-        :type research_data: polars.DataFrame
-        :param node_metrics: Métriques globales et mensuelles existantes des nœuds.
-        :type node_metrics: polars.DataFrame
-        :param edge_metrics: Métriques globales et mensuelles existantes des arêtes.
-        :type edge_metrics: polars.DataFrame
-        :param nodes: Correspondance existante entre identifiants et noms des gares.
-        :type nodes: polars.DataFrame
-        :param edges: Table existante des arêtes orientées distinguant les services.
-        :type edges: polars.DataFrame
-        :param output_dir: Dossier de destination des fichiers PNG.
-        :type output_dir: str | os.PathLike[str]
-        :returns: Correspondance entre noms des graphiques descriptifs et chemins enregistrés.
-        :rtype: dict[str, pathlib.Path]
-        :raises TypeError: Si une entrée n’est pas un DataFrame Polars.
-        :raises ValueError: Si des champs requis pour les graphiques sont absents.
-        :raises OSError: Si les fichiers des graphiques ne peuvent pas être écrits.
-        """
+
+    :param research_data: Données de recherche mensuelles avec résultats opérationnels.
+    :type research_data: polars.DataFrame
+    :param node_metrics: Métriques globales et mensuelles existantes des nœuds.
+    :type node_metrics: polars.DataFrame
+    :param edge_metrics: Métriques globales et mensuelles existantes des arêtes.
+    :type edge_metrics: polars.DataFrame
+    :param nodes: Correspondance existante entre identifiants et noms des gares.
+    :type nodes: polars.DataFrame
+    :param edges: Table existante des arêtes orientées distinguant les services.
+    :type edges: polars.DataFrame
+    :param output_dir: Dossier de destination des fichiers PNG.
+    :type output_dir: str | os.PathLike[str]
+    :returns: Correspondance entre noms des graphiques descriptifs et chemins enregistrés.
+    :rtype: dict[str, pathlib.Path]
+    :raises TypeError: Si une entrée n’est pas un DataFrame Polars.
+    :raises ValueError: Si des champs requis pour les graphiques sont absents.
+    :raises OSError: Si les fichiers des graphiques ne peuvent pas être écrits.
+    """
     frames = (research_data, node_metrics, edge_metrics, nodes, edges)
     if any(not isinstance(frame, pl.DataFrame) for frame in frames):
-        raise TypeError('Toutes les entrées des visualisations doivent être des DataFrames Polars')
+        raise TypeError(
+            "Toutes les entrées des visualisations doivent être des DataFrames Polars"
+        )
     _require(
         research_data,
         {
@@ -819,24 +821,24 @@ def run_visualization_pipeline(
     output_dir: str | os.PathLike[str] = DEFAULT_OUTPUT_DIR,
 ) -> dict[str, Path]:
     """Charge les résultats existants et génère les visualisations descriptives PNG.
-    
-        :param research_data_path: Chemin des données de recherche mensuelles.
-        :type research_data_path: str | os.PathLike[str]
-        :param node_metrics_path: Chemin des métriques existantes des nœuds.
-        :type node_metrics_path: str | os.PathLike[str]
-        :param edge_metrics_path: Chemin des métriques existantes des arêtes.
-        :type edge_metrics_path: str | os.PathLike[str]
-        :param nodes_path: Chemin de la correspondance existante des gares.
-        :type nodes_path: str | os.PathLike[str]
-        :param edges_path: Chemin des arêtes orientées existantes.
-        :type edges_path: str | os.PathLike[str]
-        :param output_dir: Dossier de destination des graphiques.
-        :type output_dir: str | os.PathLike[str]
-        :returns: Noms des graphiques associés aux chemins PNG générés.
-        :rtype: dict[str, pathlib.Path]
-        :raises OSError: Si les entrées ne peuvent pas être lues ou les graphiques enregistrés.
-        :raises ValueError: Si des champs d’entrée requis sont absents.
-        """
+
+    :param research_data_path: Chemin des données de recherche mensuelles.
+    :type research_data_path: str | os.PathLike[str]
+    :param node_metrics_path: Chemin des métriques existantes des nœuds.
+    :type node_metrics_path: str | os.PathLike[str]
+    :param edge_metrics_path: Chemin des métriques existantes des arêtes.
+    :type edge_metrics_path: str | os.PathLike[str]
+    :param nodes_path: Chemin de la correspondance existante des gares.
+    :type nodes_path: str | os.PathLike[str]
+    :param edges_path: Chemin des arêtes orientées existantes.
+    :type edges_path: str | os.PathLike[str]
+    :param output_dir: Dossier de destination des graphiques.
+    :type output_dir: str | os.PathLike[str]
+    :returns: Noms des graphiques associés aux chemins PNG générés.
+    :rtype: dict[str, pathlib.Path]
+    :raises OSError: Si les entrées ne peuvent pas être lues ou les graphiques enregistrés.
+    :raises ValueError: Si des champs d’entrée requis sont absents.
+    """
     return generate_visualizations(
         pl.read_parquet(research_data_path),
         pl.read_parquet(node_metrics_path),

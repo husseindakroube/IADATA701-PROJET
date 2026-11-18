@@ -1,4 +1,4 @@
-'Calcule les métriques structurelles globales et mensuelles des graphes orientés.'
+"Calcule les métriques structurelles globales et mensuelles des graphes orientés."
 
 from __future__ import annotations
 
@@ -64,7 +64,7 @@ for _endpoint in ("source", "target"):
 @dataclass
 class GraphMetricsResult:
     """Tables et diagnostics produits par le calcul des métriques du graphe.
-    
+
     :ivar node_metrics: Métriques globales et mensuelles des nœuds.
     :ivar edge_metrics: Métriques globales et mensuelles des arêtes.
     :ivar metadata: Configuration, schémas d’entrée et sortie et échecs.
@@ -108,15 +108,15 @@ def _validate_artifacts(
                 f"{label} : les colonnes de clé doivent être de type String : {', '.join(wrong)}"
             )
     if nodes.get_column("node_id").n_unique() != nodes.height:
-        raise ValueError('Le fichier des nœuds contient des node_id dupliqués')
+        raise ValueError("Le fichier des nœuds contient des node_id dupliqués")
     if edges.get_column("edge_id").n_unique() != edges.height:
-        raise ValueError('Le fichier des arêtes contient des edge_id dupliqués')
+        raise ValueError("Le fichier des arêtes contient des edge_id dupliqués")
     if (
         edges.select(pl.struct("service", "source", "target").n_unique()).item()
         != edges.height
     ):
         raise ValueError(
-            'Le fichier des arêtes contient des identités service/source/target dupliquées'
+            "Le fichier des arêtes contient des identités service/source/target dupliquées"
         )
     if (
         observations.select(
@@ -124,15 +124,21 @@ def _validate_artifacts(
         ).item()
         != observations.height
     ):
-        raise ValueError('Les observations des arêtes contiennent des clés métier mensuelles dupliquées')
+        raise ValueError(
+            "Les observations des arêtes contiennent des clés métier mensuelles dupliquées"
+        )
     node_ids = set(nodes.get_column("node_id").to_list())
     if not set(edges.get_column("source").to_list()).issubset(node_ids) or not set(
         edges.get_column("target").to_list()
     ).issubset(node_ids):
-        raise ValueError('Les arêtes référencent des identifiants absents du fichier des nœuds')
+        raise ValueError(
+            "Les arêtes référencent des identifiants absents du fichier des nœuds"
+        )
     edge_ids = set(edges.get_column("edge_id").to_list())
     if not set(observations.get_column("edge_id").to_list()).issubset(edge_ids):
-        raise ValueError('Les observations référencent des identifiants absents du fichier des arêtes')
+        raise ValueError(
+            "Les observations référencent des identifiants absents du fichier des arêtes"
+        )
     edge_pairs = {
         (row["edge_id"], row["service"], row["source"], row["target"])
         for row in edges.iter_rows(named=True)
@@ -141,7 +147,9 @@ def _validate_artifacts(
         (row["edge_id"], row["service"], row["source"], row["target"]) not in edge_pairs
         for row in observations.iter_rows(named=True)
     ):
-        raise ValueError('Les observations mensuelles ne correspondent pas aux identités des arêtes')
+        raise ValueError(
+            "Les observations mensuelles ne correspondent pas aux identités des arêtes"
+        )
 
 
 def _calculate_graph_metrics(
@@ -259,9 +267,9 @@ def _top_rows(
 def _build_report(result: GraphMetricsResult) -> str:
     metadata = result.metadata
     lines = [
-        '# Rapport des métriques du graphe',
+        "# Rapport des métriques du graphe",
         "",
-        '## Entrées et périmètre des calculs',
+        "## Entrées et périmètre des calculs",
         "",
         f"- Fichier des nœuds : `{metadata['source_paths']['nodes']}` ({metadata['source_row_counts']['nodes']:,} rows)",
         f"- Fichier des arêtes : `{metadata['source_paths']['edges']}` ({metadata['source_row_counts']['edges']:,} rows)",
@@ -270,9 +278,9 @@ def _build_report(result: GraphMetricsResult) -> str:
         f"- Graphes globaux : {metadata['overall_graph_count']} ; graphes mensuels : {metadata['monthly_graph_count']}",
         f"- Lignes de métriques des nœuds en sortie : {result.node_metrics.height:,} ; lignes de métriques des arêtes : {result.edge_metrics.height:,}",
         "",
-        '## Synthèse globale du graphe par service',
+        "## Synthèse globale du graphe par service",
         "",
-        '| Service | Nœuds | Arêtes | Degré moyen | PageRank maximal | Intermédiarité maximale |',
+        "| Service | Nœuds | Arêtes | Degré moyen | PageRank maximal | Intermédiarité maximale |",
         "|---|---:|---:|---:|---:|---:|",
     ]
     for service in metadata["services"]:
@@ -285,10 +293,10 @@ def _build_report(result: GraphMetricsResult) -> str:
         lines.append(
             f"| {service} | {rows.height} | {edge_count} | {rows['degree'].mean() if rows.height else 0:.4f} | {rows['pagerank'].max() if rows.height and rows['pagerank'].null_count() < rows.height else 'n/a'} | {rows['betweenness_centrality'].max() if rows.height else 'n/a'} |"
         )
-    lines += ["", '## Dix premières gares globales par service', ""]
+    lines += ["", "## Dix premières gares globales par service", ""]
     for metric in ("in_degree", "out_degree", "betweenness_centrality", "pagerank"):
         lines.extend(
-            [f"### {metric}", "", '| Service | Gare | Valeur |', "|---|---|---:|"]
+            [f"### {metric}", "", "| Service | Gare | Valeur |", "|---|---|---:|"]
         )
         for service in metadata["services"]:
             for row in _top_rows(
@@ -302,9 +310,9 @@ def _build_report(result: GraphMetricsResult) -> str:
                 )
         lines.append("")
     lines += [
-        '## Dix premières arêtes selon leur intermédiarité globale',
+        "## Dix premières arêtes selon leur intermédiarité globale",
         "",
-        '| Service | Origine | Destination | Valeur |',
+        "| Service | Origine | Destination | Valeur |",
         "|---|---|---|---:|",
     ]
     for service in metadata["services"]:
@@ -317,7 +325,7 @@ def _build_report(result: GraphMetricsResult) -> str:
             lines.append(
                 f"| {row['service']} | {row['source']} | {row['target']} | {row['edge_betweenness']:.6g} |"
             )
-    lines += ["", '## Distributions des métriques', ""]
+    lines += ["", "## Distributions des métriques", ""]
     for metric in NODE_METRIC_NAMES:
         lines.append(
             f"- Métrique globale des nœuds `{metric}`: `{metadata['distributions']['node'][metric]}`"
@@ -327,9 +335,9 @@ def _build_report(result: GraphMetricsResult) -> str:
     )
     lines += [
         "",
-        '## Évolution mensuelle par service',
+        "## Évolution mensuelle par service",
         "",
-        '| Mois | Service | Nœuds | Arêtes | Degré moyen | PageRank maximal | Intermédiarité maximale |',
+        "| Mois | Service | Nœuds | Arêtes | Degré moyen | PageRank maximal | Intermédiarité maximale |",
         "|---|---|---:|---:|---:|---:|---:|",
     ]
     for item in metadata["monthly_graphs"]:
@@ -349,21 +357,23 @@ def _build_report(result: GraphMetricsResult) -> str:
         lines.append(
             f"| {item['period']} | {item['service']} | {nodes.height} | {edges.height} | {nodes['degree'].mean() if nodes.height else 0:.4f} | {max_pr if max_pr is not None else 'n/a'} | {nodes['betweenness_centrality'].max() if nodes.height else 'n/a'} |"
         )
-    lines += ["", '## Convergence PageRank et avertissements', ""]
+    lines += ["", "## Convergence PageRank et avertissements", ""]
     if metadata["pagerank_convergence_failures"]:
         lines.extend(
             f"- `{failure}`" for failure in metadata["pagerank_convergence_failures"]
         )
     else:
-        lines.append('- PageRank a convergé pour tous les graphes service-période calculés.')
+        lines.append(
+            "- PageRank a convergé pour tous les graphes service-période calculés."
+        )
     lines += [
         "",
-        '## Limites d’interprétation',
+        "## Limites d’interprétation",
         "",
-        '- Les métriques non pondérées décrivent les plus courts chemins de la topologie observée, pas les itinéraires réels ni les tronçons physiques.',
-        '- Le degré compte les connexions distinctes, pas la fréquence des trains ; la centralité ne démontre ni volume de voyageurs, ni importance opérationnelle, ni propagation des retards.',
-        '- Les valeurs globales résument l’union des arêtes de la période ; les valeurs mensuelles sont calculées indépendamment sur chaque mois.',
-        '- Les services National et International sont calculés séparément.',
+        "- Les métriques non pondérées décrivent les plus courts chemins de la topologie observée, pas les itinéraires réels ni les tronçons physiques.",
+        "- Le degré compte les connexions distinctes, pas la fréquence des trains ; la centralité ne démontre ni volume de voyageurs, ni importance opérationnelle, ni propagation des retards.",
+        "- Les valeurs globales résument l’union des arêtes de la période ; les valeurs mensuelles sont calculées indépendamment sur chaque mois.",
+        "- Les services National et International sont calculés séparément.",
         "",
     ]
     return "\n".join(lines)
@@ -380,35 +390,35 @@ def run_graph_metrics_pipeline(
     tol: float = DEFAULT_TOL,
 ) -> GraphMetricsResult:
     """Calcule et exporte les métriques globales et mensuelles du graphe orienté.
-    
-        :param nodes_path: Chemin du fichier ``nodes.parquet`` existant.
-        :type nodes_path: str | os.PathLike[str]
-        :param edges_path: Chemin du fichier ``edges.parquet`` existant.
-        :type edges_path: str | os.PathLike[str]
-        :param observations_path: Chemin Parquet existant des observations mensuelles.
-        :type observations_path: str | os.PathLike[str]
-        :param output_dir: Dossier des tables de métriques Parquet et métadonnées JSON.
-        :type output_dir: str | os.PathLike[str]
-        :param report_path: Destination du rapport Markdown.
-        :type report_path: str | os.PathLike[str]
-        :param alpha: Facteur d’amortissement PageRank dans ``[0, 1]``.
-        :type alpha: float
-        :param max_iter: Nombre maximal d’itérations PageRank par graphe.
-        :type max_iter: int
-        :param tol: Tolérance de convergence PageRank.
-        :type tol: float
-        :returns: Tables de métriques, métadonnées et chemins écrits.
-        :rtype: GraphMetricsResult
-        :raises OSError: Si les entrées ne peuvent pas être lues ou les sorties écrites.
-        :raises TypeError: Si une entrée n’est pas une table Parquet compatible avec Polars.
-        :raises ValueError: Si les paramètres, schémas, clés ou références sont invalides.
-        """
+
+    :param nodes_path: Chemin du fichier ``nodes.parquet`` existant.
+    :type nodes_path: str | os.PathLike[str]
+    :param edges_path: Chemin du fichier ``edges.parquet`` existant.
+    :type edges_path: str | os.PathLike[str]
+    :param observations_path: Chemin Parquet existant des observations mensuelles.
+    :type observations_path: str | os.PathLike[str]
+    :param output_dir: Dossier des tables de métriques Parquet et métadonnées JSON.
+    :type output_dir: str | os.PathLike[str]
+    :param report_path: Destination du rapport Markdown.
+    :type report_path: str | os.PathLike[str]
+    :param alpha: Facteur d’amortissement PageRank dans ``[0, 1]``.
+    :type alpha: float
+    :param max_iter: Nombre maximal d’itérations PageRank par graphe.
+    :type max_iter: int
+    :param tol: Tolérance de convergence PageRank.
+    :type tol: float
+    :returns: Tables de métriques, métadonnées et chemins écrits.
+    :rtype: GraphMetricsResult
+    :raises OSError: Si les entrées ne peuvent pas être lues ou les sorties écrites.
+    :raises TypeError: Si une entrée n’est pas une table Parquet compatible avec Polars.
+    :raises ValueError: Si les paramètres, schémas, clés ou références sont invalides.
+    """
     if not 0 <= alpha <= 1:
-        raise ValueError('alpha doit être compris entre 0 et 1')
+        raise ValueError("alpha doit être compris entre 0 et 1")
     if max_iter < 1:
-        raise ValueError('max_iter doit être strictement positif')
+        raise ValueError("max_iter doit être strictement positif")
     if tol <= 0:
-        raise ValueError('tol doit être strictement positif')
+        raise ValueError("tol doit être strictement positif")
     source_paths = {
         "nodes": Path(nodes_path),
         "edges": Path(edges_path),
@@ -476,12 +486,16 @@ def run_graph_metrics_pipeline(
         node_metrics.select(pl.struct(node_key).n_unique()).item()
         != node_metrics.height
     ):
-        raise ValueError('Les métriques calculées des nœuds contiennent des clés dupliquées')
+        raise ValueError(
+            "Les métriques calculées des nœuds contiennent des clés dupliquées"
+        )
     if (
         edge_metrics.select(pl.struct(edge_key).n_unique()).item()
         != edge_metrics.height
     ):
-        raise ValueError('Les métriques calculées des arêtes contiennent des clés dupliquées')
+        raise ValueError(
+            "Les métriques calculées des arêtes contiennent des clés dupliquées"
+        )
     metadata: dict[str, Any] = {
         "schema_version": "1.0",
         "source_paths": {key: str(value) for key, value in source_paths.items()},
@@ -512,16 +526,16 @@ def run_graph_metrics_pipeline(
             "alpha": alpha,
             "max_iter": max_iter,
             "tol": tol,
-            "dangling": 'Valeur par défaut NetworkX : redistribution uniforme',
+            "dangling": "Valeur par défaut NetworkX : redistribution uniforme",
         },
         "pagerank_convergence_failures": failures,
         "metric_definitions": {
-            "in_degree_centrality": 'in_degree / (n_nodes - 1), ou 0 si n_nodes < 2',
-            "out_degree_centrality": 'out_degree / (n_nodes - 1), ou 0 si n_nodes < 2',
-            "betweenness_centrality": 'Intermédiarité NetworkX normalisée des plus courts chemins orientés non pondérés',
-            "in_closeness": 'Proximité orientée NetworkX ; distances entrantes corrigées selon les nœuds accessibles',
-            "out_closeness": 'Proximité orientée NetworkX sur le graphe inversé ; distances sortantes corrigées selon les nœuds accessibles',
-            "edge_betweenness": 'Intermédiarité NetworkX normalisée des arêtes sur les plus courts chemins orientés non pondérés',
+            "in_degree_centrality": "in_degree / (n_nodes - 1), ou 0 si n_nodes < 2",
+            "out_degree_centrality": "out_degree / (n_nodes - 1), ou 0 si n_nodes < 2",
+            "betweenness_centrality": "Intermédiarité NetworkX normalisée des plus courts chemins orientés non pondérés",
+            "in_closeness": "Proximité orientée NetworkX ; distances entrantes corrigées selon les nœuds accessibles",
+            "out_closeness": "Proximité orientée NetworkX sur le graphe inversé ; distances sortantes corrigées selon les nœuds accessibles",
+            "edge_betweenness": "Intermédiarité NetworkX normalisée des arêtes sur les plus courts chemins orientés non pondérés",
         },
         "output_schemas": {
             "node_metrics": {key: str(value) for key, value in _NODE_SCHEMA.items()},
@@ -530,8 +544,8 @@ def run_graph_metrics_pipeline(
         "unique_keys": {"node_metrics": node_key, "edge_metrics": edge_key},
         "software_versions": {"networkx": nx.__version__, "polars": pl.__version__},
         "warnings": [
-            'Les chemins observés ne prouvent ni itinéraires réels ni propagation des retards.',
-            'Le degré décrit les connexions distinctes, pas la fréquence des trains ; PageRank n’est pas un flux de voyageurs.',
+            "Les chemins observés ne prouvent ni itinéraires réels ni propagation des retards.",
+            "Le degré décrit les connexions distinctes, pas la fréquence des trains ; PageRank n’est pas un flux de voyageurs.",
         ],
     }
     node_overall = node_metrics.filter(pl.col("period") == "overall")

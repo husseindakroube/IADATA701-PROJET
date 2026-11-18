@@ -1,0 +1,9 @@
+2026-11-18 19:05:53,389 | INFO | projet_kit_data | Journalisation de l’application initialisée
+2026-11-18 19:05:53,389 | DEBUG | projet_kit_data | DEMONSTRATION — données fictives, aucune session réelle
+2026-11-18 19:05:53,391 | INFO | projet_kit_data.activity | session=demo-session event=page_view details={"page": "Liaisons et réseau"}
+2026-11-18 19:05:53,391 | INFO | projet_kit_data.activity | session=demo-session event=carte_filters details={"service": "National", "color_mode": "cluster", "routes": 2}
+2026-11-18 19:05:53,391 | INFO | projet_kit_data.activity | session=demo-session event=route_comparison details={"route_a": "A → B", "route_b": "B → A"}
+2026-11-18 19:05:53,391 | INFO | projet_kit_data.activity | session=demo-session event=download details={"file": "liaisons_selection.csv", "routes": 2}
+2026-11-18 19:05:53,395 | WARNING | projet_kit_data | DEMONSTRATION — sélection vide simulée
+2026-11-18 19:05:53,395 | ERROR | projet_kit_data | DEMONSTRATION — fichier absent simulé : exemple.csv
+2026-11-18 19:05:53,395 | CRITICAL | projet_kit_data | DEMONSTRATION — indisponibilité simulée de la source

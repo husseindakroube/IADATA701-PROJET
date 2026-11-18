@@ -11,6 +11,9 @@ wheels/
 .uv-cache/
 .pytest_cache/
 logs/*.log*
+!logs/examples/debug.log
+!logs/examples/error.log
+docs/_build/
 reports/
 .coverage*
 .env

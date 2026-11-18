@@ -1,8 +1,7 @@
-'Profils des 4 clusters de liaisons TGV issus du clustering non supervisé.'
+"Profils des 4 clusters de liaisons TGV issus du clustering non supervisé."
 
 from ast import literal_eval
 
-import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 from sklearn.cluster import KMeans
@@ -84,11 +83,11 @@ if not resume.empty:
                 f'<div style="font-size:15px;font-weight:600;color:#2C3E50;'
                 f'margin:4px 0 10px 0;">{libelle}</div>'
                 f'<div style="font-size:13px;color:#34495E;line-height:1.7;">'
-                f'<b>{int(row["nombre_paires"])}</b> paires de gares<br>'
-                f'<b>{int(row["nombre_trains"]):,}</b> trains observés<br>'
-                f'<b>{row["duree_moyenne"]:.0f} min</b> durée moyenne<br>'
-                f'<b>{row["taux_retard_15_pct"]:.1f} %</b> taux de retard >15 min'
-                f'</div></div>'.replace(",", " "),
+                f"<b>{int(row['nombre_paires'])}</b> paires de gares<br>"
+                f"<b>{int(row['nombre_trains']):,}</b> trains observés<br>"
+                f"<b>{row['duree_moyenne']:.0f} min</b> durée moyenne<br>"
+                f"<b>{row['taux_retard_15_pct']:.1f} %</b> taux de retard >15 min"
+                f"</div></div>".replace(",", " "),
                 unsafe_allow_html=True,
             )
     st.divider()
@@ -108,14 +107,16 @@ st.caption(
 if not resume.empty:
     fig_profils = go.Figure()
     for col, lib in CAUSES_LIBELLES.items():
-        fig_profils.add_trace(go.Bar(
-            name=lib,
-            x=[f"Cluster {int(c)}" for c in resume["cluster"]],
-            y=resume[col].values,
-            text=[f"{v:.1f}" for v in resume[col].values],
-            textposition="outside",
-            textfont=dict(size=10),
-        ))
+        fig_profils.add_trace(
+            go.Bar(
+                name=lib,
+                x=[f"Cluster {int(c)}" for c in resume["cluster"]],
+                y=resume[col].values,
+                text=[f"{v:.1f}" for v in resume[col].values],
+                textposition="outside",
+                textfont=dict(size=10),
+            )
+        )
     fig_profils.update_layout(
         barmode="group",
         height=380,
@@ -123,8 +124,9 @@ if not resume.empty:
         yaxis=dict(title="Part moyenne (%)", gridcolor="#ECF0F1"),
         xaxis=dict(title=None),
         plot_bgcolor="#FFFFFF",
-        legend=dict(orientation="h", yanchor="bottom", y=-0.25,
-                    xanchor="center", x=0.5),
+        legend=dict(
+            orientation="h", yanchor="bottom", y=-0.25, xanchor="center", x=0.5
+        ),
     )
     st.plotly_chart(fig_profils, width="stretch")
 
@@ -153,27 +155,41 @@ if not profils.empty:
     fig_pca = go.Figure()
     for cid in sorted(profils_pca["cluster"].unique()):
         sous = profils_pca[profils_pca["cluster"] == cid]
-        fig_pca.add_trace(go.Scatter(
-            x=sous["PC1"], y=sous["PC2"], mode="markers",
-            name=f"Cluster {int(cid)} — {LIBELLES_CLUSTERS.get(int(cid), '')}",
-            marker=dict(
-                size=12,
-                color=COULEURS_CLUSTERS.get(int(cid), "#95A5A6"),
-                line=dict(color="#FFFFFF", width=1.5),
-            ),
-            hovertext=[f"<b>{g1} ↔ {g2}</b><br>Cluster {int(cid)}"
-                       for g1, g2 in zip(sous["gare_1"], sous["gare_2"])],
-            hoverinfo="text",
-        ))
+        fig_pca.add_trace(
+            go.Scatter(
+                x=sous["PC1"],
+                y=sous["PC2"],
+                mode="markers",
+                name=f"Cluster {int(cid)} — {LIBELLES_CLUSTERS.get(int(cid), '')}",
+                marker=dict(
+                    size=12,
+                    color=COULEURS_CLUSTERS.get(int(cid), "#95A5A6"),
+                    line=dict(color="#FFFFFF", width=1.5),
+                ),
+                hovertext=[
+                    f"<b>{g1} ↔ {g2}</b><br>Cluster {int(cid)}"
+                    for g1, g2 in zip(sous["gare_1"], sous["gare_2"])
+                ],
+                hoverinfo="text",
+            )
+        )
     fig_pca.update_layout(
-        height=480, margin=dict(l=10, r=10, t=30, b=10),
-        xaxis=dict(title=f"PC1 ({pca.explained_variance_ratio_[0] * 100:.1f} % variance)",
-                   gridcolor="#ECF0F1", zerolinecolor="#BDC3C7"),
-        yaxis=dict(title=f"PC2 ({pca.explained_variance_ratio_[1] * 100:.1f} % variance)",
-                   gridcolor="#ECF0F1", zerolinecolor="#BDC3C7"),
+        height=480,
+        margin=dict(l=10, r=10, t=30, b=10),
+        xaxis=dict(
+            title=f"PC1 ({pca.explained_variance_ratio_[0] * 100:.1f} % variance)",
+            gridcolor="#ECF0F1",
+            zerolinecolor="#BDC3C7",
+        ),
+        yaxis=dict(
+            title=f"PC2 ({pca.explained_variance_ratio_[1] * 100:.1f} % variance)",
+            gridcolor="#ECF0F1",
+            zerolinecolor="#BDC3C7",
+        ),
         plot_bgcolor="#FFFFFF",
-        legend=dict(orientation="h", yanchor="bottom", y=-0.25,
-                    xanchor="center", x=0.5),
+        legend=dict(
+            orientation="h", yanchor="bottom", y=-0.25, xanchor="center", x=0.5
+        ),
     )
     st.plotly_chart(fig_pca, width="stretch")
     st.caption(
@@ -195,28 +211,45 @@ with st.expander("Choix de k : méthode du coude"):
             km = KMeans(n_clusters=k, random_state=42, n_init=10).fit(X_scaled)
             inerties.append(km.inertia_)
         fig_elbow = go.Figure()
-        fig_elbow.add_trace(go.Scatter(
-            x=ks, y=inerties, mode="lines+markers",
-            line=dict(color="#2E86DE", width=2), marker=dict(size=8),
-        ))
+        fig_elbow.add_trace(
+            go.Scatter(
+                x=ks,
+                y=inerties,
+                mode="lines+markers",
+                line=dict(color="#2E86DE", width=2),
+                marker=dict(size=8),
+            )
+        )
         # Marque k=4
-        fig_elbow.add_trace(go.Scatter(
-            x=[4], y=[inerties[ks.index(4)]], mode="markers",
-            marker=dict(size=14, color="#C0392B",
-                        line=dict(color="#FFFFFF", width=2)),
-            name="k=4 retenu", showlegend=False,
-        ))
+        fig_elbow.add_trace(
+            go.Scatter(
+                x=[4],
+                y=[inerties[ks.index(4)]],
+                mode="markers",
+                marker=dict(
+                    size=14, color="#C0392B", line=dict(color="#FFFFFF", width=2)
+                ),
+                name="k=4 retenu",
+                showlegend=False,
+            )
+        )
         fig_elbow.add_annotation(
-            x=4, y=inerties[ks.index(4)],
-            text="k=4 retenu", showarrow=True, arrowhead=2,
-            ax=30, ay=-30, font=dict(color="#C0392B", size=11),
+            x=4,
+            y=inerties[ks.index(4)],
+            text="k=4 retenu",
+            showarrow=True,
+            arrowhead=2,
+            ax=30,
+            ay=-30,
+            font=dict(color="#C0392B", size=11),
         )
         fig_elbow.update_layout(
-            height=320, margin=dict(l=10, r=10, t=10, b=10),
-            xaxis=dict(title="Nombre de clusters k", dtick=1,
-                       gridcolor="#ECF0F1"),
+            height=320,
+            margin=dict(l=10, r=10, t=10, b=10),
+            xaxis=dict(title="Nombre de clusters k", dtick=1, gridcolor="#ECF0F1"),
             yaxis=dict(title="Inertie intra-cluster", gridcolor="#ECF0F1"),
-            plot_bgcolor="#FFFFFF", showlegend=False,
+            plot_bgcolor="#FFFFFF",
+            showlegend=False,
         )
         st.plotly_chart(fig_elbow, width="stretch")
         st.caption(
@@ -239,7 +272,9 @@ options_cluster = [
     for c in clusters_disponibles
 ]
 choix_cluster = st.selectbox(
-    "Choisir un cluster", options_cluster, index=0,
+    "Choisir un cluster",
+    options_cluster,
+    index=0,
 )
 cid_choisi = int(choix_cluster.split(" ")[1])
 log_selection("cluster_view", cluster=cid_choisi)
@@ -252,15 +287,17 @@ if not resume.empty:
         f'<div style="padding:12px 16px;background:{couleur_c};color:white;'
         f'border-radius:6px;margin:12px 0;">'
         f'<b style="font-size:16px;">Cluster {cid_choisi} — '
-        f'{LIBELLES_CLUSTERS.get(cid_choisi, "")}</b>'
-        f'</div>',
+        f"{LIBELLES_CLUSTERS.get(cid_choisi, '')}</b>"
+        f"</div>",
         unsafe_allow_html=True,
     )
     m1, m2, m3, m4 = st.columns(4)
     with m1:
         st.metric("Paires de gares", int(row_c["nombre_paires"]))
     with m2:
-        st.metric("Trains observés", f"{int(row_c['nombre_trains']):,}".replace(",", " "))
+        st.metric(
+            "Trains observés", f"{int(row_c['nombre_trains']):,}".replace(",", " ")
+        )
     with m3:
         st.metric("Durée moyenne", f"{row_c['duree_moyenne']:.0f} min")
     with m4:
@@ -273,7 +310,9 @@ paires_cluster["paire_formatee"] = paires_cluster["paire"].apply(
     lambda s: " ↔ ".join(literal_eval(s))
 )
 st.dataframe(
-    paires_cluster[["paire_formatee"]].rename(columns={"paire_formatee": "Paire de gares"}),
-    hide_index=True, width="stretch",
+    paires_cluster[["paire_formatee"]].rename(
+        columns={"paire_formatee": "Paire de gares"}
+    ),
+    hide_index=True,
+    width="stretch",
 )
-

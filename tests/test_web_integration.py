@@ -1,4 +1,4 @@
-'Tests de non-régression des limites d’intégration et des prédictions enregistrées.'
+"Tests de non-régression des limites d’intégration et des prédictions enregistrées."
 
 import sys
 
@@ -50,7 +50,14 @@ def test_saved_metrics_match_same_test_rows():
 
 @pytest.mark.parametrize(
     "page",
-    ["main.py", "data_quality.py", "routes_network.py", "clusters.py", "predictions.py", "conclusions.py"],
+    [
+        "main.py",
+        "data_quality.py",
+        "routes_network.py",
+        "clusters.py",
+        "predictions.py",
+        "conclusions.py",
+    ],
 )
 def test_all_pages_render(page):
     app = AppTest.from_file(str(ROOT / "app/app.py"), default_timeout=30).run()
@@ -109,12 +116,23 @@ def test_comparison_exports_share_test_rows_and_metrics():
     frame = load_table("data/processed/ml/comparaison_predictions_test.parquet")
     baseline = load_table("data/processed/ml/baseline_predictions_test.parquet")
     keys = ["date", "service", "departure", "arrival"]
-    joined = frame.merge(baseline, on=keys, how="outer", validate="one_to_one", indicator=True)
+    joined = frame.merge(
+        baseline, on=keys, how="outer", validate="one_to_one", indicator=True
+    )
     assert joined["_merge"].eq("both").all()
     assert np.allclose(joined.prediction_a, joined.prediction_ml)
     assert np.allclose(joined.delay_rate_15_x, joined.delay_rate_15_y)
     saved = load_json("data/processed/ml/comparaison_metrics.json")
-    for name, col in zip(saved, ["prediction_naive", "prediction_a", "prediction_b", "prediction_c", "prediction_d"]):
+    for name, col in zip(
+        saved,
+        [
+            "prediction_naive",
+            "prediction_a",
+            "prediction_b",
+            "prediction_c",
+            "prediction_d",
+        ],
+    ):
         actual = compute_metrics(frame.delay_rate_15, frame[col], frame.circulated)
         actual["r2"] = r2_score(frame.delay_rate_15, frame[col])
         for metric, value in actual.items():
@@ -127,7 +145,17 @@ def test_cluster_profiles_match_new_labels_and_summary():
     labels = load_cluster_features(ROOT / "data/processed/clusters_liaisons.csv")
     profiles = load_table("data/processed/ml/clusters_profils.parquet")
     summary = load_table("data/processed/ml/clusters_resume.parquet")
-    joined = labels.merge(profiles, left_on=["gare_a", "gare_b"], right_on=["gare_1", "gare_2"], how="outer", validate="one_to_one", indicator=True)
+    joined = labels.merge(
+        profiles,
+        left_on=["gare_a", "gare_b"],
+        right_on=["gare_1", "gare_2"],
+        how="outer",
+        validate="one_to_one",
+        indicator=True,
+    )
     assert joined["_merge"].eq("both").all()
     assert joined.cluster_x.eq(joined.cluster_y).all()
-    assert profiles.groupby("cluster").size().to_dict() == summary.set_index("cluster").nombre_paires.to_dict()
+    assert (
+        profiles.groupby("cluster").size().to_dict()
+        == summary.set_index("cluster").nombre_paires.to_dict()
+    )

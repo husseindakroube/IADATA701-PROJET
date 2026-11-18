@@ -1,4 +1,4 @@
-'Adaptateurs en lecture seule pour les résultats d’analyse enregistrés par l’équipe.'
+"Adaptateurs en lecture seule pour les résultats d’analyse enregistrés par l’équipe."
 
 import json
 import logging
@@ -18,28 +18,28 @@ LOGGER = logging.getLogger(__name__)
 
 
 def load_table(relative: str) -> pd.DataFrame:
-    'Charge une table du projet et journalise les échecs sans modifier le fichier.'
+    "Charge une table du projet et journalise les échecs sans modifier le fichier."
     path = ROOT / relative
     try:
         frame = (
             pd.read_parquet(path) if path.suffix == ".parquet" else pd.read_csv(path)
         )
-        LOGGER.debug('Fichier chargé %s : %d lignes', relative, len(frame))
+        LOGGER.debug("Fichier chargé %s : %d lignes", relative, len(frame))
         return frame
     except Exception:
-        LOGGER.exception('Impossible de charger le fichier %s', relative)
+        LOGGER.exception("Impossible de charger le fichier %s", relative)
         raise
 
 
 def load_json(relative: str) -> dict:
-    'Charge les métadonnées enregistrées, sans désérialisation ni entraînement de modèle.'
+    "Charge les métadonnées enregistrées, sans désérialisation ni entraînement de modèle."
     result = json.loads((ROOT / relative).read_text(encoding="utf-8"))
-    LOGGER.debug('Métadonnées chargées : %s', relative)
+    LOGGER.debug("Métadonnées chargées : %s", relative)
     return result
 
 
 def validate_observations(frame: pd.DataFrame) -> pd.DataFrame:
-    'Valide la clé commune avant d’afficher les observations dans l’interface.'
+    "Valide la clé commune avant d’afficher les observations dans l’interface."
     required = {
         *KEYS,
         *FLAGS,
@@ -60,7 +60,7 @@ def validate_observations(frame: pd.DataFrame) -> pd.DataFrame:
 def filter_observations(
     frame: pd.DataFrame, start, end, service=None, departure=None, arrival=None
 ) -> pd.DataFrame:
-    'Applique les mêmes filtres de dates inclusives et de liaisons orientées sur chaque page.'
+    "Applique les mêmes filtres de dates inclusives et de liaisons orientées sur chaque page."
     mask = frame["date"].between(pd.Timestamp(start), pd.Timestamp(end))
     for column, value in [
         ("service", service),

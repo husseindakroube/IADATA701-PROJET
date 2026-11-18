@@ -1,4 +1,4 @@
-'Valide les entrées SSH et la restauration du déploiement sans contacter de serveur.'
+"Valide les entrées SSH et la restauration du déploiement sans contacter de serveur."
 
 import importlib.util
 import subprocess
@@ -19,6 +19,26 @@ def load_module(name):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def test_demo_logs_use_real_routing_and_refuse_overwrite(tmp_path):
+    module = load_module("generate_log_examples")
+    directory = tmp_path / "examples"
+    module.generate_examples(directory)
+    debug = (directory / "debug.log").read_text(encoding="utf-8")
+    error = (directory / "error.log").read_text(encoding="utf-8")
+    assert debug.count("event=page_view") == 1
+    assert "event=download" in debug
+    assert "session=demo-session" in debug
+    assert "DEMONSTRATION" in error
+    assert "ERROR" in error and "CRITICAL" in error
+    assert "INFO" not in error and "WARNING" not in error and "DEBUG" not in error
+    assert "Traceback" not in error
+    with pytest.raises(FileExistsError):
+        module.generate_examples(directory)
+    assert (directory / "debug.log").read_text(encoding="utf-8") == debug
+    with pytest.raises(FileExistsError):
+        module.generate_examples(module.ROOT / "logs")
 
 
 @pytest.mark.parametrize(

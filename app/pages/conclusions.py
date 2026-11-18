@@ -1,4 +1,4 @@
-'Synthèse du projet, réponse à la problématique et ressources de reproductibilité.'
+"Synthèse du projet, réponse à la problématique et ressources de reproductibilité."
 
 import streamlit as st
 from sklearn.metrics import mean_absolute_error, r2_score
@@ -59,7 +59,7 @@ with col_r2:
         '<div style="font-size:12px;letter-spacing:1px;color:#922B21;'
         'font-weight:600;">PARTIE 2 — PRÉDICTION</div>'
         '<div style="font-size:16px;font-weight:600;margin:6px 0;'
-        'color:#922B21;">Non, l\'exploiter n\'améliore pas significativement la prédiction.</div>'
+        "color:#922B21;\">Non, l'exploiter n'améliore pas significativement la prédiction.</div>"
         '<div style="font-size:14px;color:#641E16;line-height:1.5;">'
         "Les modèles enrichis avec les features de graphe (B), de cluster (C) "
         "ou les deux (D) obtiennent des MAE pondérées quasi identiques au modèle "
@@ -89,9 +89,13 @@ st.markdown(
 st.markdown("## Résultats par pilier")
 
 donnees_qualite = table("data/processed/sncf.parquet", required=False)
-summary_reseau = table("data/processed/graph/descriptive/network_summary.parquet", required=False)
+summary_reseau = table(
+    "data/processed/graph/descriptive/network_summary.parquet", required=False
+)
 clusters = table("data/processed/clusters_liaisons.csv", required=False)
-predictions = table("data/processed/ml/comparaison_predictions_test.parquet", required=False)
+predictions = table(
+    "data/processed/ml/comparaison_predictions_test.parquet", required=False
+)
 
 p1, p2 = st.columns(2)
 
@@ -99,6 +103,7 @@ with p1, st.container(border=True):
     st.markdown("**🔍 Qualité des données**")
     if not donnees_qualite.empty:
         from projet_kit_data.web_data import FLAGS
+
         total = len(donnees_qualite)
         flagged = int(donnees_qualite[FLAGS].fillna(False).any(axis=1).sum())
         propres = total - flagged
@@ -106,8 +111,7 @@ with p1, st.container(border=True):
             f"**{total:,} observations** traitées par un ETL non destructif, "
             f"**{propres:,} propres** après application de 4 contrôles de "
             f"cohérence. Toutes les lignes sont conservées avec leurs "
-            f"indicateurs de qualité pour garantir la traçabilité."
-            .replace(",", " ")
+            f"indicateurs de qualité pour garantir la traçabilité.".replace(",", " ")
         )
 
 with p2, st.container(border=True):
@@ -141,14 +145,18 @@ with p3, st.container(border=True):
 with p4, st.container(border=True):
     st.markdown("**🤖 Prédiction retenue**")
     if not predictions.empty:
-        mae_a = mean_absolute_error(predictions.delay_rate_15, predictions["prediction_a"]) * 100
+        mae_a = (
+            mean_absolute_error(predictions.delay_rate_15, predictions["prediction_a"])
+            * 100
+        )
         r2_a = r2_score(predictions.delay_rate_15, predictions["prediction_a"])
         st.caption(
             f"Modèle **A (HistGradientBoostingRegressor)** retenu après correction "
             f"d'une fuite temporelle initiale. MAE **{mae_a:.3f} pp**, "
             f"R² **{r2_a:.3f}** sur {len(predictions):,} observations de test. "
-            f"Les modèles enrichis B/C/D obtiennent des performances équivalentes."
-            .replace(",", " ")
+            f"Les modèles enrichis B/C/D obtiennent des performances équivalentes.".replace(
+                ",", " "
+            )
         )
 
 

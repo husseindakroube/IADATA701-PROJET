@@ -1,4 +1,4 @@
-'Orchestre la préparation ETL locale des données SNCF.'
+"Orchestre la préparation ETL locale des données SNCF."
 
 from __future__ import annotations
 
@@ -17,11 +17,11 @@ def run_etl_pipeline(
     raw_data_path: str | os.PathLike[str] = sncf_api.DEFAULT_RAW_DATA_PATH,
 ) -> pl.DataFrame:
     """Charge, type et annote les données brutes SNCF locales.
-    
+
     Appelle successivement les modules d’acquisition, de prétraitement et de contrôle
     qualité. Ne télécharge pas les données, ne lance pas l’audit, ne modifie pas le
     fichier brut et ne corrige ni ne supprime les observations anormales.
-    
+
     :param raw_data_path: JSON brut existant ; chemin du module d’acquisition par défaut.
     :type raw_data_path: str | os.PathLike[str]
     :returns: Table Polars typée avec les indicateurs de diagnostic existants.
@@ -40,11 +40,11 @@ def run_and_save_etl(
     output_path: str | os.PathLike[str] = DEFAULT_PROCESSED_DATA_PATH,
 ) -> pl.DataFrame:
     """Exécute la chaîne ETL locale et enregistre son résultat au format Parquet.
-    
+
     La chaîne charge le JSON brut, prépare la table canonique typée et ajoute les
     indicateurs qualité. Crée le dossier de sortie si nécessaire, écrit la table sans
     transformation supplémentaire et renvoie cette même table.
-    
+
     :param raw_data_path: JSON brut existant ; chemin du module d’acquisition par défaut.
     :type raw_data_path: str | os.PathLike[str]
     :param output_path: Destination Parquet ; ``data/processed/sncf.parquet`` par défaut.

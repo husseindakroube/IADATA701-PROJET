@@ -1,4 +1,4 @@
-'Récupère et conserve les observations mensuelles brutes de régularité TGV SNCF.'
+"Récupère et conserve les observations mensuelles brutes de régularité TGV SNCF."
 
 from __future__ import annotations
 
@@ -24,13 +24,13 @@ _RETRYABLE_STATUS_CODES = {429, *range(500, 600)}
 
 class SNCFAPIError(RuntimeError):
     """Représente un échec HTTP ou une structure de réponse invalide de l’API SNCF.
-    
+
     :param message: Description de l’échec de l’API.
     :type message: str"""
 
     def __init__(self, message: str) -> None:
         """Initialise l’erreur de l’API avec un message descriptif.
-        
+
         :param message: Description de l’échec de l’API.
         :type message: str
         :returns: Aucune valeur.
@@ -39,12 +39,12 @@ class SNCFAPIError(RuntimeError):
 
 
 def _is_record_array(value: Any) -> TypeGuard[list[dict[str, Any]]]:
-    'Indique si *value* est un tableau JSON contenant uniquement des objets.'
+    "Indique si *value* est un tableau JSON contenant uniquement des objets."
     return isinstance(value, list) and all(isinstance(record, dict) for record in value)
 
 
 def _retry_after_seconds(value: str | None) -> float | None:
-    'Interprète la valeur HTTP Retry-After comme un délai positif ou nul.'
+    "Interprète la valeur HTTP Retry-After comme un délai positif ou nul."
     if value is None:
         return None
 
@@ -66,7 +66,7 @@ def _wait_before_retry(
     backoff_factor: float,
     retry_after: str | None = None,
 ) -> None:
-    'Attend selon un délai exponentiel en respectant une valeur Retry-After valide.'
+    "Attend selon un délai exponentiel en respectant une valeur Retry-After valide."
     backoff = backoff_factor * (2**retry_number)
     retry_after_delay = _retry_after_seconds(retry_after)
     time.sleep(max(backoff, retry_after_delay or 0.0))
@@ -80,11 +80,11 @@ def fetch_raw_data(
     backoff_factor: float = 1.0,
 ) -> list[dict[str, Any]]:
     """Récupère toutes les observations de régularité TGV SNCF sans les transformer.
-    
+
     Appelle l’export JSON de l’API SNCF Explore v2.1 avec ``limit=-1``. Les erreurs
     transitoires de connexion, délais dépassés et réponses HTTP 429 ou 5xx entraînent
     jusqu’à ``max_retries`` nouvelles tentatives.
-    
+
     :param connect_timeout: Délai maximal de connexion en secondes.
     :type connect_timeout: float
     :param read_timeout: Délai maximal de lecture de la réponse en secondes.
@@ -99,11 +99,11 @@ def fetch_raw_data(
     :raises requests.exceptions.JSONDecodeError: Si la réponse n’est pas du JSON valide ; cette exception est volontairement propagée.
     :raises ValueError: Si un délai, nombre de tentatives ou facteur d’attente est invalide."""
     if connect_timeout <= 0 or read_timeout <= 0:
-        raise ValueError('Les délais d’attente doivent être strictement positifs.')
+        raise ValueError("Les délais d’attente doivent être strictement positifs.")
     if max_retries < 0:
-        raise ValueError('max_retries doit être positif ou nul.')
+        raise ValueError("max_retries doit être positif ou nul.")
     if backoff_factor < 0:
-        raise ValueError('backoff_factor doit être positif ou nul.')
+        raise ValueError("backoff_factor doit être positif ou nul.")
 
     timeout = (connect_timeout, read_timeout)
     for attempt in range(max_retries + 1):
@@ -158,7 +158,7 @@ def fetch_raw_data(
             )
         return records
 
-    raise SNCFAPIError('La requête vers l’API SNCF a échoué sans réponse.')
+    raise SNCFAPIError("La requête vers l’API SNCF a échoué sans réponse.")
 
 
 def save_raw_data(
@@ -166,10 +166,10 @@ def save_raw_data(
     path: str | os.PathLike[str] = DEFAULT_RAW_DATA_PATH,
 ) -> Path:
     """Enregistre atomiquement les observations brutes dans un tableau JSON UTF-8.
-    
+
     Crée les dossiers parents si nécessaire. Un fichier temporaire du dossier cible
     est déplacé avec :func:`os.replace` afin de ne pas exposer de fichier partiellement écrit.
-    
+
     :param records: Dictionnaires bruts à sérialiser sans ETL ni nettoyage.
     :type records: Sequence[dict[str, Any]]
     :param path: Destination ; chemin des données brutes du projet par défaut.
@@ -210,7 +210,7 @@ def load_raw_data(
     path: str | os.PathLike[str] = DEFAULT_RAW_DATA_PATH,
 ) -> list[dict[str, Any]]:
     """Charge un tableau JSON brut SNCF précédemment enregistré.
-    
+
     :param path: Fichier JSON ; chemin des données brutes du projet par défaut.
     :type path: str | os.PathLike[str]
     :returns: Dictionnaires décodés conservant les noms et valeurs des champs sources.

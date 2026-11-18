@@ -73,10 +73,15 @@ COORDONNEES = {
 
 
 def main() -> None:
-    rows = [{"gare": g, "latitude": lat, "longitude": lon}
-            for g, (lat, lon) in COORDONNEES.items()]
+    """Écrit les coordonnées des gares dans data/raw/coordonnees_gares.csv."""
+    rows = [
+        {"gare": g, "latitude": lat, "longitude": lon}
+        for g, (lat, lon) in COORDONNEES.items()
+    ]
     df = pd.DataFrame(rows).sort_values("gare").reset_index(drop=True)
-    sortie = Path(__file__).resolve().parents[2] / "data" / "raw" / "coordonnees_gares.csv"
+    sortie = (
+        Path(__file__).resolve().parents[2] / "data" / "raw" / "coordonnees_gares.csv"
+    )
     df.to_csv(sortie, index=False)
     print(f"Ecrit {len(df)} gares dans {sortie}")
 

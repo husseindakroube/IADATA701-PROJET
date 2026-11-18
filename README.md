@@ -5,8 +5,8 @@ et fichiers de résultats du projet complémentaire de l'équipe.
 
 Six pages : accueil, qualité, liaisons/réseau, profils/clusters, prédictions,
 conclusions. Les filtres descriptifs sont communs ; graphes, clusters et tests ML
-conservent leur propre périmètre explicite. Aucun notebook ni entraînement ne
-s'exécute au démarrage.
+conservent leur propre périmètre explicite. Aucun notebook ne s'exécute au
+démarrage ; la page clusters recalcule la PCA et les ajustements K-Means du coude.
 
 ## Installation et lancement
 
@@ -59,7 +59,7 @@ les prédictions A/B/C/D sur les mêmes 1 857 observations de test, avec erreurs
 Les scripts et notebooks importés restent disponibles pour étudier la génération
 originale ; ils ne constituent pas encore une chaîne unique entièrement harmonisée.
 Leurs paramètres et chemins de lancement sont documentés dans leurs sources.
-Les notebooks sont téléchargeables depuis la page Conclusions.
+Les notebooks sources restent consultables dans le dossier `notebooks/` du dépôt.
 
 `docs/integration_manifest.json` conserve les chemins et empreintes SHA-256 des
 fichiers importés. `data/reports/clustering/elbow.png`, `pca.png` et `pca.txt`
@@ -73,17 +73,19 @@ Voir [le bilan complet et les manques](docs/INTEGRATION_GAPS.md).
 
 ```powershell
 uv run --locked pytest -q
-uv run --locked ruff check app src --select E9,F63,F7,F82
-uv run --locked python -m compileall -q app src
+uv run --locked ruff check app src scripts tests docs/conf.py
+uv run --locked ruff format --check app src scripts tests docs/conf.py
+uv run --locked python -m compileall -q app src scripts
+uv run --locked sphinx-build -W --keep-going -b html docs docs/_build/html
 ```
 
 Les tests d'intégration vérifient le chargement des six pages, les filtres, les clés
 métier et la correspondance des métriques avec les mêmes observations de test.
 La CI lance désormais la suite complète, publie les rapports et exige au moins
 90,1 % de couverture sur `app/` et `src/projet_kit_data/`. Le relevé local initial
-a été actualisé à 91,62 % (170 tests), le 18 novembre 2026. Les tests de déploiement sont également exécutés.
+a été actualisé à 91,95 % (172 tests), le 18 novembre 2026. Les tests de déploiement sont également exécutés.
 
-Les vérifications de syntaxe et d'erreurs critiques couvrent tous les scripts,
+Les vérifications de syntaxe, style et docstrings couvrent tous les scripts,
 y compris ceux de génération des coordonnées et des agrégats de liaisons.
 Les tests de l'interface vérifient aussi la sélection sur la carte et les courbes
 directionnelles du graphe. Après le contrôle de santé Docker, la CI charge les
@@ -92,13 +94,17 @@ six pages dans l'image de production, sans réseau, avec
 
 ## Documentation et déploiement
 
-Les documents Markdown importés sont dans `docs/` et `data/reports/`. Le projet ne
-fournit pas encore de construction Sphinx complète ni de lien d'application publique.
+Les documents Markdown importés sont dans `docs/` et `data/reports/`. La documentation
+Sphinx contient un guide d'installation, d'utilisation, de journalisation et une
+référence Python générée depuis les docstrings. Après la commande de construction
+ci-dessus, ouvrir `docs/_build/html/index.html`. La CI échoue en cas d'avertissement
+Sphinx et publie le HTML dans l'artefact `sphinx-html-<commit>`.
+Le lien d'application publique reste à renseigner après déploiement effectif.
 Le workflow construit et vérifie une image Docker, la publie sur GHCR depuis main,
 puis peut la déployer par SSH avec contrôle de santé et retour à la version précédente
 en cas d’échec. Configurer les Secrets de production et `DEPLOY_ENABLED` avant activation.
 Voir [la configuration CI/CD](docs/CI_CD.md) pour le serveur, le proxy et les commandes.
-Le déploiement réel et la construction Sphinx restent à valider.
+Le déploiement réel reste à valider ; la documentation Sphinx est construite localement.
 
 ## Équipe et dépôt
 
@@ -146,7 +152,21 @@ pas automatiquement copiés dans `error.log`.
 Configuration : `src/projet_kit_data/logging_config.py`. Chaque fichier est limité
 à 5 Mio avec trois sauvegardes (`.log.1` à `.log.3`), en UTF-8. La configuration
 est réutilisée à chaque rerun. Les fichiers de logs et leurs sauvegardes sont
-ignorés par Git. L'ancien `app.log`, s'il existe, n'est plus alimenté.
+ignorés par Git, sauf les exemples simulés dans `logs/examples/`.
+L'ancien `app.log`, s'il existe, n'est plus alimenté.
+
+Les exemples `logs/examples/debug.log` et `logs/examples/error.log` sont générés
+avec le vrai logger, une session fictive et des incidents explicitement simulés.
+Ils ne proviennent pas des utilisateurs du site. Pour les reproduire dans un
+nouveau dossier, exécuter :
+
+```powershell
+uv run --locked python scripts/deployment/generate_log_examples.py reports/log-examples
+```
+
+Le générateur refuse d'écraser des journaux existants. La CI l'exécute dans un
+dossier neuf et conserve les exemples avec les rapports de test. Les anciens
+fichiers de sortie serveur cessent d'être suivis par Git, sans suppression locale.
 
 Le dossier doit être accessible en écriture. En cas d'échec, l'application affiche
 un message et envoie l'erreur à la console. Dans Docker, les fichiers résident dans

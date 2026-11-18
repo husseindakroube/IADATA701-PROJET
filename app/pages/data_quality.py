@@ -1,10 +1,10 @@
-'Audit qualité des données SNCF avec indicateurs, complétude et pipeline.'
+"Audit qualité des données SNCF avec indicateurs, complétude et pipeline."
 
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from utils.data import filters, observations, report, table
+from utils.data import filters, observations, report
 from projet_kit_data.web_data import FLAGS, KEYS, ROOT
 
 
@@ -62,9 +62,9 @@ st.divider()
 # Trois onglets d analyse
 # =============================================================================
 
-rules, completeness, lineage = st.tabs([
-    "Signalements de qualité", "Complétude et doublons", "Pipeline et sources"
-])
+rules, completeness, lineage = st.tabs(
+    ["Signalements de qualité", "Complétude et doublons", "Pipeline et sources"]
+)
 
 
 # -----------------------------------------------------------------------------
@@ -79,18 +79,26 @@ with rules:
     )
 
     counts = (
-        donnees_completes[FLAGS].sum()
+        donnees_completes[FLAGS]
+        .sum()
         .rename(index=LIBELLES_FLAGS)
         .sort_values(ascending=True)
     )
-    fig_flags = go.Figure(data=[go.Bar(
-        y=counts.index, x=counts.values, orientation="h",
-        marker=dict(color="#0077B6"),
-        text=[f"{int(v):,}".replace(",", " ") for v in counts.values],
-        textposition="outside",
-    )])
+    fig_flags = go.Figure(
+        data=[
+            go.Bar(
+                y=counts.index,
+                x=counts.values,
+                orientation="h",
+                marker=dict(color="#0077B6"),
+                text=[f"{int(v):,}".replace(",", " ") for v in counts.values],
+                textposition="outside",
+            )
+        ]
+    )
     fig_flags.update_layout(
-        height=260, margin=dict(l=10, r=40, t=10, b=10),
+        height=260,
+        margin=dict(l=10, r=40, t=10, b=10),
         xaxis=dict(title="Nombre d'observations", showgrid=False),
         yaxis=dict(title=None),
         plot_bgcolor="#FFFFFF",
@@ -107,13 +115,11 @@ with rules:
     nb_vus = int(flagged.sum())
     st.caption(
         f"**{nb_vus:,} observations signalées** dans le périmètre choisi, "
-        f"sur {len(data):,} examinées."
-        .replace(",", " ")
+        f"sur {len(data):,} examinées.".replace(",", " ")
     )
 
     with st.expander("Voir le détail des observations signalées"):
         st.dataframe(data.loc[flagged], hide_index=True)
-
 
 
 # -----------------------------------------------------------------------------
@@ -133,13 +139,21 @@ with completeness:
         st.success("Aucune valeur manquante sur l'ensemble du dataset.")
     else:
         part = missing / nb_total * 100
-        fig_missing = go.Figure(data=[go.Bar(
-            y=missing.index[::-1], x=missing.values[::-1], orientation="h",
-            marker=dict(color="#E67E22"),
-            text=[f"{v:,.0f} ({p:.1f} %)".replace(",", " ")
-                  for v, p in zip(missing.values[::-1], part.values[::-1])],
-            textposition="outside",
-        )])
+        fig_missing = go.Figure(
+            data=[
+                go.Bar(
+                    y=missing.index[::-1],
+                    x=missing.values[::-1],
+                    orientation="h",
+                    marker=dict(color="#E67E22"),
+                    text=[
+                        f"{v:,.0f} ({p:.1f} %)".replace(",", " ")
+                        for v, p in zip(missing.values[::-1], part.values[::-1])
+                    ],
+                    textposition="outside",
+                )
+            ]
+        )
         fig_missing.update_layout(
             height=max(300, 24 * len(missing)),
             margin=dict(l=10, r=80, t=10, b=10),
@@ -150,10 +164,12 @@ with completeness:
         st.plotly_chart(fig_missing, width="stretch")
 
         with st.expander("Tableau détaillé"):
-            tableau = pd.DataFrame({
-                "Valeurs manquantes": missing,
-                "Part des observations (%)": part.round(2),
-            })
+            tableau = pd.DataFrame(
+                {
+                    "Valeurs manquantes": missing,
+                    "Part des observations (%)": part.round(2),
+                }
+            )
             st.dataframe(tableau)
 
     st.markdown("### Unicité de la clé mensuelle")
@@ -179,32 +195,34 @@ with lineage:
         "sans supprimer de ligne, garantissant la traçabilité complète."
     )
 
-    etapes = pd.DataFrame([
-        {
-            "Étape": "1. Fichier brut SNCF",
-            "Observations": f"{nb_total:,}".replace(",", " "),
-            "Action": "Téléchargement du CSV AQST depuis l'API data.gouv.fr "
-                      "(régularité mensuelle TGV).",
-        },
-        {
-            "Étape": "2. Parsing et typage",
-            "Observations": f"{nb_total:,}".replace(",", " "),
-            "Action": "Lecture via pandas, typage des dates au format mensuel, "
-                      "normalisation des noms de gares.",
-        },
-        {
-            "Étape": "3. Contrôles de qualité",
-            "Observations": f"{nb_total:,}".replace(",", " "),
-            "Action": "Ajout de 4 colonnes flag_* identifiant les incohérences "
-                      "structurelles sans modification des valeurs.",
-        },
-        {
-            "Étape": "4. Sauvegarde parquet",
-            "Observations": f"{nb_total:,}".replace(",", " "),
-            "Action": "Export vers data/processed/sncf.parquet, format colonnaire "
-                      "optimisé pour l'analyse et les notebooks.",
-        },
-    ])
+    etapes = pd.DataFrame(
+        [
+            {
+                "Étape": "1. Fichier brut SNCF",
+                "Observations": f"{nb_total:,}".replace(",", " "),
+                "Action": "Téléchargement du CSV AQST depuis l'API data.gouv.fr "
+                "(régularité mensuelle TGV).",
+            },
+            {
+                "Étape": "2. Parsing et typage",
+                "Observations": f"{nb_total:,}".replace(",", " "),
+                "Action": "Lecture via pandas, typage des dates au format mensuel, "
+                "normalisation des noms de gares.",
+            },
+            {
+                "Étape": "3. Contrôles de qualité",
+                "Observations": f"{nb_total:,}".replace(",", " "),
+                "Action": "Ajout de 4 colonnes flag_* identifiant les incohérences "
+                "structurelles sans modification des valeurs.",
+            },
+            {
+                "Étape": "4. Sauvegarde parquet",
+                "Observations": f"{nb_total:,}".replace(",", " "),
+                "Action": "Export vers data/processed/sncf.parquet, format colonnaire "
+                "optimisé pour l'analyse et les notebooks.",
+            },
+        ]
+    )
     st.dataframe(etapes, hide_index=True, width="stretch")
 
     st.markdown("### Ressources de référence")
@@ -212,7 +230,9 @@ with lineage:
     with col_r1:
         report("data/reports/data_contract.md", "Contrat des données (markdown)")
     with col_r2:
-        report("data/reports/anomalies_qualite.csv", "Rapport original d'anomalies (CSV)")
+        report(
+            "data/reports/anomalies_qualite.csv", "Rapport original d'anomalies (CSV)"
+        )
 
     with st.expander("Audit textuel complet du périmètre source"):
         path = ROOT / "data/reports/data_quality_report.txt"

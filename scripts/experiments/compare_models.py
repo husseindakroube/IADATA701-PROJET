@@ -15,16 +15,13 @@ from sncf_rail_insight.ml.models import (
 
 # Caractéristiques des gares : structurelles ou pondérées
 STRUCTURAL_FEATURES = [
-    feature for feature in GRAPH_FEATURES
-    if not (
-        "strength" in feature
-        or "weighted_pagerank" in feature
-    )
+    feature
+    for feature in GRAPH_FEATURES
+    if not ("strength" in feature or "weighted_pagerank" in feature)
 ]
 
 WEIGHTED_FEATURES = [
-    feature for feature in GRAPH_FEATURES
-    if feature not in STRUCTURAL_FEATURES
+    feature for feature in GRAPH_FEATURES if feature not in STRUCTURAL_FEATURES
 ]
 
 # Configurations comparées avec les mêmes hyperparamètres
@@ -38,14 +35,14 @@ FEATURE_SETS = {
     "Historique + liaisons": HISTORY_FEATURES + EDGE_FEATURES,
 }
 
+
 def main() -> None:
     """Entraîne les configurations et compare leurs performances."""
     data = load_ml_dataset("data/raw/regularite-mensuelle-tgv-aqst.csv")
 
     train = data.loc[data["date"] < "2024-01-01"]
     validation = data.loc[
-        (data["date"] >= "2024-01-01")
-        & (data["date"] < "2025-01-01")
+        (data["date"] >= "2024-01-01") & (data["date"] < "2025-01-01")
     ]
 
     y_train = train[TARGET]
@@ -73,14 +70,11 @@ def main() -> None:
         )
 
     # Comparaison globale
-    metrics = (
-        pd.DataFrame(results)
-        .sort_values("mae")
-        .set_index("model")
-    )
+    metrics = pd.DataFrame(results).sort_values("mae").set_index("model")
 
     print("=== ETUDE D'ABLATION - VALIDATION 2024 ===")
     print(metrics.round(6).to_string())
+
 
 if __name__ == "__main__":
     main()

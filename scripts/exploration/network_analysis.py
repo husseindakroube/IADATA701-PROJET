@@ -9,6 +9,7 @@ from sncf_rail_insight.preprocessing import prepare_graph_data
 
 DATA_PATH = Path("data/raw/regularite-mensuelle-tgv-aqst.csv")
 
+
 def main() -> None:
     """Décrit le réseau et compare sa structure entre les années."""
     raw = pd.read_csv(DATA_PATH, sep=";")

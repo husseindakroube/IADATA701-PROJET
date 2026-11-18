@@ -1,4 +1,4 @@
-'Tests de préparation typée des observations brutes SNCF.'
+"Tests de préparation typée des observations brutes SNCF."
 
 from __future__ import annotations
 
@@ -47,7 +47,7 @@ EXPECTED_COLUMNS = [
 
 
 def make_record(**overrides: Any) -> dict[str, Any]:
-    'Construit une observation complète et valide selon le schéma canonique.'
+    "Construit une observation complète et valide selon le schéma canonique."
     record: dict[str, Any] = {
         "date": "2025-01",
         "service": "National",
@@ -175,7 +175,7 @@ def test_fractional_integer_field_is_rejected() -> None:
 
 
 def test_non_numeric_integer_string_is_rejected() -> None:
-    with pytest.raises(ValueError, match='nb_train_prevu.*un nombre est attendu'):
+    with pytest.raises(ValueError, match="nb_train_prevu.*un nombre est attendu"):
         preprocess_data([make_record(nb_train_prevu="many")])
 
 
@@ -189,7 +189,7 @@ def test_valid_integer_in_decimal_field_is_converted_to_float64() -> None:
 def test_non_numeric_decimal_value_is_rejected() -> None:
     with pytest.raises(
         ValueError,
-        match='prct_cause_externe.*indice de ligne source 0.*un nombre est attendu',
+        match="prct_cause_externe.*indice de ligne source 0.*un nombre est attendu",
     ):
         preprocess_data([make_record(prct_cause_externe="unknown")])
 
@@ -197,7 +197,7 @@ def test_non_numeric_decimal_value_is_rejected() -> None:
 def test_numeric_value_in_string_field_is_rejected() -> None:
     with pytest.raises(
         ValueError,
-        match='gare_depart.*indice de ligne source 0.*une chaîne ou une valeur nulle est attendue',
+        match="gare_depart.*indice de ligne source 0.*une chaîne ou une valeur nulle est attendue",
     ):
         preprocess_data([make_record(gare_depart=123)])
 

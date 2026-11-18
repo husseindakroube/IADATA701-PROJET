@@ -15,6 +15,7 @@ ROUTE_COLUMNS = [
     "Gare d'arrivée",
 ]
 
+
 def main() -> None:
     """Présente le dataset et contrôle la cohérence des observations."""
     raw = pd.read_csv(DATA_PATH, sep=";")
@@ -51,9 +52,7 @@ def main() -> None:
         "Circulations prévues nulles": data["planned"] == 0,
         "Circulations prévues négatives": data["planned"] < 0,
         "Annulations négatives": data["cancelled"] < 0,
-        "Annulations > circulations prévues": (
-            data["cancelled"] > data["planned"]
-        ),
+        "Annulations > circulations prévues": (data["cancelled"] > data["planned"]),
         "Aucun train circulé": data["circulated"] <= 0,
         "Retards > 15 min négatifs": data["late_15"] < 0,
         "Retards > 30 min négatifs": late_30 < 0,
@@ -61,12 +60,8 @@ def main() -> None:
         "Retards > 15 min supérieurs aux trains circulés": (
             data["late_15"] > data["circulated"]
         ),
-        "Retards > 30 min supérieurs aux > 15 min": (
-            late_30 > data["late_15"]
-        ),
-        "Retards > 60 min supérieurs aux > 30 min": (
-            late_60 > late_30
-        ),
+        "Retards > 30 min supérieurs aux > 15 min": (late_30 > data["late_15"]),
+        "Retards > 60 min supérieurs aux > 30 min": (late_60 > late_30),
         "Durées de trajet nulles": data["duration"] == 0,
         "Durées de trajet négatives": data["duration"] < 0,
     }

@@ -1,4 +1,4 @@
-'Tests des fonctions d’acquisition des données brutes SNCF.'
+"Tests des fonctions d’acquisition des données brutes SNCF."
 
 import json
 from pathlib import Path
@@ -16,7 +16,7 @@ def make_response(
     status_code: int = 200,
     headers: dict[str, str] | None = None,
 ) -> requests.Response:
-    'Crée un véritable objet réponse Requests sans accès au réseau.'
+    "Crée un véritable objet réponse Requests sans accès au réseau."
     response = requests.Response()
     response.status_code = status_code
     response.headers.update(headers or {})

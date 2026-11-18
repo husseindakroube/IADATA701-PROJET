@@ -1,5 +1,13 @@
 # Intégration et fonctionnalités restantes
 
+> Bilan historique de l'import initial, conservé pour sa provenance. Depuis cette
+> photographie, la carte et la PCA interactive ont été ajoutées, des téléchargements
+> retirés et la CI complétée (style, docstrings, Sphinx, exemples de journaux).
+> Le dernier contrôle local compte 172 tests réussis et 91,95 % de couverture.
+> La documentation Sphinx se construit sans avertissement. Pour l'état technique
+> actuel, consulter le README et `docs/CI_CD.md` ; les réserves analytiques ci-dessous
+> restent à examiner séparément.
+
 Mise à jour du 18 novembre 2026 à partir du projet complémentaire. Seuls les travaux déjà fournis sont intégrés ; aucune nouvelle analyse ni aucun entraînement n'est exécuté.
 
 | Page | Résultats intégrés | Restant ou à vérifier |

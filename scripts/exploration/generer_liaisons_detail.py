@@ -42,21 +42,27 @@ def agreger_observe(sncf: pd.DataFrame) -> pd.DataFrame:
     """Agrege les observations par liaison orientee."""
     sncf = sncf.copy()
     sncf["nb_train_realise"] = sncf["nb_train_prevu"] - sncf["nb_annulation"]
-    agg = sncf.groupby(["gare_depart", "gare_arrivee"]).agg(
-        duree_moyenne=("duree_moyenne", "mean"),
-        nb_train_prevu=("nb_train_prevu", "sum"),
-        nb_train_realise=("nb_train_realise", "sum"),
-        nb_train_retard_arrivee=("nb_train_retard_arrivee", "sum"),
-        nb_observations=("date", "count"),
-    ).reset_index()
+    agg = (
+        sncf.groupby(["gare_depart", "gare_arrivee"])
+        .agg(
+            duree_moyenne=("duree_moyenne", "mean"),
+            nb_train_prevu=("nb_train_prevu", "sum"),
+            nb_train_realise=("nb_train_realise", "sum"),
+            nb_train_retard_arrivee=("nb_train_retard_arrivee", "sum"),
+            nb_observations=("date", "count"),
+        )
+        .reset_index()
+    )
     agg["taux_retard_observe_global"] = (
         agg["nb_train_retard_arrivee"] / agg["nb_train_realise"]
     )
     # Moyenne des causes ponderee par le nombre de retards du mois
     for col in COLS_CAUSES:
         serie = sncf.groupby(["gare_depart", "gare_arrivee"]).apply(
-            lambda g: (g[col] * g["nb_train_retard_arrivee"]).sum()
-            / max(g["nb_train_retard_arrivee"].sum(), 1),
+            lambda g: (
+                (g[col] * g["nb_train_retard_arrivee"]).sum()
+                / max(g["nb_train_retard_arrivee"].sum(), 1)
+            ),
             include_groups=False,
         )
         agg[col] = agg.set_index(["gare_depart", "gare_arrivee"]).index.map(serie)
@@ -69,13 +75,17 @@ def agreger_predictions(pred: pd.DataFrame) -> pd.DataFrame:
     pred["num_a"] = pred["prediction_a"] * pred["circulated"]
     pred["num_obs"] = pred["delay_rate_15"] * pred["circulated"]
     pred["num_naive"] = pred["prediction_naive"] * pred["circulated"]
-    agg = pred.groupby(["departure", "arrival"]).agg(
-        taux_retard_predit=("num_a", "sum"),
-        taux_retard_observe_test=("num_obs", "sum"),
-        taux_retard_naif=("num_naive", "sum"),
-        circulated_total=("circulated", "sum"),
-        service=("service", "first"),
-    ).reset_index()
+    agg = (
+        pred.groupby(["departure", "arrival"])
+        .agg(
+            taux_retard_predit=("num_a", "sum"),
+            taux_retard_observe_test=("num_obs", "sum"),
+            taux_retard_naif=("num_naive", "sum"),
+            circulated_total=("circulated", "sum"),
+            service=("service", "first"),
+        )
+        .reset_index()
+    )
     for col in ["taux_retard_predit", "taux_retard_observe_test", "taux_retard_naif"]:
         agg[col] = agg[col] / agg["circulated_total"]
     agg = agg.drop(columns=["circulated_total"])
@@ -96,6 +106,7 @@ def ajouter_cluster(liaisons: pd.DataFrame, clusters: pd.DataFrame) -> pd.DataFr
 
 
 def main() -> None:
+    """Fusionne observations, prédictions et coordonnées puis exporte les liaisons."""
     sncf = pd.read_parquet(DATA_PROC / "sncf.parquet")
     pred = pd.read_parquet(DATA_PROC / "ml" / "comparaison_predictions_test.parquet")
     coords = pd.read_csv(DATA_RAW / "coordonnees_gares.csv")
@@ -109,10 +120,18 @@ def main() -> None:
 
     # Rattache les coordonnees de chaque gare
     coords_dep = coords.rename(
-        columns={"gare": "gare_depart", "latitude": "lat_depart", "longitude": "lon_depart"}
+        columns={
+            "gare": "gare_depart",
+            "latitude": "lat_depart",
+            "longitude": "lon_depart",
+        }
     )
     coords_arr = coords.rename(
-        columns={"gare": "gare_arrivee", "latitude": "lat_arrivee", "longitude": "lon_arrivee"}
+        columns={
+            "gare": "gare_arrivee",
+            "latitude": "lat_arrivee",
+            "longitude": "lon_arrivee",
+        }
     )
     liaisons = liaisons.merge(coords_dep, on="gare_depart", how="left")
     liaisons = liaisons.merge(coords_arr, on="gare_arrivee", how="left")

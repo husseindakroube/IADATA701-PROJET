@@ -1,7 +1,6 @@
 """Tests unitaires du module comparison."""
 
 import pandas as pd
-import pytest
 
 from projet_kit_data.comparaison import (
     add_cluster_to_dataset,
@@ -25,15 +24,19 @@ def test_load_cluster_features(tmp_path):
 
 def test_add_cluster_to_dataset_joint_bien():
     """add_cluster_to_dataset ajoute une colonne cluster via la paire."""
-    data = pd.DataFrame({
-        "departure": ["PARIS LYON", "LYON PART DIEU"],
-        "arrival": ["LYON PART DIEU", "PARIS LYON"],
-    })
-    clusters = pd.DataFrame({
-        "gare_a": ["LYON PART DIEU"],
-        "gare_b": ["PARIS LYON"],
-        "cluster": [0],
-    })
+    data = pd.DataFrame(
+        {
+            "departure": ["PARIS LYON", "LYON PART DIEU"],
+            "arrival": ["LYON PART DIEU", "PARIS LYON"],
+        }
+    )
+    clusters = pd.DataFrame(
+        {
+            "gare_a": ["LYON PART DIEU"],
+            "gare_b": ["PARIS LYON"],
+            "cluster": [0],
+        }
+    )
 
     enrichi = add_cluster_to_dataset(data, clusters)
 
@@ -43,15 +46,19 @@ def test_add_cluster_to_dataset_joint_bien():
 
 def test_add_cluster_to_dataset_sans_correspondance():
     """Les lignes sans paire correspondante ont une valeur cluster manquante."""
-    data = pd.DataFrame({
-        "departure": ["PARIS NORD"],
-        "arrival": ["BRUXELLES"],
-    })
-    clusters = pd.DataFrame({
-        "gare_a": ["PARIS LYON"],
-        "gare_b": ["LYON PART DIEU"],
-        "cluster": [0],
-    })
+    data = pd.DataFrame(
+        {
+            "departure": ["PARIS NORD"],
+            "arrival": ["BRUXELLES"],
+        }
+    )
+    clusters = pd.DataFrame(
+        {
+            "gare_a": ["PARIS LYON"],
+            "gare_b": ["LYON PART DIEU"],
+            "cluster": [0],
+        }
+    )
 
     enrichi = add_cluster_to_dataset(data, clusters)
     assert enrichi["cluster"].isna().all()
@@ -79,17 +86,17 @@ def test_compute_errors_by_group():
         def predict(self, X):
             return [0.1] * len(X)
 
-    test = pd.DataFrame({
-        "feature_1": [1, 2, 3, 4],
-        "target": [0.1, 0.2, 0.3, 0.1],
-        "groupe": ["A", "A", "B", "B"],
-    })
-
-    mae = compute_errors_by_group(
-        FakeModel(), test, ["feature_1"], "target", "groupe"
+    test = pd.DataFrame(
+        {
+            "feature_1": [1, 2, 3, 4],
+            "target": [0.1, 0.2, 0.3, 0.1],
+            "groupe": ["A", "A", "B", "B"],
+        }
     )
 
-    assert mae.loc["A"] == 5.0   
+    mae = compute_errors_by_group(FakeModel(), test, ["feature_1"], "target", "groupe")
+
+    assert mae.loc["A"] == 5.0
     assert mae.loc["B"] == 10.0
 
 
@@ -97,19 +104,27 @@ def test_add_graph_features_ajoute_colonnes():
     """add_graph_features ajoute 10 colonnes de graphe au DataFrame."""
     from projet_kit_data.comparaison import add_graph_features
 
-    data = pd.DataFrame({
-        "departure": ["A", "B", "A", "C"],
-        "arrival": ["B", "A", "C", "B"],
-    })
+    data = pd.DataFrame(
+        {
+            "departure": ["A", "B", "A", "C"],
+            "arrival": ["B", "A", "C", "B"],
+        }
+    )
 
     enrichi = add_graph_features(data)
 
     # 10 nouvelles colonnes attendues (5 features x 2 gares)
     nouvelles_colonnes = [
-        "depart_in_degree", "depart_out_degree", "depart_total_degree",
-        "depart_betweenness", "depart_pagerank",
-        "arrivee_in_degree", "arrivee_out_degree", "arrivee_total_degree",
-        "arrivee_betweenness", "arrivee_pagerank",
+        "depart_in_degree",
+        "depart_out_degree",
+        "depart_total_degree",
+        "depart_betweenness",
+        "depart_pagerank",
+        "arrivee_in_degree",
+        "arrivee_out_degree",
+        "arrivee_total_degree",
+        "arrivee_betweenness",
+        "arrivee_pagerank",
     ]
     for col in nouvelles_colonnes:
         assert col in enrichi.columns

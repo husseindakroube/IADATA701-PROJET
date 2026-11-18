@@ -1,4 +1,4 @@
-'Déploiement sur serveur Linux, exécuté par deploy.py via SSH avec CONFIG injecté.'
+"Déploiement sur serveur Linux, exécuté par deploy.py via SSH avec CONFIG injecté."
 
 import fcntl
 import os
@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 def deploy(config: dict) -> None:
-    'Télécharge avant remplacement, attend un état sain et restaure la configuration précédente en cas d’échec.'
+    "Télécharge avant remplacement, attend un état sain et restaure la configuration précédente en cas d’échec."
     directory = Path.home() / ".local/share/tgvision"
     directory.mkdir(parents=True, exist_ok=True)
     with (directory / "deploy.lock").open("w") as lock:
@@ -56,7 +56,7 @@ def deploy(config: dict) -> None:
                 subprocess.run(command + ["logs", "--tail", "80"], check=False, env=env)
                 if previous_compose is not None and previous_env is not None:
                     print(
-                        'Échec du déploiement ; restauration de la configuration précédente.',
+                        "Échec du déploiement ; restauration de la configuration précédente.",
                         flush=True,
                     )
                     compose.write_text(previous_compose, encoding="utf-8")
@@ -76,10 +76,12 @@ def deploy(config: dict) -> None:
                     previous_compose, encoding="utf-8"
                 )
                 (directory / ".env.previous").write_text(previous_env, encoding="utf-8")
-            print('Déploiement opérationnel : ' + config["image"], flush=True)
+            print("Déploiement opérationnel : " + config["image"], flush=True)
 
 
 if __name__ == "__main__":
     if "CONFIG" not in globals():
-        raise SystemExit('Exécutez deploy.py ; ce fichier nécessite les données de déploiement SSH.')
+        raise SystemExit(
+            "Exécutez deploy.py ; ce fichier nécessite les données de déploiement SSH."
+        )
     deploy(globals()["CONFIG"])

@@ -1,4 +1,4 @@
-'Tests du calcul des métriques de graphe globales et mensuelles.'
+"Tests du calcul des métriques de graphe globales et mensuelles."
 
 import json
 

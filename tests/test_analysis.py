@@ -1,4 +1,4 @@
-'Tests des jointures de recherche et des taux d’annulation calculés.'
+"Tests des jointures de recherche et des taux d’annulation calculés."
 
 import json
 
