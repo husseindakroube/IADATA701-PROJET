@@ -8,12 +8,21 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "folium>=1.0.0",
     "matplotlib>=3.11.2",
     "networkx>=3.7",
     "numpy>=2.5.5",
+    "pandas>=2.2",
+    "plotly>=5.24",
     "polars>=2.1.0",
+    "pyarrow>=18",
     "requests>=2.32,<3",
+    "scikit-learn==1.9.1",
     "scipy>=1.18.1",
+    "seaborn==0.13.2",
+    "statsmodels==0.15.0",
+    "streamlit>=1.67.0",
+    "streamlit-folium>=0.27.4",
 ]
 
 [dependency-groups]

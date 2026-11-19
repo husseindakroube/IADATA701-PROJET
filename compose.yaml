@@ -1,0 +1,17 @@
+name: tgvision
+services:
+  web:
+    image: ${TGVISION_IMAGE:?Définissez TGVISION_IMAGE avec l’empreinte de l’image publiée}
+    restart: unless-stopped
+    init: true
+    ports:
+      - "127.0.0.1:8501:8501"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -1,0 +1,64 @@
+.tgvision-footer {
+    margin-top: 55px;
+    padding: 36px clamp(21px, 3.43vw, 55px) 19px;
+    background: var(--fond-barre-navigation, #050505);
+    color: #ffffff;
+    border-top: 1px solid #292929;
+}
+.tgvision-footer-grid {
+    display: grid;
+    grid-template-columns: 1.7fr 1fr 1fr;
+    gap: clamp(21px, 3.43vw, 55px);
+}
+.tgvision-footer p {
+    color: #d8d8e5;
+    font-size: 0.84rem;
+    line-height: 1.7;
+    margin: 14px 0;
+}
+.tgvision-footer strong { color: #ffffff; }
+.tgvision-footer a { color: #ffad8c; text-underline-offset: 5px; }
+.tgvision-footer a:hover { color: #ffffff; }
+.tgvision-footer a:focus-visible { outline: 2px solid #ffad8c; outline-offset: 5px; }
+.tgvision-footer .tgvision-footer-brand {
+    display: inline-block;
+    color: #ffffff;
+    font-size: clamp(1.8rem, 2.57vw, 2.57rem);
+    font-weight: 750;
+    text-decoration: none;
+    line-height: 1.2;
+}
+.tgvision-footer .tgvision-footer-tagline {
+    font-size: 0.65rem;
+    letter-spacing: 0.13em;
+    margin: 7px 0 24px;
+}
+.tgvision-footer .tgvision-footer-phone { color: #ffffff; white-space: nowrap; }
+.tgvision-footer-logo { display: inline-flex; height: 93px; align-items: center; }
+.tgvision-footer-logo img { object-fit: contain; max-width: 100%; width: 93px; height: 93px; }
+.tgvision-footer-logo .tgvision-footer-sncf { width: 111px; background: #ffffff; padding: 9px; border-radius: 4px; }
+.tgvision-footer h2 {
+    font-size: 0.94rem;
+    color: #ffffff;
+    margin: 17px 0 0;
+    padding: 0;
+}
+.tgvision-footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    border-top: 1px solid #333333;
+    margin-top: 27px;
+    padding-top: 17px;
+    font-size: 0.75rem;
+    color: #c2c2d3;
+}
+@media (max-width: 900px) {
+    .tgvision-footer-grid { grid-template-columns: 1fr 1fr; }
+    .tgvision-footer-contact { grid-column: 1 / -1; }
+}
+@media (max-width: 520px) {
+    .tgvision-footer-grid { grid-template-columns: 1fr; gap: 27px; }
+    .tgvision-footer { margin-top: 34px; }
+}

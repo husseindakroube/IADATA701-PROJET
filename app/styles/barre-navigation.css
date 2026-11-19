@@ -1,0 +1,261 @@
+/* Repères de lecture :
+ * .nom cible une classe HTML ; .st-key-nom cible un conteneur créé avec key="nom".
+ * Un espace cible les descendants ; > cible les enfants directs.
+ * :hover = survol ; :focus-visible = focus visible, notamment au clavier.
+ * ::after ajoute un contenu visuel ; [open] sélectionne un volet details ouvert.
+ * px = pixels CSS ; rem = taille de police racine ; em = taille de police locale.
+ * vw = 1 % de la largeur de la fenêtre ; svh = 1 % de sa petite hauteur de référence.
+ * var(--nom) lit une variable de colors.css ; rgba(..., alpha) règle aussi l’opacité.
+ * clamp(min, valeur souple, max) encadre une dimension ; calc() calcule une dimension.
+ * @media applique des règles seulement lorsque la condition de largeur est remplie.
+ */
+
+/* Barre de bureau : le sélecteur correspond à la clé du conteneur Streamlit. */
+.st-key-barre-navigation-haut {
+    /* Fond de l’élément : couleur, dégradé ou variable de la palette ; transparent laisse voir le fond parent. */
+    background: var(--fond-barre-navigation);
+    /* Arrondi des coins ; 999px donne une forme de pilule. Quatre valeurs : haut gauche, haut droit, bas droit, bas gauche. */
+    border-radius: 999px;
+    /* Espace intérieur entre le contenu et les bords du bloc. Ordre des valeurs : haut/bas puis gauche/droite. */
+    padding: 6px 12px;
+    /* Marge extérieure au-dessous du contenu ou du bloc ; 0 supprime cet espace. */
+    margin-bottom: 10px;
+}
+
+.marque-navigation {
+    /* Espace extérieur séparant le bloc de ses voisins ; auto sur les côtés peut centrer un bloc de largeur limitée. Ordre des valeurs : les quatre côtés. */
+    margin: 0;
+}
+
+.titre-navigation {
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
+    color: #F8FAFC;
+    /* Taille des caractères ; rem dépend de la taille racine, vw de la largeur de la fenêtre. clamp fixe le minimum, la valeur fluide et le maximum, dans cet ordre. */
+    font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+    /* Épaisseur des caractères : 400 normal, 600 semi-gras, 700 gras, 800 très gras. */
+    font-weight: 800;
+    /* Hauteur de ligne : un nombre sans unité multiplie la taille du texte. */
+    line-height: 1.1;
+    /* Espace extérieur séparant le bloc de ses voisins ; auto sur les côtés peut centrer un bloc de largeur limitée. Ordre des valeurs : les quatre côtés. */
+    margin: 0;
+}
+
+.slogan-navigation {
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
+    color: var(--texte-attenue-navigation);
+    /* Taille des caractères ; rem dépend de la taille racine, vw de la largeur de la fenêtre. */
+    font-size: 0.55rem;
+    /* Épaisseur des caractères : 400 normal, 600 semi-gras, 700 gras, 800 très gras. */
+    font-weight: 600;
+    /* Espacement supplémentaire entre les lettres ; em est relatif à leur taille. */
+    letter-spacing: 0.07em;
+    /* Espace extérieur séparant le bloc de ses voisins ; auto sur les côtés peut centrer un bloc de largeur limitée. Ordre des valeurs : haut, gauche/droite, bas. */
+    margin: 4px 0 0;
+    /* Avec nowrap, empêcher le texte de passer à la ligne. */
+    white-space: nowrap;
+}
+
+/* Apparence commune aux liens des menus de bureau et mobile. */
+.lien-navigation {
+    /* Mode de disposition : block occupe une ligne, flex aligne les enfants, grid crée une grille, none masque le bloc sans réserver d’espace. */
+    display: flex;
+    /* Alignement des enfants sur l’axe transversal du conteneur flex ; center les centre, flex-start les place au début. */
+    align-items: center;
+    /* Répartition sur l’axe principal du flex : center centre, flex-start aligne au début, space-between éloigne les extrémités. */
+    justify-content: center;
+
+    /* Avec border-box, inclure les bordures et le padding dans les dimensions CSS annoncées. */
+    box-sizing: border-box;
+    /* Largeur du bloc : 100 % remplit le parent, fit-content s’adapte au contenu ; une valeur en px fixe la largeur. */
+    width: 100%;
+    /* Espace intérieur entre le contenu et les bords du bloc. Ordre des valeurs : haut/bas puis gauche/droite. */
+    padding: 10px 12px;
+
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
+    color: var(--texte-barre-navigation);
+    /* Taille des caractères ; rem dépend de la taille racine, vw de la largeur de la fenêtre. */
+    font-size: 1.05rem;
+    /* Épaisseur des caractères : 400 normal, 600 semi-gras, 700 gras, 800 très gras. */
+    font-weight: 700;
+    /* Alignement du texte : center le centre ; justify répartit les espaces pour aligner les deux bords. */
+    text-align: center;
+    /* Décoration des liens : none retire le soulignement, underline le rétablit au survol. */
+    text-decoration: none;
+
+    /* Fond de l’élément : couleur, dégradé ou variable de la palette ; transparent laisse voir le fond parent. */
+    background: transparent;
+    /* Avec nowrap, empêcher le texte de passer à la ligne. */
+    white-space: nowrap;
+    /* Arrondi des coins ; 999px donne une forme de pilule. Quatre valeurs : haut gauche, haut droit, bas droit, bas gauche. */
+    border-radius: 999px;
+
+    /* Animer seulement le fond et la couleur sur 0.2s (200 ms), avec une progression ease. */
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.lien-navigation:hover {
+    /* Fond de l’élément : couleur, dégradé ou variable de la palette ; transparent laisse voir le fond parent. */
+    background: var(--fond-survol-navigation);
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
+    color: var(--texte-survol-navigation);
+}
+
+/* Maintenir un repère visuel sur la page actuellement affichée. */
+.lien-navigation-active {
+    /* Fond de l’élément : couleur, dégradé ou variable de la palette ; transparent laisse voir le fond parent. */
+    background: var(--fond-navigation-active);
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
+    color: var(--texte-navigation-active);
+    /* Épaisseur des caractères : 400 normal, 600 semi-gras, 700 gras, 800 très gras. */
+    font-weight: 700;
+}
+
+.lien-navigation-active:hover {
+    /* Fond de l’élément : couleur, dégradé ou variable de la palette ; transparent laisse voir le fond parent. */
+    background: var(--fond-navigation-active);
+    /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
+    color: var(--texte-navigation-active);
+}
+
+/* Le menu compact reste masqué au-dessus du seuil mobile. */
+.st-key-barre-navigation-mobile {
+    /* Mode de disposition : block occupe une ligne, flex aligne les enfants, grid crée une grille, none masque le bloc sans réserver d’espace. */
+    display: none;
+}
+
+/* Les six pages nécessitent le menu compact sur tablette et petit ordinateur. */
+@media (max-width: 1280px) {
+
+    .st-key-barre-navigation-haut {
+        /* Mode de disposition : block occupe une ligne, flex aligne les enfants, grid crée une grille, none masque le bloc sans réserver d’espace. */
+        display: none;
+    }
+
+    .st-key-barre-navigation-mobile {
+        /* Mode de disposition : block occupe une ligne, flex aligne les enfants, grid crée une grille, none masque le bloc sans réserver d’espace. */
+        display: block;
+    }
+
+    .barre-navigation-mobile {
+        /* relative crée un repère pour les enfants positionnés ; absolute retire l’élément du flux et le place dans son ancêtre positionné. */
+        position: relative;
+        /* Espace intérieur entre le contenu et les bords du bloc. Ordre des valeurs : les quatre côtés. */
+        padding: 12px;
+        /* Arrondi des coins ; 999px donne une forme de pilule. Quatre valeurs : haut gauche, haut droit, bas droit, bas gauche. */
+        border-radius: 20px;
+        /* Fond de l’élément : couleur, dégradé ou variable de la palette ; transparent laisse voir le fond parent. */
+        background: var(--fond-barre-navigation);
+        /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
+        color: var(--texte-barre-navigation);
+    }
+
+    .marque-navigation-mobile {
+        /* Mode de disposition : block occupe une ligne, flex aligne les enfants, grid crée une grille, none masque le bloc sans réserver d’espace. */
+        display: flex;
+        /* Alignement des enfants sur l’axe transversal du conteneur flex ; center les centre, flex-start les place au début. */
+        align-items: center;
+        /* Espace entre enfants flex/grid, sans marge extérieure ; deux valeurs donnent l’écart entre lignes puis entre colonnes. */
+        gap: 12px;
+        /* Largeur du bloc : 100 % remplit le parent, fit-content s’adapte au contenu ; une valeur en px fixe la largeur. */
+        width: fit-content;
+        /* Réserver la place du bouton Menu à droite de la marque. */
+        /* Limite supérieure de largeur ; none retire la limite, calc combine plusieurs dimensions. */
+        max-width: calc(100% - 88px);
+        /* Hauteur minimale : 44px garde notamment une cible tactile confortable pour les liens et le bouton mobile. */
+        min-height: 44px;
+        /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
+        color: var(--texte-barre-navigation);
+        /* Décoration des liens : none retire le soulignement, underline le rétablit au survol. */
+        text-decoration: none;
+        /* Taille des caractères ; rem dépend de la taille racine, vw de la largeur de la fenêtre. */
+        font-size: 1.25rem;
+        /* Épaisseur des caractères : 400 normal, 600 semi-gras, 700 gras, 800 très gras. */
+        font-weight: 800;
+    }
+
+    .marque-navigation-mobile img {
+        /* Largeur du bloc : 100 % remplit le parent, fit-content s’adapte au contenu ; une valeur en px fixe la largeur. */
+        width: 44px;
+        /* Hauteur du bloc : auto conserve les proportions intrinsèques d’une image ; 100 % remplit la hauteur du parent défini. */
+        height: auto;
+    }
+
+    /* Ancrer le bouton dans la barre, même lorsque le menu est ouvert. */
+    .menu-navigation-mobile > summary {
+        /* relative crée un repère pour les enfants positionnés ; absolute retire l’élément du flux et le place dans son ancêtre positionné. */
+        position: absolute;
+        /* Distance entre le bord supérieur de l’élément positionné et son cadre de référence. */
+        top: 12px;
+        /* Distance entre le bord droit de l’élément positionné et son cadre de référence. */
+        right: 12px;
+        /* Mode de disposition : block occupe une ligne, flex aligne les enfants, grid crée une grille, none masque le bloc sans réserver d’espace. */
+        display: flex;
+        /* Alignement des enfants sur l’axe transversal du conteneur flex ; center les centre, flex-start les place au début. */
+        align-items: center;
+        /* Répartition sur l’axe principal du flex : center centre, flex-start aligne au début, space-between éloigne les extrémités. */
+        justify-content: center;
+        /* Espace entre enfants flex/grid, sans marge extérieure ; deux valeurs donnent l’écart entre lignes puis entre colonnes. */
+        gap: 8px;
+        /* Hauteur minimale : 44px garde notamment une cible tactile confortable pour les liens et le bouton mobile. */
+        min-height: 44px;
+        /* Espace intérieur entre le contenu et les bords du bloc. Ordre des valeurs : haut/bas puis gauche/droite. */
+        padding: 0 12px;
+        /* Arrondi des coins ; 999px donne une forme de pilule. Quatre valeurs : haut gauche, haut droit, bas droit, bas gauche. */
+        border-radius: 12px;
+        /* Avec pointer, afficher la main pour indiquer que l’élément est cliquable. */
+        cursor: pointer;
+        /* Avec none, retirer le marqueur natif de summary ; les signes + et − le remplacent. */
+        list-style: none;
+        /* Taille des caractères ; rem dépend de la taille racine, vw de la largeur de la fenêtre. */
+        font-size: 0.9rem;
+        /* Couleur du texte ; transparent laisse apparaître le fond découpé dans les lettres. */
+        color: var(--texte-barre-navigation);
+        /* Fond de l’élément : couleur, dégradé ou variable de la palette ; transparent laisse voir le fond parent. */
+        background: var(--fond-survol-navigation);
+    }
+
+    .menu-navigation-mobile > summary::-webkit-details-marker {
+        /* Mode de disposition : block occupe une ligne, flex aligne les enfants, grid crée une grille, none masque le bloc sans réserver d’espace. */
+        display: none;
+    }
+
+    .menu-navigation-mobile > summary::after {
+        /* Texte ajouté par le pseudo-élément ::after ; ici + pour ouvrir, − lorsque details est ouvert. */
+        content: "+";
+    }
+
+    /* L’attribut open est géré nativement par la balise details. */
+    .menu-navigation-mobile[open] > summary::after {
+        /* Texte ajouté par le pseudo-élément ::after ; ici + pour ouvrir, − lorsque details est ouvert. */
+        content: "−";
+    }
+
+    .liens-navigation-mobile {
+        /* Mode de disposition : block occupe une ligne, flex aligne les enfants, grid crée une grille, none masque le bloc sans réserver d’espace. */
+        display: grid;
+        /* Espace entre enfants flex/grid, sans marge extérieure ; deux valeurs donnent l’écart entre lignes puis entre colonnes. */
+        gap: 4px;
+        /* Espacement intérieur au-dessus du contenu ou du bloc ; 0 supprime cet espace. */
+        padding-top: 12px;
+    }
+
+    .liens-navigation-mobile .lien-navigation {
+        /* Répartition sur l’axe principal du flex : center centre, flex-start aligne au début, space-between éloigne les extrémités. */
+        justify-content: flex-start;
+        /* Hauteur minimale : 44px garde notamment une cible tactile confortable pour les liens et le bouton mobile. */
+        min-height: 44px;
+        /* Arrondi des coins ; 999px donne une forme de pilule. Quatre valeurs : haut gauche, haut droit, bas droit, bas gauche. */
+        border-radius: 12px;
+    }
+
+    /* Signaler la cible sélectionnée lors de la navigation au clavier. */
+    .barre-navigation-mobile a:focus-visible,
+    .menu-navigation-mobile > summary:focus-visible {
+        /* Contour de focus indépendant de la bordure ; visible au clavier sans déplacer la mise en page. */
+        outline: 2px solid var(--texte-navigation-active);
+        /* Distance entre le contour de focus et le bord de l’élément. */
+        outline-offset: 3px;
+    }
+}

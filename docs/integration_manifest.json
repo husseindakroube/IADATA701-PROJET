@@ -1,0 +1,438 @@
+[
+  {
+    "path": "src/projet_kit_data/dataset.py",
+    "sha256": "5abc15acf5e5efca484b930518ca0d7022a11b1ae6cbff5ad2fd45c92510f3cd"
+  },
+  {
+    "path": "src/projet_kit_data/preprocessing.py",
+    "sha256": "117bd4acaf1f83ab75e241bbe7bb141b3e0903a76fc338ec4a13a71d0d704085"
+  },
+  {
+    "path": "src/projet_kit_data/eda/quality.py",
+    "sha256": "6d27f50337880a60c4d52b4b89a7ae637423b4527f1c36924e44ff6df69980b4"
+  },
+  {
+    "path": "src/projet_kit_data/eda/report.py",
+    "sha256": "d7b26f8c876ec84da0d39a2ed0f56a6136e2ac5499d1df4bc3b111cf9edffd3f"
+  },
+  {
+    "path": "src/projet_kit_data/eda/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/projet_kit_data/etl/audit.py",
+    "sha256": "8d5e470744ee1be8e74f994a28662b9003bfba8144e24c919407503a5a8eae32"
+  },
+  {
+    "path": "src/projet_kit_data/etl/cleaning.py",
+    "sha256": "3bac850d30f224f976632a37f7a78e430fdd8e9fb48009bc2870e3d00b8bdd87"
+  },
+  {
+    "path": "src/projet_kit_data/etl/pipeline.py",
+    "sha256": "770e475e043c8462ed6f845910acd3f41c9374e5440ba6e3330d057a6758ed7f"
+  },
+  {
+    "path": "src/projet_kit_data/etl/preprocessing.py",
+    "sha256": "e2fb42235a46d5f0b590f6df32ea9929ee2fe7d02cb8e673eca9225fc1e89a3b"
+  },
+  {
+    "path": "src/projet_kit_data/etl/__init__.py",
+    "sha256": "be54e7f033999a4c4cd26efe97cc5a0ccff1d679c4e44a03b851a4fd01ee70ca"
+  },
+  {
+    "path": "src/projet_kit_data/graph/analysis.py",
+    "sha256": "14268e20db8eeef51b6e0198d7ad84cd37d269cc9e0cae5c99089ada8ebb8e02"
+  },
+  {
+    "path": "src/projet_kit_data/graph/centrality.py",
+    "sha256": "e406e46b54fc023ef3da927f115a55879253dc3461ce2d58ccf564ab1ebf9f76"
+  },
+  {
+    "path": "src/projet_kit_data/graph/construction.py",
+    "sha256": "1b0329681e14b06fc327727566ee8a3bbb79c7d05ba2229684e0cf3bd202432f"
+  },
+  {
+    "path": "src/projet_kit_data/graph/descriptive.py",
+    "sha256": "cf79dcbb875db746fab447fb7bae3039a3e198776263e1915d6304441ddb0a6b"
+  },
+  {
+    "path": "src/projet_kit_data/graph/metrics.py",
+    "sha256": "268eea4b3905b9deb6159e6e9d6ba39eb8a3d0a6a593803ef9e086bc256c78cc"
+  },
+  {
+    "path": "src/projet_kit_data/graph/network.py",
+    "sha256": "45d7fcb69e95a3576244bc7135fb7344548c4ef9fb6dcffb9440b08f253939f4"
+  },
+  {
+    "path": "src/projet_kit_data/graph/routes.py",
+    "sha256": "6d3bfafd46934b35ddbbe854acbec06f3b8f0894452cd416ce88512b4cf52fe9"
+  },
+  {
+    "path": "src/projet_kit_data/graph/visualization.py",
+    "sha256": "1219d4ae48892caf5596e9bb0ee5c11862fa67387ffc65dc3a5ace99b9b92531"
+  },
+  {
+    "path": "src/projet_kit_data/graph/__init__.py",
+    "sha256": "459b2d9940fcff5d1ef9c7829eb6911793ebb98a9c65eee60179340047560ca6"
+  },
+  {
+    "path": "src/projet_kit_data/ingestion/download_data.py",
+    "sha256": "170b955cc3162231cfeec44ce517cf349309de431a9091858ee424ed5cb8ec8f"
+  },
+  {
+    "path": "src/projet_kit_data/ingestion/sncf_api.py",
+    "sha256": "8ff831ae77a4babb161aee36ef06602ced2ad18423d55fa19a020ff76cb54d96"
+  },
+  {
+    "path": "src/projet_kit_data/ingestion/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/projet_kit_data/ml/baseline.py",
+    "sha256": "e8bb07d7b8c2d07df9a1e58bd8e8a6f26588f9f0f0ad0fa27f1173b4ef96a1cd"
+  },
+  {
+    "path": "src/projet_kit_data/ml/enrichment.py",
+    "sha256": "64e88559792cb2a35cb8ff8b1ee655d47e1d0fac061a12ce635078b586f5c29b"
+  },
+  {
+    "path": "src/projet_kit_data/ml/evaluation.py",
+    "sha256": "1d6d9a9dcf1a4a669c65dd0fac8a9c2c4f2dab182b68ba60571f5dfaa1e7886f"
+  },
+  {
+    "path": "src/projet_kit_data/ml/historical.py",
+    "sha256": "c300019fdbe61cb42c562df2467e9311e3cd487b53a995df21cd71c084ad704c"
+  },
+  {
+    "path": "src/projet_kit_data/ml/models.py",
+    "sha256": "2a0b2ee5995d6dedcd43c8b749afb2b62cfe7724859ffd7a8eaf98d1e5503b9e"
+  },
+  {
+    "path": "src/projet_kit_data/ml/temporal.py",
+    "sha256": "597632bc906660d2da51948c50116fa397793f2d1f7aad56cb8350f5075a29ec"
+  },
+  {
+    "path": "src/projet_kit_data/ml/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "data/processed/clusters_liaisons.csv",
+    "sha256": "ae89adc20969793a56fb884076d49a040f0f78cad99b6283235fd2209c993981"
+  },
+  {
+    "path": "data/processed/research_dataset.parquet",
+    "sha256": "9e214ed4cba44afb96a943e2f1ad68e84a874989b46493beb437ec216af399e7"
+  },
+  {
+    "path": "data/processed/research_dataset_metadata.json",
+    "sha256": "e87e00939e251ddb471f933c502eb134814330d1e3fd1a31b7780ecde5c79b96"
+  },
+  {
+    "path": "data/processed/sncf.parquet",
+    "sha256": "f4cfb369c1c04ebf3f1283d0a880b8ba399f76605f3f43b51b37feab0c84fb11"
+  },
+  {
+    "path": "data/raw/regularite-mensuelle-tgv-aqst.csv",
+    "sha256": "a23f9605ee6c14055d3abdb9b599ab0458ee087ab2f625a8feb6f8db5153cc62"
+  },
+  {
+    "path": "data/raw/regularite-mensuelle-tgv-aqst.json",
+    "sha256": "0f7d951b5457123447ecd2f23fdabcd6b377d52f8592c0fe6675de8ae7a2226c"
+  },
+  {
+    "path": "data/reports/anomalies_qualite.csv",
+    "sha256": "9ebb31dde591a4802f4f03478f4b20050c631153380f4395bed4229bdc673f0d"
+  },
+  {
+    "path": "data/reports/anomaly_investigation_report.md",
+    "sha256": "0e1f045247e5c1a7cb1a5b80557a650018726d256e5e98a3ad74a417b8011fed"
+  },
+  {
+    "path": "data/reports/cross_branch_cleaning_impact_report.md",
+    "sha256": "b8caee697d3c46bdc764844f9ad51f581326dfba3a5fed70e7888bf3aeec3354"
+  },
+  {
+    "path": "data/reports/data_contract.md",
+    "sha256": "273db2dff069231843ff9c578d2767ffc0f6bdaf764faa3ea94ba1345a958a1f"
+  },
+  {
+    "path": "data/reports/data_quality_report.txt",
+    "sha256": "38bef70788b9ddded74bf1b35125e22949578d3a98101e0578cdd045ffce9e9b"
+  },
+  {
+    "path": "data/processed/graph/edges.parquet",
+    "sha256": "932df641cdde046c99ef322d8cc849b566a2e714c9306a15c030ece6c77407f7"
+  },
+  {
+    "path": "data/processed/graph/edge_metrics.parquet",
+    "sha256": "97d54e8d6409caa4bc71ea60325fba61bc341e36a8bd50df92910641512cac57"
+  },
+  {
+    "path": "data/processed/graph/edge_observations.parquet",
+    "sha256": "877ac388018e26b5d97b2bec95b395be1b9b6726e16fb44d46bc3426b8f891a5"
+  },
+  {
+    "path": "data/processed/graph/graph_metadata.json",
+    "sha256": "8b5171c37fa8e9805893e76cf838e0a6c74bc671ca77925424dd7c0400434c23"
+  },
+  {
+    "path": "data/processed/graph/metrics_metadata.json",
+    "sha256": "ad9bbfd86fdba5cfc28f5060495f92491595121c06aef8b32175c3c6e1f6da7c"
+  },
+  {
+    "path": "data/processed/graph/nodes.parquet",
+    "sha256": "5fb334c6b1071a0cbedff0aec4342bde72440079b2fdc6ad921c06874f662ff5"
+  },
+  {
+    "path": "data/processed/graph/node_metrics.parquet",
+    "sha256": "5cb6a3fd528e2a60723ff9cc527848dbed5811a045144d6419df2104b52b1753"
+  },
+  {
+    "path": "data/processed/ml/baseline_metrics.json",
+    "sha256": "6df79cd0eb081a063758b6cb544ffca7262083a4019da53c8c80832648cf7788"
+  },
+  {
+    "path": "data/processed/ml/baseline_predictions_test.parquet",
+    "sha256": "62f4c754844c1f8fc9da724a9115c91cc496cbb4e41e84d77eb0bb9636aee0a8"
+  },
+  {
+    "path": "data/processed/graph/descriptive/edge_rankings.parquet",
+    "sha256": "0014731b018ddd37ebeddd41d0523b001639aa1eda15f7a9270d52bdd58b7f1f"
+  },
+  {
+    "path": "data/processed/graph/descriptive/monthly_summary.parquet",
+    "sha256": "b1c8233445726441d22009bc2c3e6740e7ae392d5efe6e633bde418b0614cce8"
+  },
+  {
+    "path": "data/processed/graph/descriptive/network_summary.parquet",
+    "sha256": "857866e5e791f51f9a225f41d41fd6cd4aaa31c4b32ad64aa912a0a6845568ae"
+  },
+  {
+    "path": "data/processed/graph/descriptive/node_metric_summary.parquet",
+    "sha256": "4728030b2f00ee1b0b4fa0c00bce2650f2d3ab8128bf82c1d843862bb6898e44"
+  },
+  {
+    "path": "data/processed/graph/descriptive/node_rankings.parquet",
+    "sha256": "7fa47fceb5d63c24f388da983eeaffc05ddcdc6e20ca0a961b4522007fff7fa2"
+  },
+  {
+    "path": "data/processed/graph/descriptive/operational_summary.parquet",
+    "sha256": "93f85f00e85b88579171c68fc56592416dad5e449fc5d8f2f9622c33a89036e2"
+  },
+  {
+    "path": "data/processed/graph/descriptive/quality_flag_summary.parquet",
+    "sha256": "84acefd49c7f2ab8b370a9c1f03b2206bf3ce87ce7a17a18266871cc3880fba7"
+  },
+  {
+    "path": "data/processed/graph/visualizations/degree_distributions.png",
+    "sha256": "0849d47a4b585fcd233dd7320b1287928a3f6a343fd1b99afd79818206b0c389"
+  },
+  {
+    "path": "data/processed/graph/visualizations/edge_betweenness_distribution.png",
+    "sha256": "1bdef00f2c1fa113db1f11d90e9307b5b6c52ab0c26affeababa1baf4e96fc0d"
+  },
+  {
+    "path": "data/processed/graph/visualizations/monthly_network_evolution.png",
+    "sha256": "711fc9d49f0356b71f5e0a7244a9608d394fa329dfaff0de7d2fb7733c3671e4"
+  },
+  {
+    "path": "data/processed/graph/visualizations/network_international.png",
+    "sha256": "7ddfe9852867613e762481a2095f9f29ce1cf8390e0cd8eb73b371ef5afbc9e8"
+  },
+  {
+    "path": "data/processed/graph/visualizations/network_national.png",
+    "sha256": "c124c8178575ae84705f632e98461e3778847e52a1a024d24e4a89d9a7a7b28e"
+  },
+  {
+    "path": "data/processed/graph/visualizations/node_centrality_distributions.png",
+    "sha256": "1122f6da0c5b72884f7f61dcb87fbee154fc45b4f93211fe00a152e0fdbe1fe5"
+  },
+  {
+    "path": "data/processed/graph/visualizations/operational_outcome_distributions.png",
+    "sha256": "e02748bf21d10717a9a50999437d60d3406bb8642ebde86a9d78a5b3f1e6f98d"
+  },
+  {
+    "path": "data/processed/graph/visualizations/leading_station_rankings.png",
+    "sha256": "80dc81caa2e965d9f00f3ed38e440667dc509e974ed2630e8bd0de38a34f0e83"
+  },
+  {
+    "path": "data/reports/graph/construction_report.md",
+    "sha256": "984ccf2965bb56ba3868438fe1a067148785776feb27c3b91e25313addcf4ab1"
+  },
+  {
+    "path": "data/reports/graph/descriptive_network_analysis.md",
+    "sha256": "15abc7650f53c1265451cd2374050007033ab3fe63723e2799909aaff4b99094"
+  },
+  {
+    "path": "data/reports/graph/metrics_report.md",
+    "sha256": "d40af4223f52c598c81fb0b20b3955175e7fdc3eca0150c7c51aa0a49ca80d2a"
+  },
+  {
+    "path": "data/reports/graph/research_data_quality_report.md",
+    "sha256": "eed8beab3299b1debf6a662696e73fcf12aedc650a9b97b09f6cbdd5a1fccdd6"
+  },
+  {
+    "path": "data/reports/graph/research_report.md",
+    "sha256": "b14cbfa259ee66bc55efbb3a8b5dec097d344c82f7728e82bdb8849836c53b43"
+  },
+  {
+    "path": "docs/descriptive_analysis.md",
+    "sha256": "d5b1bbb8e917d691237caaff7e587d71134474eb17181e186c35ff18741d4b0a"
+  },
+  {
+    "path": "docs/graph_construction.md",
+    "sha256": "bdb3c471a7d560b114e41da30b326a691d53718f13983350ddbf5b665349172a"
+  },
+  {
+    "path": "docs/graph_metrics.md",
+    "sha256": "14aa49cd2bd859345a8511e11bf1fcba5e62c239e391b287405938a3cbe77805"
+  },
+  {
+    "path": "docs/research_data_preparation.md",
+    "sha256": "08a3b9d653711ddbe2a3ad7e6e5159479b902ef51c888f2b88bef2c1410ed868"
+  },
+  {
+    "path": "scripts/experiments/compare_models.py",
+    "sha256": "cbe478cd51fe71a37a3c01f9500c8486e9971a9f4054af3dabe880f9951cf671"
+  },
+  {
+    "path": "scripts/experiments/evaluate_models.py",
+    "sha256": "2c2c15089febd2c121ac3b96155a67a39b763ae8bc89ab96b3108edaab9d0999"
+  },
+  {
+    "path": "scripts/experiments/tune_models.py",
+    "sha256": "1ae6dc2ef1f08ade9b955816da45ee8e89a587e7c7b8190add12ec79ba09c295"
+  },
+  {
+    "path": "scripts/exploration/data_quality.py",
+    "sha256": "6af30aa710ec5b3d15bc797954ee0c196f66267ba0240853bebdb3450d44c55d"
+  },
+  {
+    "path": "scripts/exploration/network_analysis.py",
+    "sha256": "777ebcd906627c4ee8e445ed573302249f0d9920973a59a6d8f72654caf87912"
+  },
+  {
+    "path": "tests/test_analysis.py",
+    "sha256": "2fa2665bcae1a3fa148565686e5986d6c7ba11924cb5390db124edaa5d97919d"
+  },
+  {
+    "path": "tests/test_audit.py",
+    "sha256": "c69dff7ddf9c5d7ca4590091c1969c71f05753cfd3ea3b196ae8307276d29f14"
+  },
+  {
+    "path": "tests/test_cleaning.py",
+    "sha256": "9755e322a4fc68a0a841ed6aa1b43a00d487787c7337ad0eaa45bb5b7b965986"
+  },
+  {
+    "path": "tests/test_descriptive.py",
+    "sha256": "c738ca5fcbc7cab69ae43ec456581df9aac76689ad1f26b5bcbc69d76826ce4d"
+  },
+  {
+    "path": "tests/test_etl.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "tests/test_graph.py",
+    "sha256": "24e96da8fc57dabf8cf7b0399ebad6698fe815acd3ffbe88c38a5693418ee646"
+  },
+  {
+    "path": "tests/test_graph_features.py",
+    "sha256": "0271abdba6cc16a0013b65b361b4717b3cbf4c9ec23a913d57ac71b797e8e874"
+  },
+  {
+    "path": "tests/test_ingestion.py",
+    "sha256": "c62701f3dc5010e57d925bc762e966e593b8764c31df11c6f521d988cc1757b5"
+  },
+  {
+    "path": "tests/test_metrics.py",
+    "sha256": "a549465db1865b3842861427cde040ceef60b0b099d2be70ca4660f6fca6ca1a"
+  },
+  {
+    "path": "tests/test_ml_baseline.py",
+    "sha256": "d105b87072ddb4cf80df7490b62d4c383c129497e7a0d53a9bcb12a05e63f93f"
+  },
+  {
+    "path": "tests/test_ml_preprocessing.py",
+    "sha256": "ba37c4aa707618cdcb42d59277751fa84016147ffbe622a48733dd93bf726e69"
+  },
+  {
+    "path": "tests/test_pipeline.py",
+    "sha256": "2c5cd65d0a73c94d39d4f1cf9b22350ae17ea7e366b1298e16f4f329169588e0"
+  },
+  {
+    "path": "tests/test_preprocessing.py",
+    "sha256": "457c476331b9753c633847e126e981beb76053e0bc43172550f55cb9c97b7b77"
+  },
+  {
+    "path": "tests/test_temporal_features.py",
+    "sha256": "a3225b51f624a49c50754051fdb99277d98fc78058a29ee68c71581cdaf1366a"
+  },
+  {
+    "path": "tests/test_visualization.py",
+    "sha256": "a17d8177c5bb4014eb3fc2afce43bc947a77bc9592e1f82cb9580938409f0e9b"
+  },
+  {
+    "path": "tests/eda/test_quality.py",
+    "sha256": "57332c77cf94941f9e2ca2bd08191203c15da1af000a0815b3bc641b184ea12d"
+  },
+  {
+    "path": "notebooks/01_eda_qualite.ipynb",
+    "sha256": "49aff67219f6e0d2a9d3c024f422962e06340af42b424ce37059e749b302144e"
+  },
+  {
+    "path": "notebooks/02_eda_analyse.ipynb",
+    "sha256": "50f75918ec6ea942842b5842fdfc0e90f70a7d9cdb839d906294632ef334ff39"
+  },
+  {
+    "path": "notebooks/03_ml_baseline.ipynb",
+    "sha256": "5c85069591064fcc5052dc04559e0f54a31af0d088d6d5fccf47862aea77a6be"
+  },
+  {
+    "path": "notebooks/04_ml_non_supervise.ipynb",
+    "sha256": "c8acba7a48787a88266eaee9499f11049fa7f32a6fa99ce4cbf66e714518ed08"
+  },
+  {
+    "path": "notebooks/05_ml_comparaison.ipynb",
+    "sha256": "1b13d170b40fb03a48f6bf0f45cdf3ca7484693df25f665cd14fdd8c34cacde9"
+  },
+  {
+    "path": "models/baseline_model.joblib",
+    "sha256": "acaad2e3a3e13aab28263e6908a160ee006870a7c045c73c292bfac92f256df7"
+  },
+  {
+    "path": "docs/images/Projet_SNCF.svg",
+    "sha256": "51c0c141917914ed28ede966affc62920c5eaee6e0bfc6dc1578746e7a9e40ba"
+  },
+  {
+    "path": "src/projet_kit_data/comparaison.py",
+    "sha256": "2a900359a7243c8484f7535a0945cdea4f4acf1f640f865cd2c6def439fe9dee"
+  },
+  {
+    "path": "tests/test_comparaison.py",
+    "sha256": "90524124292e8e9488f18662d27b956b24eb8ecc4440f87e5c62a724ddc78841"
+  },
+  {
+    "path": "data/processed/ml/clusters_profils.parquet",
+    "sha256": "3db4075a2c13cca3a6b691d8669efe8e97358268fd1521b32866b8f0a503c60d"
+  },
+  {
+    "path": "data/processed/ml/clusters_resume.parquet",
+    "sha256": "4e681e7dac27393d98a60f73c1d201e11ede50f928e3174953d7497b8371c5e3"
+  },
+  {
+    "path": "data/processed/ml/comparaison_metrics.json",
+    "sha256": "2f4adbfb54858aeed35be0924d921181aa194187787ee1d42ca6a70aa6424d9d"
+  },
+  {
+    "path": "data/processed/ml/comparaison_predictions_test.parquet",
+    "sha256": "4f8a8ba956405b547116525dcb7ac836f98af0168998a806bcfd8ad61bab64bd"
+  },
+  {
+    "path": "models/clustering_model.joblib",
+    "sha256": "d57852ac39265a0d0f5a4798d60d2f478beb30444718c065e8bd93535772e808"
+  },
+  {
+    "path": "models/comparaison_modele_retenu.joblib",
+    "sha256": "c6193f9d72fe627f2913900f15f088bcd35df7f70537ebcdc770a9abc9254642"
+  }
+]
