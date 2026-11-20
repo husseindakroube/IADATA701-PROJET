@@ -18,7 +18,14 @@ from utils.carte import (
     libelle_liaison,
     LIBELLES_CLUSTERS,
 )
-from utils.data import filters, observations, scope_metrics, table
+from utils.data import (
+    filters,
+    network_summary_metrics,
+    observations,
+    scope_metrics,
+    table,
+    validate_rankings,
+)
 from projet_kit_data.web_data import ROOT
 
 
@@ -593,20 +600,31 @@ with network:
         "des services TGV AQST sur l'ensemble de la période 2018-01 → 2026-09. "
         "Chaque gare est un nœud, chaque liaison orientée une arête."
     )
+    st.caption(
+        "Le graphe décrit les liaisons origine-destination observées dans les "
+        "données mensuelles. Il ne permet pas d'établir les itinéraires réels, "
+        "les flux de voyageurs, l'infrastructure physique ni une propagation "
+        "des retards."
+    )
 
     # Encadré pédagogique sur les centralités
     with st.expander("Comprendre les mesures de centralité", expanded=False):
         st.markdown(
-            "**Degré entrant / sortant.** Nombre de liaisons arrivant ou partant "
-            "d'une gare. Un degré élevé signifie une gare très connectée.\n\n"
-            "**Betweenness (intermédiarité).** Nombre de plus courts chemins "
-            "du réseau qui passent par cette gare. Les gares à forte betweenness "
-            "sont des hubs de transit stratégiques.\n\n"
-            "**PageRank.** Score d'importance qui tient compte de l'importance "
-            "des voisins. Une gare connectée à des hubs reçoit un meilleur score "
-            "qu'une gare connectée à des terminus isolés.\n\n"
-            "**Closeness (proximité).** Inverse de la distance moyenne à toutes "
-            "les autres gares. Mesure l'accessibilité globale depuis cette gare."
+            "**Degré entrant / sortant.** Nombre de liaisons origine-destination "
+            "observées qui arrivent à une gare ou en partent dans le graphe. Il "
+            "décrit sa connectivité dans ce graphe, sans mesurer son importance "
+            "dans le réseau ferroviaire physique.\n\n"
+            "**Betweenness Centrality (intermédiarité).** Mesure la position d'une "
+            "gare dans les plus courts chemins du graphe OD construit. Elle ne "
+            "prouve ni le passage de trains réels par cette gare, ni un volume "
+            "de trafic ou un rôle de transit stratégique.\n\n"
+            "**PageRank.** Mesure calculée à partir des connexions dirigées du "
+            "graphe OD et de la structure des voisins. Une valeur manquante indique "
+            "un résultat indisponible, notamment en cas de non-convergence ; elle "
+            "ne doit pas être interprétée comme zéro.\n\n"
+            "**Closeness (proximité).** Résume les distances dans le graphe OD "
+            "construit. Elle ne décrit pas les distances ni l'accessibilité de "
+            "l'infrastructure ferroviaire réelle."
         )
 
     # Bandeau de métriques réseau
@@ -618,21 +636,9 @@ with network:
         for _, row in summary.iterrows():
             with st.container(border=True):
                 st.markdown(f"**Réseau {row.service}**")
-                m1, m2, m3, m4 = st.columns(4)
-                with m1:
-                    st.metric("Gares", int(row.node_count))
-                with m2:
-                    st.metric("Liaisons orientées", int(row.edge_count))
-                with m3:
-                    if "density" in row.index and pd.notna(row.density):
-                        st.metric("Densité", f"{row.density:.3f}")
-                    else:
-                        st.metric("Densité", "N/A")
-                with m4:
-                    if "diameter" in row.index and pd.notna(row.diameter):
-                        st.metric("Diamètre", int(row.diameter))
-                    else:
-                        st.metric("Diamètre", "N/A")
+                colonnes = st.columns(4)
+                for index, (libelle, valeur) in enumerate(network_summary_metrics(row)):
+                    colonnes[index % 4].metric(libelle, valeur)
 
     st.divider()
 
@@ -679,18 +685,42 @@ with network:
             )
 
     # Classements de centralité
-    ranking = table(
-        "data/processed/graph/descriptive/node_rankings.parquet", required=False
+    ranking, ranking_warning = validate_rankings(
+        table("data/processed/graph/descriptive/node_rankings.parquet", required=False)
     )
+    if ranking_warning:
+        st.warning(ranking_warning)
     if not ranking.empty:
         ranking_service = ranking.loc[ranking.service.eq(service)]
         if not ranking_service.empty:
             st.markdown("### Classements des gares les plus centrales")
             st.caption(
                 "Top des gares pour chaque mesure de centralité calculée sur "
-                "l'ensemble de la période."
+                "l'ensemble de la période. Ces rangs décrivent uniquement le "
+                "graphe OD observé et ne démontrent pas un rôle dans les "
+                "itinéraires ou le trafic ferroviaire réels."
             )
-            st.dataframe(ranking_service, hide_index=True, width="stretch")
+            classement_affiche = ranking_service.drop(
+                columns=["node_id"], errors="ignore"
+            ).rename(
+                columns={
+                    "rank": "Rang",
+                    "service": "Service",
+                    "ranking_metric": "Mesure",
+                    "station_name": "Gare",
+                    "value": "Valeur",
+                }
+            )
+            classement_affiche["Mesure"] = classement_affiche["Mesure"].replace(
+                {
+                    "connectivity_degree": "Degré de connectivité",
+                    "betweenness_centrality": "Betweenness Centrality",
+                    "pagerank": "PageRank",
+                }
+            )
+            st.dataframe(classement_affiche, hide_index=True, width="stretch")
+        else:
+            st.info(f"Aucun classement n'est disponible pour le service {service}.")
 
     # Détails d une gare
     nodes = table("data/processed/graph/node_metrics.parquet", required=False)

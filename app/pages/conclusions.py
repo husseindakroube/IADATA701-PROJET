@@ -3,7 +3,7 @@
 import streamlit as st
 from sklearn.metrics import mean_absolute_error, r2_score
 
-from utils.data import table
+from utils.data import network_station_counts, ranked_stations, table
 
 
 # =============================================================================
@@ -92,6 +92,10 @@ donnees_qualite = table("data/processed/sncf.parquet", required=False)
 summary_reseau = table(
     "data/processed/graph/descriptive/network_summary.parquet", required=False
 )
+noeuds_reseau = table("data/processed/graph/nodes.parquet", required=False)
+classement_reseau = table(
+    "data/processed/graph/descriptive/node_rankings.parquet", required=False
+)
 clusters = table("data/processed/clusters_liaisons.csv", required=False)
 predictions = table(
     "data/processed/ml/comparaison_predictions_test.parquet", required=False
@@ -117,15 +121,42 @@ with p1, st.container(border=True):
 with p2, st.container(border=True):
     st.markdown("**🗺️ Structure du réseau**")
     if not summary_reseau.empty:
-        total_gares = int(summary_reseau["node_count"].sum())
-        total_edges = int(summary_reseau["edge_count"].sum())
-        st.caption(
-            f"Analyse par théorie des graphes de **{total_gares} gares** et "
-            f"**{total_edges} liaisons orientées**. Paris Lyon, Lyon Part Dieu "
-            f"et Paris Montparnasse concentrent la betweenness la plus élevée, "
-            f"confirmant une topologie en étoile centrée sur Paris avec un hub "
-            f"province fort à Lyon."
+        total_gares, appartenances_service = network_station_counts(
+            summary_reseau, noeuds_reseau
         )
+        total_edges = int(summary_reseau["edge_count"].sum())
+        if total_gares is not None and appartenances_service is not None:
+            intro_graphe = (
+                "Le graphe OD sauvegardé compte "
+                f"**{total_gares} gares distinctes** et "
+                f"**{appartenances_service} appartenances gare-service**, pour "
+                f"**{total_edges} liaisons orientées observées**."
+            )
+        else:
+            intro_graphe = (
+                "Le décompte des gares du graphe OD n'est pas disponible; "
+                f"**{total_edges} liaisons orientées observées** sont enregistrées."
+            )
+        gares_betweenness = ranked_stations(
+            classement_reseau,
+            service="National",
+            metric="betweenness_centrality",
+        )
+        if not gares_betweenness.empty:
+            noms_gares = ", ".join(gares_betweenness.station_name.astype(str))
+            st.caption(
+                f"{intro_graphe} Dans le classement national enregistré, les "
+                f"trois premières gares selon Betweenness Centrality sont : "
+                f"{noms_gares}. Cette mesure décrit leur position dans les plus "
+                "courts chemins du graphe construit ; elle ne démontre pas leur "
+                "rôle dans des itinéraires ou flux ferroviaires réels."
+            )
+        else:
+            st.caption(
+                f"{intro_graphe} Le classement de centralité n'est pas "
+                "disponible. Les liaisons observées ne permettent pas d'établir "
+                "les itinéraires ni les flux ferroviaires réels."
+            )
 
 p3, p4 = st.columns(2)
 

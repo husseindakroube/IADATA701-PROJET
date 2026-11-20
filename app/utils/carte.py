@@ -512,10 +512,15 @@ def construire_ego_graphe(service: str, gare_centrale: str) -> go.Figure:
         if nom in metriques_s.index:
             m = metriques_s.loc[nom]
             bet = float(m["betweenness_centrality"])
+            pagerank = (
+                f"{float(m['pagerank']):.3f}"
+                if pd.notna(m["pagerank"])
+                else "Indisponible"
+            )
             taille += math.sqrt(max(bet, 0)) * 30
             survol += (
                 f"<br>Degré : {int(m['degree'])}<br>"
-                f"Betweenness : {bet:.3f}<br>PageRank : {float(m['pagerank']):.3f}"
+                f"Betweenness : {bet:.3f}<br>PageRank : {pagerank}"
             )
         fig.add_trace(
             go.Scatter(
@@ -537,10 +542,15 @@ def construire_ego_graphe(service: str, gare_centrale: str) -> go.Figure:
     # Gare centrale
     if gare_centrale in metriques_s.index:
         m_c = metriques_s.loc[gare_centrale]
+        pagerank_central = (
+            f"{float(m_c['pagerank']):.3f}"
+            if pd.notna(m_c["pagerank"])
+            else "Indisponible"
+        )
         hover_c = (
             f"<b>{gare_centrale}</b><br>Degré : {int(m_c['degree'])}<br>"
             f"Betweenness : {float(m_c['betweenness_centrality']):.3f}<br>"
-            f"PageRank : {float(m_c['pagerank']):.3f}"
+            f"PageRank : {pagerank_central}"
         )
     else:
         hover_c = f"<b>{gare_centrale}</b>"
