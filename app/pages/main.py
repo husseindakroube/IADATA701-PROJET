@@ -6,7 +6,7 @@ from html import escape
 import pandas as pd
 import streamlit as st
 
-from utils.data import observations, table
+from utils.data import observations, ranked_stations, table
 
 GLOBAL_Path = Path(__file__).resolve().parent
 IMAGES_PATH = GLOBAL_Path.parent.parent / "images"
@@ -145,11 +145,29 @@ st.subheader("Trois résultats clés")
 col_r1, col_r2, col_r3 = st.columns(3)
 with col_r1, st.container(border=True):
     st.markdown("**Structure du réseau**")
-    st.caption(
-        "Analyse par théorie des graphes des 130 liaisons orientées. "
-        "Paris Lyon, Lyon Part Dieu et Paris Montparnasse sont les gares de "
-        "plus forte centralité, confirmant une topologie en étoile centrée sur Paris."
+    classement_reseau = table(
+        "data/processed/graph/descriptive/node_rankings.parquet", required=False
     )
+    gares_betweenness = ranked_stations(
+        classement_reseau,
+        service="National",
+        metric="betweenness_centrality",
+    )
+    if not gares_betweenness.empty:
+        noms_gares = ", ".join(gares_betweenness.station_name.astype(str))
+        st.caption(
+            "Dans le classement sauvegardé du graphe OD national, les trois "
+            f"premières gares selon Betweenness Centrality sont : {noms_gares}. "
+            "Cette mesure décrit leur position dans les plus courts chemins du "
+            "graphe construit ; elle ne prouve ni des itinéraires réels ni des "
+            "flux de voyageurs."
+        )
+    else:
+        st.caption(
+            "Le classement de centralité du graphe OD national n'est pas "
+            "disponible. Les mesures du graphe ne décrivent pas directement "
+            "les itinéraires ni les flux ferroviaires réels."
+        )
 with col_r2, st.container(border=True):
     st.markdown("**Typologie des liaisons**")
     st.caption(

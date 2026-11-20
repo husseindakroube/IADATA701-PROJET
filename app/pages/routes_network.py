@@ -13,13 +13,15 @@ from utils.carte import (
     charger_liaisons_detail,
     charger_sncf_mensuel,
     construire_carte,
-    construire_ego_graphe,
-    gares_du_service,
     libelle_liaison,
     LIBELLES_CLUSTERS,
 )
-from utils.data import filters, observations, scope_metrics, table
-from projet_kit_data.web_data import ROOT
+from utils.data import (
+    filters,
+    observations,
+    scope_metrics,
+    table,
+)
 
 
 st.caption("EXPLORER LES SERVICES TGV")
@@ -27,15 +29,16 @@ st.title("Une liaison, mois après mois")
 st.write(
     "Explorez les 130 liaisons orientées du réseau sur une carte interactive, "
     "suivez l'évolution des retards et annulations d'une liaison précise, "
-    "ou analysez la structure globale du réseau à travers les centralités."
+    "ou comparez les caractéristiques de deux liaisons. La structure du réseau "
+    "et ses associations avec la régularité sont présentées dans la page "
+    "Structure et régularité."
 )
 
-carte_onglet, routes, comparer, network = st.tabs(
+carte_onglet, routes, comparer = st.tabs(
     [
         "Carte interactive",
         "Explorer une liaison",
         "Comparer deux liaisons",
-        "Comprendre le réseau",
     ]
 )
 
@@ -581,128 +584,3 @@ with comparer:
             ),
         )
         st.plotly_chart(fig_causes, width="stretch")
-
-
-# =============================================================================
-# Onglet 4 — Comprendre le réseau (analyse structurelle)
-# =============================================================================
-with network:
-    st.subheader("Analyse structurelle du réseau TGV")
-    st.write(
-        "Analyse par théorie des graphes de la structure origine-destination "
-        "des services TGV AQST sur l'ensemble de la période 2018-01 → 2026-09. "
-        "Chaque gare est un nœud, chaque liaison orientée une arête."
-    )
-
-    # Encadré pédagogique sur les centralités
-    with st.expander("Comprendre les mesures de centralité", expanded=False):
-        st.markdown(
-            "**Degré entrant / sortant.** Nombre de liaisons arrivant ou partant "
-            "d'une gare. Un degré élevé signifie une gare très connectée.\n\n"
-            "**Betweenness (intermédiarité).** Nombre de plus courts chemins "
-            "du réseau qui passent par cette gare. Les gares à forte betweenness "
-            "sont des hubs de transit stratégiques.\n\n"
-            "**PageRank.** Score d'importance qui tient compte de l'importance "
-            "des voisins. Une gare connectée à des hubs reçoit un meilleur score "
-            "qu'une gare connectée à des terminus isolés.\n\n"
-            "**Closeness (proximité).** Inverse de la distance moyenne à toutes "
-            "les autres gares. Mesure l'accessibilité globale depuis cette gare."
-        )
-
-    # Bandeau de métriques réseau
-    summary = table(
-        "data/processed/graph/descriptive/network_summary.parquet", required=False
-    )
-    if not summary.empty:
-        st.markdown("### Vue d'ensemble des deux réseaux")
-        for _, row in summary.iterrows():
-            with st.container(border=True):
-                st.markdown(f"**Réseau {row.service}**")
-                m1, m2, m3, m4 = st.columns(4)
-                with m1:
-                    st.metric("Gares", int(row.node_count))
-                with m2:
-                    st.metric("Liaisons orientées", int(row.edge_count))
-                with m3:
-                    if "density" in row.index and pd.notna(row.density):
-                        st.metric("Densité", f"{row.density:.3f}")
-                    else:
-                        st.metric("Densité", "N/A")
-                with m4:
-                    if "diameter" in row.index and pd.notna(row.diameter):
-                        st.metric("Diamètre", int(row.diameter))
-                    else:
-                        st.metric("Diamètre", "N/A")
-
-    st.divider()
-
-    # Sélection du service
-    service = st.selectbox(
-        "Choisir un réseau à analyser", ["National", "International"]
-    )
-    log_selection("network_view", service=service)
-
-    # Ego-graphe centré sur une gare
-    st.markdown("### Explorer une gare et ses connexions directes")
-    st.caption(
-        "Choisissez une gare pour voir ses liaisons directes. Rouge = départs "
-        "de la gare, bleu = arrivées. Taille des voisins proportionnelle à leur betweenness."
-    )
-    liste_gares = gares_du_service(service)
-    if liste_gares:
-        # Sélection par défaut : Paris Lyon pour National, Paris Lyon pour Internat
-        default_idx = 0
-        for candidat in ["PARIS LYON", "PARIS EST", "LYON PART DIEU"]:
-            if candidat in liste_gares:
-                default_idx = liste_gares.index(candidat)
-                break
-        gare_centrale = st.selectbox(
-            "Gare centrale",
-            liste_gares,
-            index=default_idx,
-            key=f"ego_gare_{service}",
-        )
-        log_selection("ego_graphe_view", service=service, gare=gare_centrale)
-        fig_ego = construire_ego_graphe(service, gare_centrale)
-        st.plotly_chart(fig_ego, width="stretch")
-
-    # Visualisation statique en complément
-    path = ROOT / f"data/processed/graph/visualizations/network_{service.lower()}.png"
-    if path.is_file():
-        with st.expander(
-            "Voir aussi la visualisation statique issue de l'analyse graphe"
-        ):
-            st.image(
-                str(path),
-                caption=f"Réseau {service} · 2018-01 → 2026-09 · liaisons orientées",
-                width="stretch",
-            )
-
-    # Classements de centralité
-    ranking = table(
-        "data/processed/graph/descriptive/node_rankings.parquet", required=False
-    )
-    if not ranking.empty:
-        ranking_service = ranking.loc[ranking.service.eq(service)]
-        if not ranking_service.empty:
-            st.markdown("### Classements des gares les plus centrales")
-            st.caption(
-                "Top des gares pour chaque mesure de centralité calculée sur "
-                "l'ensemble de la période."
-            )
-            st.dataframe(ranking_service, hide_index=True, width="stretch")
-
-    # Détails d une gare
-    nodes = table("data/processed/graph/node_metrics.parquet", required=False)
-    if not nodes.empty:
-        nodes_s = nodes.loc[nodes.service.eq(service) & nodes.period.eq("overall")]
-        if not nodes_s.empty:
-            st.markdown("### Métriques détaillées par gare")
-            station = st.selectbox(
-                "Choisir une gare",
-                sorted(nodes_s.station_name.unique()),
-                key=f"station_{service}",
-            )
-            log_selection("station_view", service=service, station=station)
-            detail = nodes_s.loc[nodes_s.station_name.eq(station)]
-            st.dataframe(detail, hide_index=True, width="stretch")
