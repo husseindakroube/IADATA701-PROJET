@@ -35,7 +35,7 @@ ajoutée.
 | `scripts/exploration/generer_coordonnees_gares.py` | Régénère le CSV des coordonnées |
 | `scripts/exploration/generer_liaisons_detail.py` | Régénère l agrégat par liaison depuis sncf.parquet, clusters, prédictions |
 
-## Marche à suivre pour Julien
+## Marche à suivre pour ShiHao
 
 Depuis la racine du dépôt, sur sa branche `Test_Shihao` :
 
