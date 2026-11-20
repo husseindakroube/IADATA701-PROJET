@@ -216,16 +216,4 @@ du workflow ; les fichiers correspondants restent disponibles comme alternative
 manuelle. Aucun secret SSH ni variable `DEPLOY_ENABLED` n'est requis pour le
 parcours Community Cloud.
 
-## Équipe et livraison
 
-Projet collectif réalisé dans le cadre d'IADATA701.
-**Les noms des membres et leurs responsabilités restent à renseigner par l'équipe.**
-
-Avant la remise finale :
-
-- Publier les derniers changements et vérifier la réussite de la CI sur GitHub.
-- Déployer l'application, vérifier son accès public et ajouter son URL au README.
-- Compléter les membres de l'équipe et la répartition du travail.
-- Fournir le dépôt public, la documentation Sphinx générée et les exemples de logs.
-
-[Dépôt GitHub du projet](https://github.com/husseindakroube/IADATA701-PROJET)
