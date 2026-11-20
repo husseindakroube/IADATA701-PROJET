@@ -1,4 +1,4 @@
-"""Read-only data quality audit for the raw SNCF TGV regularity dataset."""
+"""Audit en lecture seule de la qualité des données brutes de régularité TGV SNCF."""
 
 from __future__ import annotations
 
@@ -50,18 +50,18 @@ _EXAMPLE_IDENTITY_FIELDS = ("date", "service", "gare_depart", "gare_arrivee")
 
 
 def _json_records(path: Path) -> list[dict[str, Any]]:
-    """Read and validate a JSON array of flat records."""
+    """Lire et valider un tableau JSON d’enregistrements simples."""
     with path.open("r", encoding="utf-8") as input_file:
         records = json.load(input_file)
     if not isinstance(records, list) or any(
         not isinstance(record, dict) for record in records
     ):
-        raise ValueError("Expected the input JSON to be an array of objects.")
+        raise ValueError("Le JSON d’entrée doit être un tableau d’objets.")
     return records
 
 
 def _value_type(value: Any) -> str:
-    """Return a readable type label for a JSON-compatible value."""
+    """Renvoyer une étiquette lisible pour le type d’une valeur JSON."""
     if value is None:
         return "null"
     if isinstance(value, bool):
@@ -80,7 +80,7 @@ def _value_type(value: Any) -> str:
 
 
 def _is_finite_number(value: Any) -> bool:
-    """Return whether a value is a finite number and not a boolean."""
+    """Indiquer si une valeur est un nombre fini et non un booléen."""
     return (
         isinstance(value, (int, float))
         and not isinstance(value, bool)
@@ -92,13 +92,13 @@ def _example_record(
     record: dict[str, Any],
     relevant_fields: tuple[str, ...],
 ) -> dict[str, Any]:
-    """Select identity and diagnostic fields for a report example."""
+    """Sélectionner les champs d’identité et de diagnostic d’un exemple."""
     fields = dict.fromkeys((*_EXAMPLE_IDENTITY_FIELDS, *relevant_fields))
     return {field: record.get(field) for field in fields}
 
 
 def _anomaly_examples(records: list[dict[str, Any]]) -> dict[str, Any]:
-    """Collect counts and up to ten raw examples for selected anomalies."""
+    """Compter les anomalies retenues et recueillir jusqu’à dix exemples bruts."""
     checks: dict[str, dict[str, Any]] = {}
 
     field_checks = {
@@ -227,10 +227,11 @@ def _anomaly_examples(records: list[dict[str, Any]]) -> dict[str, Any]:
             "records_checked": len(checked_records),
             "record_count": len(violations),
             "note": (
-                "The >15 count is documented as applying only to routes that "
-                "compete with air travel; the dataset has no applicability flag."
+                "Le compte >15 ne concerne, selon la documentation, que les "
+                "liaisons en concurrence avec l’avion ; le jeu de données ne "
+                "contient aucun flag d’applicabilité."
                 if lower_threshold == "nb_train_retard_sup_15"
-                else "The >60-minute count is a subset of the >30-minute count."
+                else "Le compte >60 minutes est inclus dans le compte >30 minutes."
             ),
             "examples": [
                 _example_record(record, (lower_threshold, higher_threshold))
@@ -253,10 +254,10 @@ def _anomaly_examples(records: list[dict[str, Any]]) -> dict[str, Any]:
             "record_count": len(threshold_violations),
             "pairwise_checks": pairwise_checks,
             "note": (
-                "This is a potential ordering check: the SNCF schema describes "
-                "nb_train_retard_sup_15 as applicable to routes competing with "
-                "air travel, and the dataset does not provide that applicability "
-                "flag."
+                "Ce contrôle porte sur un ordre attendu, à titre diagnostique : "
+                "le schéma SNCF indique que nb_train_retard_sup_15 s’applique "
+                "aux liaisons en concurrence avec l’avion, mais le jeu de données "
+                "ne fournit aucun flag d’applicabilité."
             ),
             "examples": [
                 _example_record(record, threshold_fields)
@@ -267,7 +268,7 @@ def _anomaly_examples(records: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def _stat_expression(column: str, dtype: pl.DataType) -> pl.Expr:
-    """Return a Polars expression that treats NaN as missing for statistics."""
+    """Créer une expression Polars qui traite NaN comme valeur manquante."""
     expression = pl.col(column)
     if dtype.is_float():
         expression = expression.fill_nan(None)
@@ -278,7 +279,7 @@ def _duplicate_summary(
     frame: pl.DataFrame,
     records: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    """Count exact duplicates and complete business-key duplicates."""
+    """Compter les doublons exacts et ceux de clé métier complète."""
     columns = frame.columns
     exact_duplicate_count = 0
     exact_duplicate_group_count = 0
@@ -323,7 +324,7 @@ def _logical_checks(
     frame: pl.DataFrame,
     negative_summary: dict[str, dict[str, int | float | None]],
 ) -> dict[str, Any]:
-    """Count transparent row-level consistency diagnostics using Polars."""
+    """Compter les diagnostics de cohérence par ligne avec Polars."""
     columns = set(frame.columns)
     schema = frame.schema
     planned = "nb_train_prevu"
@@ -380,8 +381,8 @@ def _logical_checks(
         "records_checked": departure_checked,
         "affected_record_count": departure_affected,
         "note": (
-            "The official SNCF field is nb_train_depart_retard; "
-            "nb_train_retard_depart is also recognized as an alias."
+            "Le champ SNCF officiel est nb_train_depart_retard ; "
+            "nb_train_retard_depart est également reconnu comme alias."
         ),
     }
 
@@ -440,8 +441,8 @@ def _logical_checks(
 
 
 def _display_percentage(value: float | None) -> str:
-    """Format a percentage, including an undefined empty-data percentage."""
-    return "N/A" if value is None else f"{value:.2f}%"
+    """Formater un pourcentage, y compris s’il est indéfini pour un jeu vide."""
+    return "N/D" if value is None else f"{value:.2f}%"
 
 
 def _append_examples(
@@ -449,11 +450,13 @@ def _append_examples(
     title: str,
     summary: dict[str, Any],
 ) -> None:
-    """Append an anomaly count and its JSON-formatted example records."""
-    condition = summary.get("condition", "condition recorded in structured results")
-    lines.append(f"{title}: {summary['record_count']} records ({condition})")
+    """Ajouter un compte d’anomalies et ses exemples au format JSON."""
+    condition = summary.get(
+        "condition", "condition consignée dans les résultats structurés"
+    )
+    lines.append(f"{title} : {summary['record_count']} enregistrements ({condition})")
     if not summary["examples"]:
-        lines.append("  (no examples)")
+        lines.append("  (aucun exemple)")
         return
     for index, example in enumerate(summary["examples"], start=1):
         lines.append(
@@ -462,25 +465,26 @@ def _append_examples(
 
 
 def _format_report(results: dict[str, Any]) -> str:
-    """Render structured audit results as a readable text report."""
+    """Mettre en forme les résultats structurés dans un rapport texte lisible."""
     overview = results["dataset_overview"]
     lines = [
-        "SNCF TGV Regularity Data Quality Audit",
+        "Audit de la qualité des données de régularité TGV SNCF",
         "=" * 42,
         "",
-        "Dataset overview",
-        "-----------------",
-        f"Input file: {overview['input_path']}",
-        f"Records: {overview['record_count']}",
-        f"Columns: {overview['column_count']}",
-        "Available columns: " + (", ".join(overview["available_columns"]) or "(none)"),
-        "Missing expected columns: "
-        + (", ".join(overview["missing_expected_columns"]) or "(none)"),
-        "Unexpected columns: "
-        + (", ".join(overview["unexpected_columns"]) or "(none)"),
+        "Vue d’ensemble du jeu de données",
+        "---------------------------------",
+        f"Fichier d’entrée : {overview['input_path']}",
+        f"Enregistrements : {overview['record_count']}",
+        f"Colonnes : {overview['column_count']}",
+        "Colonnes disponibles : "
+        + (", ".join(overview["available_columns"]) or "(aucune)"),
+        "Colonnes attendues manquantes : "
+        + (", ".join(overview["missing_expected_columns"]) or "(aucune)"),
+        "Colonnes inattendues : "
+        + (", ".join(overview["unexpected_columns"]) or "(aucune)"),
         "",
-        "Observed data types by column",
-        "------------------------------",
+        "Types de données observés par colonne",
+        "--------------------------------------",
     ]
     for column, type_summary in overview["data_types"].items():
         observed = ", ".join(
@@ -488,63 +492,71 @@ def _format_report(results: dict[str, Any]) -> str:
             for name, count in type_summary["observed_value_types"].items()
         )
         lines.append(
-            f"{column}: Polars {type_summary['polars_dtype']}; "
-            f"expected SNCF type: {type_summary['expected_schema_type']}; "
-            f"observed values: {observed or '(none)'}"
+            f"{column} : type Polars {type_summary['polars_dtype']} ; "
+            f"type SNCF attendu : {type_summary['expected_schema_type']} ; "
+            f"types de valeurs observés : {observed or '(aucun)'}"
         )
 
     lines.extend(
         [
             "",
-            "Missing values",
-            "---------------",
-            "Percentages use total record count as the denominator.",
+            "Valeurs manquantes",
+            "-------------------",
+            "Les pourcentages utilisent le nombre total d’enregistrements comme dénominateur.",
         ]
     )
     for column, summary in results["missing_values"].items():
         lines.append(
             f"{column}: {summary['count']} "
-            f"({_display_percentage(summary['percentage'])}; "
-            f"{summary['percentage_denominator']} records)"
+            f"({_display_percentage(summary['percentage'])} ; "
+            f"dénominateur : {summary['percentage_denominator']} enregistrements)"
         )
 
     duplicates = results["duplicates"]
     lines.extend(
         [
             "",
-            "Duplicates",
-            "----------",
-            "Duplicate counts are rows after the first occurrence in each group.",
+            "Doublons",
+            "--------",
+            "Le nombre de doublons correspond aux lignes suivant la première occurrence de chaque groupe.",
             (
-                f"Completely duplicated records: "
+                f"Enregistrements entièrement dupliqués : "
                 f"{duplicates['exact_duplicate_record_count']} "
-                f"in {duplicates['exact_duplicate_group_count']} groups"
+                f"dans {duplicates['exact_duplicate_group_count']} groupes"
             ),
             (
-                f"Business-key duplicates ({', '.join(BUSINESS_KEY)}): "
+                f"Doublons selon la clé métier ({', '.join(BUSINESS_KEY)}) : "
                 f"{duplicates['business_key_duplicate_record_count']} "
-                f"in {duplicates['business_key_duplicate_group_count']} groups"
+                f"dans {duplicates['business_key_duplicate_group_count']} groupes"
             ),
             (
-                "Records omitted from business-key comparison due to missing key "
-                f"values: {duplicates['records_with_incomplete_business_key']}"
+                "Enregistrements exclus de la comparaison de clé métier en raison "
+                "de valeurs de clé manquantes : "
+                f"{duplicates['records_with_incomplete_business_key']}"
             ),
             "",
-            "Negative numerical values",
-            "-------------------------",
-            "Percentages use non-missing finite numeric values per column.",
+            "Valeurs numériques négatives",
+            "-----------------------------",
+            "Les pourcentages sont calculés sur les valeurs numériques finies et non manquantes de chaque colonne.",
         ]
     )
     for column, summary in results["negative_values"].items():
         lines.append(
             f"{column}: {summary['negative_count']} "
-            f"({_display_percentage(summary['percentage'])}; "
-            f"{summary['numeric_value_count']} numeric values)"
+            f"({_display_percentage(summary['percentage'])} ; "
+            f"{summary['numeric_value_count']} valeurs numériques)"
         )
 
-    lines.extend(["", "Numerical statistics", "---------------------"])
+    lines.extend(["", "Statistiques numériques", "-----------------------"])
+    statistic_labels = {
+        "minimum": "minimum",
+        "maximum": "maximum",
+        "mean": "moyenne",
+        "median": "médiane",
+        "standard_deviation": "écart-type",
+    }
     for column, summary in results["numerical_statistics"].items():
-        lines.append(f"{column} (n={summary['count']}):")
+        lines.append(f"{column} (n={summary['count']}) :")
         for statistic_name in (
             "minimum",
             "maximum",
@@ -552,32 +564,39 @@ def _format_report(results: dict[str, Any]) -> str:
             "median",
             "standard_deviation",
         ):
-            lines.append(f"  {statistic_name}: {summary[statistic_name]}")
+            lines.append(
+                f"  {statistic_labels[statistic_name]} : {summary[statistic_name]}"
+            )
         quantiles = ", ".join(
             f"{percentile}%={value}"
             for percentile, value in summary["quantiles"].items()
         )
-        lines.append(f"  quantiles: {quantiles}")
+        lines.append(f"  quantiles : {quantiles}")
 
     logical = results["logical_consistency"]
     lines.extend(
-        ["", "Logical consistency diagnostics", "-------------------------------"]
+        ["", "Diagnostics de cohérence logique", "---------------------------------"]
     )
     for check_name, summary in logical["count_greater_than_planned_checks"].items():
+        check_label = (
+            "Nombre de trains en retard au départ supérieur au nombre prévu"
+            if check_name == "departure_delay_count_greater_than_nb_train_prevu"
+            else check_name
+        )
         lines.append(
-            f"{check_name}: {summary['affected_record_count']} affected / "
-            f"{summary['records_checked']} checked"
+            f"{check_label} : {summary['affected_record_count']} concernés / "
+            f"{summary['records_checked']} vérifiés"
         )
     negative_counts = logical["negative_count_fields"]
     lines.append(
-        "Records with a negative count field: "
+        "Enregistrements avec un compte négatif : "
         f"{negative_counts['affected_record_count']}"
     )
     for column, count in negative_counts["columns"].items():
         lines.append(f"  {column}: {count}")
     cause_percentages = logical["cause_percentages_outside_0_to_100"]
     lines.append(
-        "Records with a cause percentage outside [0, 100]: "
+        "Enregistrements avec un pourcentage de cause hors de [0, 100] : "
         f"{cause_percentages['affected_record_count']}"
     )
     for column, count in cause_percentages["columns"].items():
@@ -587,18 +606,23 @@ def _format_report(results: dict[str, Any]) -> str:
     lines.extend(
         [
             "",
-            "Anomaly examples",
-            "-----------------",
-            f"Showing at most {anomaly_results['example_limit']} records per check.",
-            "Examples include the date, service, stations, and relevant values.",
+            "Exemples d’anomalies",
+            "---------------------",
+            f"Au plus {anomaly_results['example_limit']} enregistrements sont affichés par contrôle.",
+            "Les exemples présentent la date, le service, les gares et les valeurs utiles.",
         ]
     )
+    anomaly_labels = {
+        "negative_nb_train_retard_sup_30": "Valeurs négatives de nb_train_retard_sup_30",
+        "negative_retard_moyen_trains_retard_sup15": "Valeurs négatives de retard_moyen_trains_retard_sup15",
+        "cancellations_exceed_planned": "Annulations supérieures au nombre de trains prévus",
+    }
     for check_name, summary in anomaly_results["checks"].items():
-        _append_examples(lines, check_name, summary)
+        _append_examples(lines, anomaly_labels.get(check_name, check_name), summary)
 
     lines.append(
-        "Extremely negative delays use the explicit diagnostic threshold "
-        f"< {anomaly_results['extreme_negative_threshold']:g} minutes."
+        "Les retards extrêmement négatifs sont repérés au moyen du seuil "
+        f"diagnostique explicite < {anomaly_results['extreme_negative_threshold']:g} minutes."
     )
     for column, summary in anomaly_results["extremely_negative_delay_values"].items():
         _append_examples(lines, column, summary)
@@ -606,38 +630,39 @@ def _format_report(results: dict[str, Any]) -> str:
     threshold_ordering = anomaly_results["threshold_ordering"]
     for check_name, summary in threshold_ordering["pairwise_checks"].items():
         lines.append(
-            f"Pairwise ordering {check_name}: {summary['record_count']} potential "
-            f"violations / {summary['records_checked']} checked"
+            f"Ordre entre les seuils ({' ≥ '.join(summary['fields'])}) : "
+            f"{summary['record_count']} violations potentielles / "
+            f"{summary['records_checked']} vérifiées"
         )
-        lines.append(f"  Note: {summary['note']}")
+        lines.append(f"  Note : {summary['note']}")
         for index, example in enumerate(summary["examples"], start=1):
             lines.append(
                 f"  {index}. {json.dumps(example, ensure_ascii=False, default=str)}"
             )
         if not summary["examples"]:
-            lines.append("  (no examples)")
+            lines.append("  (aucun exemple)")
     lines.append(
-        "Threshold ordering "
-        f"({threshold_ordering['expected_order']}): "
-        f"{threshold_ordering['record_count']} potential violations / "
-        f"{threshold_ordering['records_checked']} checked"
+        "Ordre attendu des seuils "
+        f"({threshold_ordering['expected_order']}) : "
+        f"{threshold_ordering['record_count']} violations potentielles / "
+        f"{threshold_ordering['records_checked']} vérifiées"
     )
-    lines.append(f"  Note: {threshold_ordering['note']}")
+    lines.append(f"  Note : {threshold_ordering['note']}")
     for index, example in enumerate(threshold_ordering["examples"], start=1):
         lines.append(
             f"  {index}. {json.dumps(example, ensure_ascii=False, default=str)}"
         )
     if not threshold_ordering["examples"]:
-        lines.append("  (no examples)")
+        lines.append("  (aucun exemple)")
 
     lines.extend(
         [
             "",
-            "Notes",
-            "-----",
-            "All checks are diagnostic. No records or values were modified.",
-            "Negative delays are reported and are not automatically treated as invalid.",
-            f"Report file: {results['report_path']}",
+            "Remarques",
+            "---------",
+            "Tous les contrôles sont diagnostiques. Aucun enregistrement ni aucune valeur n’a été modifié.",
+            "Les retards négatifs sont signalés, sans être automatiquement considérés comme invalides.",
+            f"Rapport : {results['report_path']}",
         ]
     )
     return "\n".join(lines) + "\n"
@@ -647,34 +672,36 @@ def audit_raw_data(
     input_path: str | Path = DEFAULT_RAW_DATA_PATH,
     report_path: str | Path = DEFAULT_REPORT_PATH,
 ) -> dict[str, Any]:
-    """Audit a raw SNCF JSON dataset and save a readable text report.
+    """Auditer un jeu de données JSON brut de la SNCF et enregistrer un rapport lisible.
 
-    The source file is opened read-only. Polars is used to inspect columns,
-    nulls, duplicates, numerical values, and statistics. The returned
-    dictionary contains the same results as the text report and can be reused
-    programmatically. No source records are modified.
+    Le fichier source est ouvert en lecture seule. Polars sert à examiner les
+    colonnes, les valeurs manquantes (JSON ``null``), les doublons, les valeurs numériques et les
+    statistiques. Le dictionnaire renvoyé contient les mêmes résultats que le
+    rapport texte et peut être réutilisé par programmation. Aucun enregistrement
+    source n’est modifié.
 
-    :param input_path: Path to the raw JSON array. Defaults to the downloaded
-        SNCF dataset under ``data/raw``.
+    :param input_path: Chemin vers le tableau JSON brut. Par défaut, le jeu de
+        données SNCF téléchargé dans ``data/raw``.
     :type input_path: str | pathlib.Path
-    :param report_path: Destination for the text report. Defaults to
+    :param report_path: Destination du rapport texte. Par défaut,
         ``data/reports/data_quality_report.txt``.
     :type report_path: str | pathlib.Path
-    :returns: Structured audit results for overview, missing values,
-        duplicates, negative values, numerical statistics, and logical checks.
+    :returns: Résultats structurés de l’audit : vue d’ensemble, valeurs
+        manquantes, doublons, valeurs négatives, statistiques numériques et
+        contrôles logiques.
     :rtype: dict[str, Any]
-    :raises OSError: If the input cannot be read or the report cannot be
-        written.
-    :raises json.JSONDecodeError: If the input file does not contain valid
-        JSON.
-    :raises ValueError: If the JSON root is not an array of objects.
+    :raises OSError: Si l’entrée ne peut pas être lue ou si le rapport ne peut
+        pas être écrit.
+    :raises json.JSONDecodeError: Si le fichier d’entrée ne contient pas de
+        JSON valide.
+    :raises ValueError: Si la racine JSON n’est pas un tableau d’objets.
     """
     source_path = Path(input_path)
     records = _json_records(source_path)
     try:
         frame = pl.DataFrame(records, infer_schema_length=None, strict=False)
     except Exception as exc:
-        raise ValueError(f"Could not construct a Polars DataFrame: {exc}") from exc
+        raise ValueError(f"Impossible de créer un DataFrame Polars : {exc}") from exc
 
     columns = frame.columns
     column_set = set(columns)
@@ -792,27 +819,27 @@ def audit_raw_data(
 
 
 def _main() -> None:
-    """Run the audit command-line interface."""
+    """Exécuter l’interface en ligne de commande de l’audit."""
     parser = argparse.ArgumentParser(
-        description="Audit the locally downloaded SNCF raw JSON dataset."
+        description="Auditer le jeu de données JSON brut SNCF téléchargé localement."
     )
     parser.add_argument(
         "--input",
         type=Path,
         default=DEFAULT_RAW_DATA_PATH,
-        help=f"Raw JSON input file (default: {DEFAULT_RAW_DATA_PATH})",
+        help=f"Fichier JSON brut d’entrée (par défaut : {DEFAULT_RAW_DATA_PATH})",
     )
     parser.add_argument(
         "--report",
         type=Path,
         default=DEFAULT_REPORT_PATH,
-        help=f"Text report output file (default: {DEFAULT_REPORT_PATH})",
+        help=f"Fichier de sortie du rapport texte (par défaut : {DEFAULT_REPORT_PATH})",
     )
     arguments = parser.parse_args()
     results = audit_raw_data(arguments.input, arguments.report)
     print(
-        f"Audited {results['dataset_overview']['record_count']} records. "
-        f"Report saved to {results['report_path']}"
+        f"{results['dataset_overview']['record_count']} enregistrements audités. "
+        f"Rapport enregistré dans {results['report_path']}"
     )
 
 

@@ -29,7 +29,7 @@ Le pipeline ETL réalise ensuite les opérations suivantes :
 3. ajoute quatre indicateurs booléens de diagnostic aux colonnes sources;
 4. écrit le résultat en Parquet dans `data/processed/sncf.parquet`.
 
-Les indicateurs signalent les comptes négatifs, l’ordre incohérent de certains seuils de retard et les annulations supérieures au nombre de trains prévus. Ils servent à repérer des lignes à examiner : le pipeline ne corrige ni ne supprime les observations. Les valeurs nulles et les colonnes d’origine sont conservées.
+Les indicateurs signalent les comptes négatifs, l’ordre incohérent de certains seuils de retard et les annulations supérieures au nombre de trains prévus. Ils servent à repérer des lignes à examiner : le pipeline ne corrige ni ne supprime les observations. Les valeurs manquantes (`null`) et les colonnes d’origine sont conservées.
 
 Un audit indépendant produit `data/reports/data_quality_report.txt` pour éclairer la définition de futures règles de nettoyage. Il décrit notamment le schéma, les valeurs manquantes, les doublons, les valeurs numériques et les incohérences logiques, avec des exemples d’anomalies. L’audit ne modifie pas le fichier brut.
 
@@ -43,7 +43,7 @@ L’analyse utilise le Parquet préparé et les métriques existantes pour repr�
 4. **Description et visualisation** — les sorties résument la topologie, les composantes connexes, les distributions de centralité, les liaisons importantes, l’évolution mensuelle et les résultats opérationnels. Les figures sont rangées sous `data/processed/graph/visualizations/`.
 5. **Associations exploratoires** — les coefficients de Pearson et Spearman, les comparaisons par groupes de centralité et une analyse de sensibilité du résultat principal (exclusion, pour ce calcul seulement, des 11 retards inférieurs à −15 minutes) sont enregistrés sous `data/processed/graph/phase3b/`. Les observations originales restent dans le jeu de recherche.
 
-Les résultats sont rassemblés dans un rapport de recherche unique en français : `data/reports/graph/research_report.md`. Les documents de [construction](docs/graph_construction.md), de [métriques](docs/graph_metrics.md), de [préparation du jeu de recherche](docs/research_data_preparation.md), d’[analyse descriptive](docs/descriptive_analysis.md) et d’[associations](docs/association_analysis.md) détaillent les choix et les sorties de chaque étape.
+Les résultats sont rassemblés dans un rapport de recherche unique en français : `data/reports/graph/research_report.md`. Les documents de [construction](graph_construction.md), de [métriques](graph_metrics.md), de [préparation du jeu de recherche](research_data_preparation.md), d’[analyse descriptive](descriptive_analysis.md) et d’[associations](association_analysis.md) détaillent les choix et les sorties de chaque étape.
 
 ## Reproduire le flux de données
 

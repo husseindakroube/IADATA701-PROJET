@@ -28,9 +28,9 @@ Dans un graphe orienté, une composante faiblement connexe relie les nœuds si l
 
 ### Importance des gares
 
-Degree compte les relations entrantes et sortantes; Betweenness centrality et PageRank décrivent d’autres positions dans le graphe orienté. Ces mesures aident à repérer les gares centrales dans les OD observées, mais ne mesurent ni le nombre de voyageurs ni la fréquence des trains.
+Le degré compte les relations entrantes et sortantes ; la betweenness centrality et PageRank décrivent d’autres positions dans le graphe orienté. Ces mesures aident à repérer les gares centrales dans les OD observées, mais ne mesurent ni le nombre de voyageurs ni la fréquence des trains.
 
-![Distributions Degree](../../processed/graph/visualizations/degree_distributions.png)
+![Distributions des degrés](../../processed/graph/visualizations/degree_distributions.png)
 
 ![Distributions de centralité](../../processed/graph/visualizations/node_centrality_distributions.png)
 
@@ -38,24 +38,24 @@ Degree compte les relations entrantes et sortantes; Betweenness centrality et Pa
 
 | Service | Mesure | Gare | Valeur |
 | --- | --- | --- | --- |
-| International | Betweenness centrality | PARIS LYON | 0.3309 |
-| International | Degree | PARIS LYON | 20 |
+| International | Centralité d’intermédiarité | PARIS LYON | 0.3309 |
+| International | Degré | PARIS LYON | 20 |
 | International | PageRank | PARIS LYON | 0.2853 |
-| National | Betweenness centrality | PARIS LYON | 0.5869 |
-| National | Degree | PARIS LYON | 42 |
+| National | Centralité d’intermédiarité | PARIS LYON | 0.5869 |
+| National | Degré | PARIS LYON | 42 |
 | National | PageRank | PARIS LYON | 0.1717 |
 
-Dans les deux services, Paris Lyon est en tête des trois mesures présentées. La distribution de Betweenness centrality comprend toutefois une forte part de zéros : International, Betweenness centrality : 83.3% de valeurs nulles; National, Betweenness centrality : 75.0% de valeurs nulles. La position dominante de quelques gares ne signifie pas que toutes les gares jouent le même rôle topologique; elle ne permet pas non plus de conclure à un rôle opérationnel causal.
+Dans les deux services, Paris Lyon est en tête des trois mesures présentées. La distribution de Betweenness centrality comprend toutefois une forte part de zéros : International, Centralité d’intermédiarité : 83.3% de valeurs égales à zéro; National, Centralité d’intermédiarité : 75.0% de valeurs égales à zéro. La position dominante de quelques gares ne signifie pas que toutes les gares jouent le même rôle topologique; elle ne permet pas non plus de conclure à un rôle opérationnel causal.
 
 ### Importance des liaisons OD
 
-Edge betweenness indique la fréquence avec laquelle une arête intervient dans les plus courts chemins du graphe orienté. La distribution montre des valeurs concentrées près du bas de l’échelle et quelques valeurs plus élevées.
+L’intermédiarité des arêtes (edge betweenness) indique la fréquence avec laquelle une arête intervient dans les plus courts chemins du graphe orienté. La distribution montre des valeurs concentrées près du bas de l’échelle et quelques valeurs plus élevées.
 
-![Distribution Edge betweenness](../../processed/graph/visualizations/edge_betweenness_distribution.png)
+![Distribution de l’intermédiarité des arêtes](../../processed/graph/visualizations/edge_betweenness_distribution.png)
 
 **Valeurs observées.** National : 2 liaison(s) partagent le maximum (0.2289); exemples : LYON PART DIEU → RENNES; RENNES → LYON PART DIEU. International : 20 liaison(s) partagent le maximum (0.0327); exemples : BARCELONA → PARIS LYON; BELLEGARDE (AIN) → PARIS LYON.
 
-Plusieurs liaisons partagent les valeurs maximales, notamment 20 liaisons International. Edge betweenness est une mesure de position dans le graphe; elle ne représente ni le trafic ni un volume de passagers. Les ex æquo sont conservés dans le tableau de classement.
+Plusieurs liaisons partagent les valeurs maximales, notamment 20 liaisons International. Cette mesure d’intermédiarité des arêtes décrit une position dans le graphe ; elle ne représente ni le trafic ni un volume de passagers. Les ex æquo sont conservés dans le tableau de classement.
 
 ## 3. Évolution temporelle
 
@@ -94,24 +94,24 @@ Cette analyse descriptive ne teste pas l’association entre structure du résea
 <!-- BEGIN GENERATED ASSOCIATION CONTENT -->
 ## 5. Association entre structure du réseau et régularité
 
-Après avoir décrit séparément la topologie et les résultats opérationnels, nous examinons leur association à l’échelle des observations mensuelles. Les prédicteurs sont les métriques existantes des liaisons et de leurs gares source et target. Les résultats sont calculés séparément pour National et International; Overall est un aperçu descriptif regroupé.
+Après avoir décrit séparément la topologie et les résultats opérationnels, nous examinons leur association à l’échelle des observations mensuelles. Les prédicteurs sont les métriques existantes des liaisons et de leurs gares d’origine et de destination. Les résultats sont calculés séparément pour les services `National` et `International` ; la catégorie `Overall` fournit une vue descriptive regroupée.
 
 Pearson mesure une association linéaire et Spearman une association monotone fondée sur les rangs. Les deux coefficients utilisent les paires valides; pour le taux d’annulation, seules les lignes marquées `cancellation_rate_valid` sont retenues. Le tableau ci-dessous choisit, pour chaque périmètre et méthode, le prédicteur dont la valeur absolue du coefficient est la plus élevée pour le retard moyen tous trains. Cette sélection est descriptive, pas confirmatoire.
 
 | Périmètre | Méthode | Prédicteur le plus associé en valeur absolue | Coefficient | n valide |
 | --- | --- | --- | --- | --- |
-| Overall | Pearson r | Target PageRank | 0,065 | 12907 |
-| Overall | Spearman rho | Target PageRank | 0,117 | 12907 |
-| National | Pearson r | Source PageRank | -0,052 | 11339 |
-| National | Spearman rho | Target Degree | 0,159 | 11339 |
-| International | Pearson r | Source Betweenness centrality | -0,106 | 1568 |
-| International | Spearman rho | Edge betweenness | -0,144 | 1568 |
+| Overall | Pearson r | Gare de destination — PageRank | 0,065 | 12907 |
+| Overall | Spearman rho | Gare de destination — PageRank | 0,117 | 12907 |
+| National | Pearson r | Gare d’origine — PageRank | -0,052 | 11339 |
+| National | Spearman rho | Gare de destination — Degré | 0,159 | 11339 |
+| International | Pearson r | Gare d’origine — Centralité d’intermédiarité | -0,106 | 1568 |
+| International | Spearman rho | Betweenness de l’arête | -0,144 | 1568 |
 
 ![Corrélations Spearman avec le retard moyen tous trains](../../processed/graph/visualizations/phase3b/primary_spearman_overview.png)
 
 ![Edge betweenness et retard moyen tous trains](../../processed/graph/visualizations/phase3b/edge_betweenness_scatter.png)
 
-![Target Degree et retard moyen tous trains](../../processed/graph/visualizations/phase3b/target_degree_scatter.png)
+![Degré de la gare cible et retard moyen tous trains](../../processed/graph/visualizations/phase3b/target_degree_scatter.png)
 
 Pour le retard moyen tous trains, la plus grande valeur absolue de Spearman est 0,159. Les coefficients restent faibles : le signe est positif pour le meilleur prédicteur National et négatif pour International. Cela répond à la question de recherche par une association limitée et différente selon le service, pas par un effet opérationnel important démontré.
 
@@ -119,10 +119,10 @@ Pour les deux autres résultats, le tableau donne le prédicteur présentant la 
 
 | Résultat | Service | Prédicteur | rho | n valide |
 | --- | --- | --- | --- | --- |
-| Taux d’annulation valide | National | Edge betweenness | -0,031 | 11293 |
-| Taux d’annulation valide | International | Edge betweenness | -0,227 | 1541 |
-| Retard moyen des trains retardés | National | Source Degree | 0,108 | 11339 |
-| Retard moyen des trains retardés | International | Edge betweenness | 0,187 | 1568 |
+| Taux d’annulation valide | National | Betweenness de l’arête | -0,031 | 11293 |
+| Taux d’annulation valide | International | Betweenness de l’arête | -0,227 | 1541 |
+| Retard moyen des trains retardés | National | Gare d’origine — Degré | 0,108 | 11339 |
+| Retard moyen des trains retardés | International | Betweenness de l’arête | 0,187 | 1568 |
 
 Les p-values brutes restent disponibles dans `correlations.parquet`; elles ne sont pas reprises ici comme preuve de significativité. Chaque liaison contribue à plusieurs mois d’observation, de sorte que les lignes ne sont pas indépendantes et que les p-values classiques peuvent surestimer la force de la preuve. Aucun ajustement multiple n’est appliqué dans cette version exploratoire.
 
@@ -151,9 +151,9 @@ Nous avons recalculé les corrélations du résultat principal en écartant, pou
 
 | Périmètre | Prédicteur | rho complet | rho sensibilité | Écart | n complet / sensibilité |
 | --- | --- | --- | --- | --- | --- |
-| Overall | Target PageRank | 0,117 | 0,118 | 0,001 | 12907 / 12896 |
-| National | Target Degree | 0,159 | 0,160 | 0,001 | 11339 / 11329 |
-| International | Edge betweenness | -0,144 | -0,146 | -0,002 | 1568 / 1567 |
+| Overall | Gare de destination — PageRank | 0,117 | 0,118 | 0,001 | 12907 / 12896 |
+| National | Gare de destination — Degré | 0,159 | 0,160 | 0,001 | 11339 / 11329 |
+| International | Betweenness de l’arête | -0,144 | -0,146 | -0,002 | 1568 / 1567 |
 
 Pour les prédicteurs résumés ici, les écarts de coefficients sont faibles. Cette vérification ne concerne que le résultat principal et le seuil choisi; elle ne démontre pas que l’ensemble de l’analyse est insensible aux valeurs extrêmes.
 

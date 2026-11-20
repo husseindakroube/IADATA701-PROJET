@@ -1,4 +1,4 @@
-"""Tests for simplified exploratory graph/regularity associations."""
+"""Tests des associations exploratoires simplifiées entre graphe et régularité."""
 
 import numpy as np
 import polars as pl
@@ -200,7 +200,7 @@ def test_pipeline_writes_streamlit_friendly_tables_and_preserves_report_content(
     assert "Phase 3A content" in generated
     assert "Manually maintained content." in generated
     assert generated.startswith(report_before)
-    assert "Overall est un aperçu descriptif regroupé" in generated
+    assert "la catégorie `Overall` fournit une vue descriptive regroupée" in generated
     assert "## 5. Association entre structure du réseau et régularité" in generated
     assert "## 6. Discussion" in generated
     assert "## 7. Conclusion et limites" in generated

@@ -1,4 +1,4 @@
-"""Non-destructive row-level data quality flags for SNCF records."""
+"""Flags non destructifs de qualité des données SNCF au niveau des lignes."""
 
 from __future__ import annotations
 
@@ -23,43 +23,46 @@ FLAG_COLUMNS = (
 
 
 def clean_data(df: pl.DataFrame) -> pl.DataFrame:
-    """Return a non-destructive analysis copy with row-level quality flags.
+    """Retourner une copie d’analyse non destructive munie de flags qualité par ligne.
 
-    The function preserves all input columns, values, row order, and row count.
-    It adds four Boolean diagnostic columns; it does not correct, remove, or
-    otherwise transform source data. Polars is used here to match the current
-    audit implementation, but the shared data contract does not require
-    Pandas consumers to migrate to Polars.
+    La fonction conserve toutes les colonnes et valeurs d’entrée, l’ordre des
+    lignes et leur nombre. Elle ajoute quatre colonnes diagnostiques booléennes ;
+    elle ne corrige, ne supprime ni ne transforme autrement les données source.
+    Polars est utilisé ici pour correspondre à l’implémentation actuelle de
+    l’audit, mais le contrat de données partagé n’impose pas aux consommateurs
+    Pandas de migrer vers Polars.
 
-    All count columns used by the flags must be present. Integer columns and
-    columns with only null values are accepted; other data types are rejected
-    so a failed comparison cannot be silently skipped. Existing input columns
-    with a diagnostic flag name are rejected to avoid overwriting source data.
+    Toutes les colonnes de compte utilisées par les flags doivent être
+    présentes. Les colonnes entières et celles qui ne contiennent que des
+    valeurs manquantes (type ``pl.Null``) sont acceptées ; les autres types sont
+    rejetés afin qu’une comparaison impossible ne soit pas silencieusement ignorée. Les colonnes
+    d’entrée portant déjà le nom d’un flag diagnostique sont rejetées pour
+    éviter d’écraser les données source.
 
-    :param df: Input SNCF data as a Polars DataFrame.
+    :param df: Données SNCF d’entrée sous forme de DataFrame Polars.
     :type df: polars.DataFrame
-    :returns: A new DataFrame containing the original data and diagnostic
-        flags. Flags identify records for review but do not determine corrected
-        values.
+    :returns: Nouveau DataFrame contenant les données d’origine et les flags
+        diagnostiques. Les flags signalent les enregistrements à examiner sans
+        définir de valeurs corrigées.
     :rtype: polars.DataFrame
-    :raises TypeError: If ``df`` is not a Polars DataFrame.
-    :raises ValueError: If a required count column is missing, has a
-        non-integer type other than ``pl.Null``, or conflicts with a
-        diagnostic flag name.
+    :raises TypeError: Si ``df`` n’est pas un DataFrame Polars.
+    :raises ValueError: Si une colonne de compte obligatoire est absente, si
+        son type n’est pas entier ni ``pl.Null``, ou si son nom entre en
+        conflit avec celui d’un flag diagnostique.
     """
     if not isinstance(df, pl.DataFrame):
-        raise TypeError("df must be a Polars DataFrame.")
+        raise TypeError("df doit être un DataFrame Polars.")
 
     missing_columns = sorted(set(COUNT_COLUMNS) - set(df.columns))
     if missing_columns:
         raise ValueError(
-            f"Missing required count columns for cleaning flags: {missing_columns}"
+            f"Colonnes de compte manquantes pour les flags de nettoyage : {missing_columns}"
         )
 
     conflicting_flags = sorted(set(FLAG_COLUMNS) & set(df.columns))
     if conflicting_flags:
         raise ValueError(
-            "Input already contains reserved diagnostic flag columns: "
+            "L’entrée contient déjà des colonnes réservées aux flags diagnostiques : "
             f"{conflicting_flags}"
         )
 
@@ -70,7 +73,8 @@ def clean_data(df: pl.DataFrame) -> pl.DataFrame:
     }
     if invalid_types:
         raise ValueError(
-            "Required count columns must have integer or all-null types: "
+            "Les colonnes de compte obligatoires doivent être entières ou contenir uniquement des "
+            "valeurs manquantes (type Null) : "
             f"{invalid_types}"
         )
 

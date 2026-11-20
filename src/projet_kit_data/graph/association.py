@@ -1,4 +1,4 @@
-"""Exploratory associations between graph structure and SNCF regularity."""
+"""Associations exploratoires entre la structure du graphe et la régularité SNCF."""
 
 from __future__ import annotations
 
@@ -87,13 +87,13 @@ _ROBUSTNESS_SCHEMA = {
 
 @dataclass
 class AssociationResult:
-    """Machine-readable results from Phase 3B association analyses.
+    """Résultats lisibles par machine des analyses d’association.
 
-    :ivar correlations: Pairwise Pearson and Spearman estimates and raw p-values.
-    :ivar quantile_comparisons: Outcome summaries by tie-preserving groups.
-    :ivar robustness_comparisons: Full-data versus primary-outcome sensitivity results.
-    :ivar metadata: Input, grouping, and interpretation metadata.
-    :ivar output_paths: Paths written by the file-based pipeline.
+    :ivar correlations: Estimations pairwise de Pearson et Spearman et valeurs p brutes.
+    :ivar quantile_comparisons: Synthèses des résultats par groupes conservant les ex æquo.
+    :ivar robustness_comparisons: Comparaison des données complètes et de l’analyse de sensibilité du résultat principal.
+    :ivar metadata: Métadonnées sur les entrées, les regroupements et l’interprétation.
+    :ivar output_paths: Chemins écrits par le pipeline fondé sur des fichiers.
     """
 
     correlations: pl.DataFrame
@@ -116,14 +116,17 @@ def _require_columns(frame: pl.DataFrame) -> None:
     missing = required.difference(frame.columns)
     if missing:
         raise ValueError(
-            "research_data is missing required columns: " + ", ".join(sorted(missing))
+            "research_data ne contient pas les colonnes requises : "
+            + ", ".join(sorted(missing))
         )
     for column in _NUMERIC_COLUMNS:
         if not frame.schema[column].is_numeric():
-            raise TypeError(f"research_data.{column} must have a numeric Polars dtype")
+            raise TypeError(
+                f"research_data.{column} doit avoir un type numérique Polars"
+            )
     for column in CLUSTER_COLUMNS:
         if frame.schema[column] != pl.String:
-            raise TypeError(f"research_data.{column} must use Polars String dtype")
+            raise TypeError(f"research_data.{column} doit être de type String Polars")
 
 
 def _pair_arrays(
@@ -147,7 +150,7 @@ def _correlation(
     elif method == "spearman":
         result = spearmanr(x, y)
     else:
-        raise ValueError(f"unsupported correlation method: {method}")
+        raise ValueError(f"Méthode de corrélation non prise en charge : {method}")
     coefficient = float(result.statistic)
     p_value = float(result.pvalue)
     if not np.isfinite(coefficient) or not np.isfinite(p_value):
@@ -161,7 +164,7 @@ def _group_labels(
     min_positive_size: int = MIN_POSITIVE_QUANTILE_SIZE,
     zero_share_threshold: float = ZERO_SHARE_THRESHOLD,
 ) -> tuple[np.ndarray, str]:
-    """Create quantile groups without splitting tied predictor values."""
+    """Créer des groupes de quantiles sans répartir les valeurs ex æquo du prédicteur."""
     labels = np.full(len(values), "", dtype=object)
     finite = np.isfinite(values)
     if not finite.any():
@@ -226,30 +229,31 @@ def build_association_results(
     research_data: pl.DataFrame,
     quantile_count: int = DEFAULT_QUANTILE_COUNT,
 ) -> AssociationResult:
-    """Calculate exploratory correlations and centrality-group summaries.
+    """Calculer des corrélations exploratoires et des synthèses par groupe de centralité.
 
-    Correlations use pairwise finite observations. Cancellation-rate pairs also
-    require the Phase 2 ``cancellation_rate_valid`` flag. Group summaries use
-    the existing tie-preserving quantile and zero-group rules. The primary
-    outcome sensitivity analysis excludes values below -15 minutes only from
-    that calculation; it never changes ``research_data``. Ordinary p-values
-    are retained as supplementary exploratory values and do not account for
-    repeated monthly observations of a liaison.
+    Les corrélations utilisent les observations finies disponibles par paire.
+    Les paires du taux d’annulation doivent également satisfaire le flag
+    ``cancellation_rate_valid``. Les synthèses de groupes appliquent les règles
+    existantes de quantiles conservant les ex æquo et de groupe de zéros.
+    L’analyse de sensibilité du résultat principal exclut les valeurs sous
+    -15 minutes de ce seul calcul ; elle ne modifie jamais ``research_data``.
+    Les valeurs p classiques sont conservées à titre exploratoire complémentaire
+    et ne tiennent pas compte des observations mensuelles répétées d’une liaison.
 
-    :param research_data: Existing Phase 2 liaison-month research DataFrame.
+    :param research_data: DataFrame de recherche existant à la granularité liaison-mois.
     :type research_data: polars.DataFrame
-    :param quantile_count: Requested number of tie-preserving positive/all-value groups.
+    :param quantile_count: Nombre demandé de groupes de valeurs positives/toutes valeurs conservant les ex æquo.
     :type quantile_count: int
-    :returns: Correlations, group summaries, robustness results, and metadata.
+    :returns: Corrélations, synthèses des groupes, résultats de robustesse et métadonnées.
     :rtype: AssociationResult
-    :raises TypeError: If the input is not a Polars DataFrame or required columns
-        have unsupported types.
-    :raises ValueError: If required columns are absent or settings are invalid.
+    :raises TypeError: Si l’entrée n’est pas un DataFrame Polars ou si les colonnes
+        requises ont des types non pris en charge.
+    :raises ValueError: Si des colonnes requises sont absentes ou si les paramètres sont invalides.
     """
     if not isinstance(research_data, pl.DataFrame):
-        raise TypeError("research_data must be a Polars DataFrame")
+        raise TypeError("research_data doit être un DataFrame Polars")
     if quantile_count < 2:
-        raise ValueError("quantile_count must be at least 2")
+        raise ValueError("quantile_count doit être supérieur ou égal à 2")
     _require_columns(research_data)
 
     correlation_rows: list[dict[str, Any]] = []
@@ -388,11 +392,11 @@ def build_association_results(
             "minimum_unique_values_for_quantiles": 3,
         },
         "interpretation_limits": [
-            "Monthly observations of one directed liaison are repeated observations, not fully independent samples.",
-            "Ordinary Pearson and Spearman p-values are exploratory and may overstate statistical evidence because of repeated observations.",
-            "Associations are observational and do not establish causality, train itineraries, passenger volumes, or delay propagation.",
-            "National and International services have different network structures and route compositions; outcome comparisons require qualification.",
-            "Only the primary outcome sensitivity analysis excludes values below -15 minutes; source records are unchanged.",
+            "Les observations mensuelles d’une même liaison orientée sont répétées et ne constituent pas des échantillons pleinement indépendants.",
+            "Les valeurs p usuelles de Pearson et Spearman sont exploratoires ; la répétition des observations peut conduire à surestimer la force probante des résultats statistiques.",
+            "Les associations sont observationnelles et ne démontrent ni causalité, ni itinéraires de train, ni volumes de voyageurs, ni propagation des retards.",
+            "Les services National et International ont des topologies et des compositions de liaisons différentes ; les comparaisons de résultats doivent être nuancées.",
+            "Seule l’analyse de sensibilité du résultat principal exclut les valeurs inférieures à -15 minutes ; les enregistrements source restent inchangés.",
         ],
     }
     return AssociationResult(
@@ -410,7 +414,10 @@ def _format_r(value: float | None) -> str:
 def _predictor_label(column: str) -> str:
     endpoint = ""
     metric = column
-    for prefix, label in (("source_", "Source "), ("target_", "Target ")):
+    for prefix, label in (
+        ("source_", "Gare d’origine — "),
+        ("target_", "Gare de destination — "),
+    ):
         if column.startswith(prefix):
             endpoint = label
             metric = column.removeprefix(prefix)
@@ -435,7 +442,7 @@ def _markdown_table(frame: pl.DataFrame) -> str:
 
 
 def _write_report(result: AssociationResult, report_path: Path) -> None:
-    """Maintain the French association narrative inside the unified report."""
+    """Maintenir le texte français sur les associations dans le rapport unifié."""
     begin = "<!-- BEGIN GENERATED ASSOCIATION CONTENT -->"
     end = "<!-- END GENERATED ASSOCIATION CONTENT -->"
     image_dir = "../../processed/graph/visualizations/phase3b"
@@ -504,7 +511,16 @@ def _write_report(result: AssociationResult, report_path: Path) -> None:
         )
         .select(
             pl.col("service").alias("Service"),
-            pl.col("group_label").alias("Groupe Edge betweenness"),
+            pl.col("group_label")
+            .str.replace("^Positive ", "Positif ")
+            .replace(
+                {
+                    "Zero": "Zéro",
+                    "Positive": "Positif",
+                    "All values": "Toutes les valeurs",
+                }
+            )
+            .alias("Groupe Edge betweenness"),
             pl.col("n").alias("n"),
             pl.col("median").round(2).alias("Médiane du retard (min)"),
             pl.col("mean").round(2).alias("Moyenne (min)"),
@@ -572,7 +588,7 @@ def _write_report(result: AssociationResult, report_path: Path) -> None:
     content = [
         "## 5. Association entre structure du réseau et régularité",
         "",
-        "Après avoir décrit séparément la topologie et les résultats opérationnels, nous examinons leur association à l’échelle des observations mensuelles. Les prédicteurs sont les métriques existantes des liaisons et de leurs gares source et target. Les résultats sont calculés séparément pour National et International; Overall est un aperçu descriptif regroupé.",
+        "Après avoir décrit séparément la topologie et les résultats opérationnels, nous examinons leur association à l’échelle des observations mensuelles. Les prédicteurs sont les métriques existantes des liaisons et de leurs gares d’origine et de destination. Les résultats sont calculés séparément pour les services `National` et `International` ; la catégorie `Overall` fournit une vue descriptive regroupée.",
         "",
         "Pearson mesure une association linéaire et Spearman une association monotone fondée sur les rangs. Les deux coefficients utilisent les paires valides; pour le taux d’annulation, seules les lignes marquées `cancellation_rate_valid` sont retenues. Le tableau ci-dessous choisit, pour chaque périmètre et méthode, le prédicteur dont la valeur absolue du coefficient est la plus élevée pour le retard moyen tous trains. Cette sélection est descriptive, pas confirmatoire.",
         "",
@@ -584,7 +600,7 @@ def _write_report(result: AssociationResult, report_path: Path) -> None:
         "",
         f"![Edge betweenness et retard moyen tous trains]({image_dir}/edge_betweenness_scatter.png)",
         "",
-        f"![Target Degree et retard moyen tous trains]({image_dir}/target_degree_scatter.png)",
+        f"![Degré de la gare cible et retard moyen tous trains]({image_dir}/target_degree_scatter.png)",
         "",
         f"Pour le retard moyen tous trains, la plus grande valeur absolue de Spearman est {_format_r(largest_abs_spearman)}. Les coefficients restent faibles : le signe est positif pour le meilleur prédicteur National et négatif pour International. Cela répond à la question de recherche par une association limitée et différente selon le service, pas par un effet opérationnel important démontré.",
         "",
@@ -663,7 +679,7 @@ def _make_figures(
         axis.set_xlabel(METRIC_PRESENTATION["edge_betweenness"].label)
         axis.grid(alpha=0.2)
     axes[0].set_ylabel("Retard moyen tous trains à l’arrivée (minutes; échelle symlog)")
-    fig.suptitle("Edge betweenness and monthly arrival regularity")
+    fig.suptitle("Betweenness des arêtes et régularité mensuelle à l’arrivée")
     fig.tight_layout()
     path = figure_dir / "edge_betweenness_scatter.png"
     fig.savefig(path, dpi=170, bbox_inches="tight")
@@ -677,10 +693,12 @@ def _make_figures(
         axis.scatter(x, y, s=12, alpha=0.24, color=colors[service], rasterized=True)
         axis.set_yscale("symlog", linthresh=15)
         axis.set_title(f"{service} (n={int(valid.sum())})")
-        axis.set_xlabel(f"Target {METRIC_PRESENTATION['degree'].label}")
+        axis.set_xlabel(
+            f"Degré de la gare cible : {METRIC_PRESENTATION['degree'].label}"
+        )
         axis.grid(alpha=0.2)
     axes[0].set_ylabel("Retard moyen tous trains à l’arrivée (minutes; échelle symlog)")
-    fig.suptitle("Target Degree and monthly arrival regularity")
+    fig.suptitle("Degré de la gare cible et régularité mensuelle à l’arrivée")
     fig.tight_layout()
     path = figure_dir / "target_degree_scatter.png"
     fig.savefig(path, dpi=170, bbox_inches="tight")
@@ -714,12 +732,12 @@ def _make_figures(
                 ],
             )
         axis.set_title(service)
-        axis.set_xlabel("Tie-preserving Edge betweenness group")
+        axis.set_xlabel("Groupe de betweenness des arêtes conservant les ex æquo")
         axis.tick_params(axis="x", rotation=30)
         axis.set_yscale("symlog", linthresh=15)
         axis.grid(axis="y", alpha=0.2)
     axes[0].set_ylabel("Retard moyen tous trains à l’arrivée (minutes; symlog)")
-    fig.suptitle("Primary outcome by Edge betweenness group")
+    fig.suptitle("Résultat principal par groupe de betweenness des arêtes")
     fig.tight_layout()
     path = figure_dir / "edge_betweenness_quantile_groups.png"
     fig.savefig(path, dpi=170, bbox_inches="tight")
@@ -744,15 +762,17 @@ def _make_figures(
             values[:, None], cmap="coolwarm", vmin=-1, vmax=1, aspect="auto"
         )
         axis.set_title(service)
-        axis.set_xticks([0], ["Spearman rho"])
+        axis.set_xticks([0], ["Rho de Spearman"])
         axis.set_yticks(
             range(len(predictors)), [_predictor_label(name) for name in predictors]
         )
         for row, value in enumerate(values):
             if np.isfinite(value):
                 axis.text(0, row, f"{value:.2f}", ha="center", va="center", fontsize=9)
-    fig.colorbar(image, ax=axes, label="Spearman correlation coefficient", shrink=0.8)
-    fig.suptitle("Graph metrics and the primary operational outcome")
+    fig.colorbar(
+        image, ax=axes, label="Coefficient de corrélation de Spearman", shrink=0.8
+    )
+    fig.suptitle("Métriques du graphe et résultat opérationnel principal")
     path = figure_dir / "primary_spearman_overview.png"
     fig.savefig(path, dpi=170, bbox_inches="tight")
     plt.close(fig)
@@ -767,28 +787,28 @@ def run_association_analysis_pipeline(
     report_path: str | os.PathLike[str] = DEFAULT_REPORT_PATH,
     quantile_count: int = DEFAULT_QUANTILE_COUNT,
 ) -> AssociationResult:
-    """Run the simplified analysis from the existing Phase 2 dataset.
+    """Exécuter l’analyse simplifiée à partir du jeu de données existant.
 
-    The pipeline reads but never rewrites the research dataset or upstream
-    graph metrics. It writes correlation, centrality-group, and robustness
-    tables, reusable figures, metadata, and a marked section in the unified
-    French research report.
+    Le pipeline lit le jeu de recherche et les métriques de graphe en amont sans
+    jamais les réécrire. Il produit des tables de corrélation, de groupes de
+    centralité et de robustesse, des figures réutilisables, des métadonnées et
+    une section balisée dans le rapport de recherche unifié en français.
 
-    :param research_data_path: Existing Phase 2 research dataset path.
+    :param research_data_path: Chemin du jeu de recherche existant.
     :type research_data_path: str | os.PathLike[str]
-    :param output_dir: Directory for Phase 3B result Parquet files and metadata.
+    :param output_dir: Répertoire des fichiers Parquet de résultats et des métadonnées.
     :type output_dir: str | os.PathLike[str]
-    :param figure_dir: Dedicated Phase 3B visualization directory.
+    :param figure_dir: Répertoire réservé aux visualisations.
     :type figure_dir: str | os.PathLike[str]
-    :param report_path: Unified French research report path.
+    :param report_path: Chemin du rapport de recherche unifié en français.
     :type report_path: str | os.PathLike[str]
-    :param quantile_count: Number of requested tie-preserving value groups.
+    :param quantile_count: Nombre demandé de groupes de valeurs conservant les ex æquo.
     :type quantile_count: int
-    :returns: Analysis tables, metadata, and output paths.
+    :returns: Tables d’analyse, métadonnées et chemins de sortie.
     :rtype: AssociationResult
-    :raises OSError: If inputs cannot be read or outputs cannot be written.
-    :raises TypeError: If input schema types are invalid.
-    :raises ValueError: If required fields or analysis settings are invalid.
+    :raises OSError: Si les entrées ne peuvent pas être lues ou les sorties écrites.
+    :raises TypeError: Si les types du schéma d’entrée sont invalides.
+    :raises ValueError: Si des champs requis ou paramètres d’analyse sont invalides.
     """
     research_path = Path(research_data_path)
     research_data = pl.read_parquet(research_path)

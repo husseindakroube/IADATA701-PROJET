@@ -1,246 +1,246 @@
-SNCF TGV Regularity Data Quality Audit
+Audit de la qualité des données de régularité TGV SNCF
 ==========================================
 
-Dataset overview
------------------
-Input file: data\raw\regularite-mensuelle-tgv-aqst.json
-Records: 12907
-Columns: 26
-Available columns: date, service, gare_depart, gare_arrivee, duree_moyenne, nb_train_prevu, nb_annulation, commentaire_annulation, nb_train_depart_retard, retard_moyen_depart, retard_moyen_tous_trains_depart, commentaire_retards_depart, nb_train_retard_arrivee, retard_moyen_arrivee, retard_moyen_tous_trains_arrivee, commentaires_retard_arrivee, nb_train_retard_sup_15, retard_moyen_trains_retard_sup15, nb_train_retard_sup_30, nb_train_retard_sup_60, prct_cause_externe, prct_cause_infra, prct_cause_gestion_trafic, prct_cause_materiel_roulant, prct_cause_gestion_gare, prct_cause_prise_en_charge_voyageurs
-Missing expected columns: (none)
-Unexpected columns: (none)
+Vue d’ensemble du jeu de données
+---------------------------------
+Fichier d’entrée : data\raw\regularite-mensuelle-tgv-aqst.json
+Enregistrements : 12907
+Colonnes : 26
+Colonnes disponibles : date, service, gare_depart, gare_arrivee, duree_moyenne, nb_train_prevu, nb_annulation, commentaire_annulation, nb_train_depart_retard, retard_moyen_depart, retard_moyen_tous_trains_depart, commentaire_retards_depart, nb_train_retard_arrivee, retard_moyen_arrivee, retard_moyen_tous_trains_arrivee, commentaires_retard_arrivee, nb_train_retard_sup_15, retard_moyen_trains_retard_sup15, nb_train_retard_sup_30, nb_train_retard_sup_60, prct_cause_externe, prct_cause_infra, prct_cause_gestion_trafic, prct_cause_materiel_roulant, prct_cause_gestion_gare, prct_cause_prise_en_charge_voyageurs
+Colonnes attendues manquantes : (aucune)
+Colonnes inattendues : (aucune)
 
-Observed data types by column
-------------------------------
-date: Polars String; expected SNCF type: string; observed values: string: 12907
-service: Polars String; expected SNCF type: string; observed values: string: 12907
-gare_depart: Polars String; expected SNCF type: string; observed values: string: 12907
-gare_arrivee: Polars String; expected SNCF type: string; observed values: string: 12907
-duree_moyenne: Polars Int64; expected SNCF type: integer; observed values: integer: 12907
-nb_train_prevu: Polars Int64; expected SNCF type: integer; observed values: integer: 12907
-nb_annulation: Polars Int64; expected SNCF type: integer; observed values: integer: 12907
-commentaire_annulation: Polars Null; expected SNCF type: string; observed values: null: 12907
-nb_train_depart_retard: Polars Int64; expected SNCF type: integer; observed values: integer: 12907
-retard_moyen_depart: Polars Float64; expected SNCF type: number; observed values: number: 12907
-retard_moyen_tous_trains_depart: Polars Float64; expected SNCF type: number; observed values: number: 12907
-commentaire_retards_depart: Polars Null; expected SNCF type: string; observed values: null: 12907
-nb_train_retard_arrivee: Polars Int64; expected SNCF type: integer; observed values: integer: 12907
-retard_moyen_arrivee: Polars Float64; expected SNCF type: number; observed values: number: 12907
-retard_moyen_tous_trains_arrivee: Polars Float64; expected SNCF type: number; observed values: number: 12907
-commentaires_retard_arrivee: Polars String; expected SNCF type: string; observed values: null: 12209, string: 698
-nb_train_retard_sup_15: Polars Int64; expected SNCF type: integer; observed values: integer: 12907
-retard_moyen_trains_retard_sup15: Polars Float64; expected SNCF type: number; observed values: number: 12907
-nb_train_retard_sup_30: Polars Int64; expected SNCF type: integer; observed values: integer: 12907
-nb_train_retard_sup_60: Polars Int64; expected SNCF type: integer; observed values: integer: 12907
-prct_cause_externe: Polars Float64; expected SNCF type: number; observed values: number: 12907
-prct_cause_infra: Polars Float64; expected SNCF type: number; observed values: number: 12907
-prct_cause_gestion_trafic: Polars Float64; expected SNCF type: number; observed values: number: 12907
-prct_cause_materiel_roulant: Polars Float64; expected SNCF type: number; observed values: number: 12907
-prct_cause_gestion_gare: Polars Float64; expected SNCF type: number; observed values: number: 12907
-prct_cause_prise_en_charge_voyageurs: Polars Float64; expected SNCF type: number; observed values: number: 12907
+Types de données observés par colonne
+--------------------------------------
+date : type Polars String ; type SNCF attendu : string ; types de valeurs observés : string: 12907
+service : type Polars String ; type SNCF attendu : string ; types de valeurs observés : string: 12907
+gare_depart : type Polars String ; type SNCF attendu : string ; types de valeurs observés : string: 12907
+gare_arrivee : type Polars String ; type SNCF attendu : string ; types de valeurs observés : string: 12907
+duree_moyenne : type Polars Int64 ; type SNCF attendu : integer ; types de valeurs observés : integer: 12907
+nb_train_prevu : type Polars Int64 ; type SNCF attendu : integer ; types de valeurs observés : integer: 12907
+nb_annulation : type Polars Int64 ; type SNCF attendu : integer ; types de valeurs observés : integer: 12907
+commentaire_annulation : type Polars Null ; type SNCF attendu : string ; types de valeurs observés : null: 12907
+nb_train_depart_retard : type Polars Int64 ; type SNCF attendu : integer ; types de valeurs observés : integer: 12907
+retard_moyen_depart : type Polars Float64 ; type SNCF attendu : number ; types de valeurs observés : number: 12907
+retard_moyen_tous_trains_depart : type Polars Float64 ; type SNCF attendu : number ; types de valeurs observés : number: 12907
+commentaire_retards_depart : type Polars Null ; type SNCF attendu : string ; types de valeurs observés : null: 12907
+nb_train_retard_arrivee : type Polars Int64 ; type SNCF attendu : integer ; types de valeurs observés : integer: 12907
+retard_moyen_arrivee : type Polars Float64 ; type SNCF attendu : number ; types de valeurs observés : number: 12907
+retard_moyen_tous_trains_arrivee : type Polars Float64 ; type SNCF attendu : number ; types de valeurs observés : number: 12907
+commentaires_retard_arrivee : type Polars String ; type SNCF attendu : string ; types de valeurs observés : null: 12209, string: 698
+nb_train_retard_sup_15 : type Polars Int64 ; type SNCF attendu : integer ; types de valeurs observés : integer: 12907
+retard_moyen_trains_retard_sup15 : type Polars Float64 ; type SNCF attendu : number ; types de valeurs observés : number: 12907
+nb_train_retard_sup_30 : type Polars Int64 ; type SNCF attendu : integer ; types de valeurs observés : integer: 12907
+nb_train_retard_sup_60 : type Polars Int64 ; type SNCF attendu : integer ; types de valeurs observés : integer: 12907
+prct_cause_externe : type Polars Float64 ; type SNCF attendu : number ; types de valeurs observés : number: 12907
+prct_cause_infra : type Polars Float64 ; type SNCF attendu : number ; types de valeurs observés : number: 12907
+prct_cause_gestion_trafic : type Polars Float64 ; type SNCF attendu : number ; types de valeurs observés : number: 12907
+prct_cause_materiel_roulant : type Polars Float64 ; type SNCF attendu : number ; types de valeurs observés : number: 12907
+prct_cause_gestion_gare : type Polars Float64 ; type SNCF attendu : number ; types de valeurs observés : number: 12907
+prct_cause_prise_en_charge_voyageurs : type Polars Float64 ; type SNCF attendu : number ; types de valeurs observés : number: 12907
 
-Missing values
----------------
-Percentages use total record count as the denominator.
-date: 0 (0.00%; 12907 records)
-service: 0 (0.00%; 12907 records)
-gare_depart: 0 (0.00%; 12907 records)
-gare_arrivee: 0 (0.00%; 12907 records)
-duree_moyenne: 0 (0.00%; 12907 records)
-nb_train_prevu: 0 (0.00%; 12907 records)
-nb_annulation: 0 (0.00%; 12907 records)
-commentaire_annulation: 12907 (100.00%; 12907 records)
-nb_train_depart_retard: 0 (0.00%; 12907 records)
-retard_moyen_depart: 0 (0.00%; 12907 records)
-retard_moyen_tous_trains_depart: 0 (0.00%; 12907 records)
-commentaire_retards_depart: 12907 (100.00%; 12907 records)
-nb_train_retard_arrivee: 0 (0.00%; 12907 records)
-retard_moyen_arrivee: 0 (0.00%; 12907 records)
-retard_moyen_tous_trains_arrivee: 0 (0.00%; 12907 records)
-commentaires_retard_arrivee: 12209 (94.59%; 12907 records)
-nb_train_retard_sup_15: 0 (0.00%; 12907 records)
-retard_moyen_trains_retard_sup15: 0 (0.00%; 12907 records)
-nb_train_retard_sup_30: 0 (0.00%; 12907 records)
-nb_train_retard_sup_60: 0 (0.00%; 12907 records)
-prct_cause_externe: 0 (0.00%; 12907 records)
-prct_cause_infra: 0 (0.00%; 12907 records)
-prct_cause_gestion_trafic: 0 (0.00%; 12907 records)
-prct_cause_materiel_roulant: 0 (0.00%; 12907 records)
-prct_cause_gestion_gare: 0 (0.00%; 12907 records)
-prct_cause_prise_en_charge_voyageurs: 0 (0.00%; 12907 records)
+Valeurs manquantes
+-------------------
+Les pourcentages utilisent le nombre total d’enregistrements comme dénominateur.
+date: 0 (0.00% ; dénominateur : 12907 enregistrements)
+service: 0 (0.00% ; dénominateur : 12907 enregistrements)
+gare_depart: 0 (0.00% ; dénominateur : 12907 enregistrements)
+gare_arrivee: 0 (0.00% ; dénominateur : 12907 enregistrements)
+duree_moyenne: 0 (0.00% ; dénominateur : 12907 enregistrements)
+nb_train_prevu: 0 (0.00% ; dénominateur : 12907 enregistrements)
+nb_annulation: 0 (0.00% ; dénominateur : 12907 enregistrements)
+commentaire_annulation: 12907 (100.00% ; dénominateur : 12907 enregistrements)
+nb_train_depart_retard: 0 (0.00% ; dénominateur : 12907 enregistrements)
+retard_moyen_depart: 0 (0.00% ; dénominateur : 12907 enregistrements)
+retard_moyen_tous_trains_depart: 0 (0.00% ; dénominateur : 12907 enregistrements)
+commentaire_retards_depart: 12907 (100.00% ; dénominateur : 12907 enregistrements)
+nb_train_retard_arrivee: 0 (0.00% ; dénominateur : 12907 enregistrements)
+retard_moyen_arrivee: 0 (0.00% ; dénominateur : 12907 enregistrements)
+retard_moyen_tous_trains_arrivee: 0 (0.00% ; dénominateur : 12907 enregistrements)
+commentaires_retard_arrivee: 12209 (94.59% ; dénominateur : 12907 enregistrements)
+nb_train_retard_sup_15: 0 (0.00% ; dénominateur : 12907 enregistrements)
+retard_moyen_trains_retard_sup15: 0 (0.00% ; dénominateur : 12907 enregistrements)
+nb_train_retard_sup_30: 0 (0.00% ; dénominateur : 12907 enregistrements)
+nb_train_retard_sup_60: 0 (0.00% ; dénominateur : 12907 enregistrements)
+prct_cause_externe: 0 (0.00% ; dénominateur : 12907 enregistrements)
+prct_cause_infra: 0 (0.00% ; dénominateur : 12907 enregistrements)
+prct_cause_gestion_trafic: 0 (0.00% ; dénominateur : 12907 enregistrements)
+prct_cause_materiel_roulant: 0 (0.00% ; dénominateur : 12907 enregistrements)
+prct_cause_gestion_gare: 0 (0.00% ; dénominateur : 12907 enregistrements)
+prct_cause_prise_en_charge_voyageurs: 0 (0.00% ; dénominateur : 12907 enregistrements)
 
-Duplicates
-----------
-Duplicate counts are rows after the first occurrence in each group.
-Completely duplicated records: 0 in 0 groups
-Business-key duplicates (date, service, gare_depart, gare_arrivee): 0 in 0 groups
-Records omitted from business-key comparison due to missing key values: 0
+Doublons
+--------
+Le nombre de doublons correspond aux lignes suivant la première occurrence de chaque groupe.
+Enregistrements entièrement dupliqués : 0 dans 0 groupes
+Doublons selon la clé métier (date, service, gare_depart, gare_arrivee) : 0 dans 0 groupes
+Enregistrements exclus de la comparaison de clé métier en raison de valeurs de clé manquantes : 0
 
-Negative numerical values
--------------------------
-Percentages use non-missing finite numeric values per column.
-duree_moyenne: 0 (0.00%; 12907 numeric values)
-nb_annulation: 0 (0.00%; 12907 numeric values)
-nb_train_depart_retard: 0 (0.00%; 12907 numeric values)
-nb_train_prevu: 0 (0.00%; 12907 numeric values)
-nb_train_retard_arrivee: 0 (0.00%; 12907 numeric values)
-nb_train_retard_sup_15: 0 (0.00%; 12907 numeric values)
-nb_train_retard_sup_30: 43 (0.33%; 12907 numeric values)
-nb_train_retard_sup_60: 0 (0.00%; 12907 numeric values)
-prct_cause_externe: 0 (0.00%; 12907 numeric values)
-prct_cause_gestion_gare: 0 (0.00%; 12907 numeric values)
-prct_cause_gestion_trafic: 0 (0.00%; 12907 numeric values)
-prct_cause_infra: 0 (0.00%; 12907 numeric values)
-prct_cause_materiel_roulant: 0 (0.00%; 12907 numeric values)
-prct_cause_prise_en_charge_voyageurs: 0 (0.00%; 12907 numeric values)
-retard_moyen_arrivee: 2 (0.02%; 12907 numeric values)
-retard_moyen_depart: 0 (0.00%; 12907 numeric values)
-retard_moyen_tous_trains_arrivee: 122 (0.95%; 12907 numeric values)
-retard_moyen_tous_trains_depart: 170 (1.32%; 12907 numeric values)
-retard_moyen_trains_retard_sup15: 8 (0.06%; 12907 numeric values)
+Valeurs numériques négatives
+-----------------------------
+Les pourcentages sont calculés sur les valeurs numériques finies et non manquantes de chaque colonne.
+duree_moyenne: 0 (0.00% ; 12907 valeurs numériques)
+nb_annulation: 0 (0.00% ; 12907 valeurs numériques)
+nb_train_depart_retard: 0 (0.00% ; 12907 valeurs numériques)
+nb_train_prevu: 0 (0.00% ; 12907 valeurs numériques)
+nb_train_retard_arrivee: 0 (0.00% ; 12907 valeurs numériques)
+nb_train_retard_sup_15: 0 (0.00% ; 12907 valeurs numériques)
+nb_train_retard_sup_30: 43 (0.33% ; 12907 valeurs numériques)
+nb_train_retard_sup_60: 0 (0.00% ; 12907 valeurs numériques)
+prct_cause_externe: 0 (0.00% ; 12907 valeurs numériques)
+prct_cause_gestion_gare: 0 (0.00% ; 12907 valeurs numériques)
+prct_cause_gestion_trafic: 0 (0.00% ; 12907 valeurs numériques)
+prct_cause_infra: 0 (0.00% ; 12907 valeurs numériques)
+prct_cause_materiel_roulant: 0 (0.00% ; 12907 valeurs numériques)
+prct_cause_prise_en_charge_voyageurs: 0 (0.00% ; 12907 valeurs numériques)
+retard_moyen_arrivee: 2 (0.02% ; 12907 valeurs numériques)
+retard_moyen_depart: 0 (0.00% ; 12907 valeurs numériques)
+retard_moyen_tous_trains_arrivee: 122 (0.95% ; 12907 valeurs numériques)
+retard_moyen_tous_trains_depart: 170 (1.32% ; 12907 valeurs numériques)
+retard_moyen_trains_retard_sup15: 8 (0.06% ; 12907 valeurs numériques)
 
-Numerical statistics
----------------------
-duree_moyenne (n=12907):
-  minimum: 0
-  maximum: 786
-  mean: 170.69311226466257
-  median: 163.0
-  standard_deviation: 87.72672400459133
-  quantiles: 25%=99.0, 50%=163.0, 75%=223.0, 95%=336.0
-nb_annulation (n=12907):
-  minimum: 0
-  maximum: 297
-  mean: 8.273649957387464
-  median: 2.0
-  standard_deviation: 21.805355695028513
-  quantiles: 25%=0.0, 50%=2.0, 75%=7.0, 95%=36.0
-nb_train_depart_retard (n=12907):
-  minimum: 0
-  maximum: 598
-  mean: 86.70388161462772
-  median: 52.0
-  standard_deviation: 88.749585565973
-  quantiles: 25%=22.0, 50%=52.0, 75%=127.0, 95%=273.0
-nb_train_prevu (n=12907):
-  minimum: 0
-  maximum: 1104
-  mean: 273.44363523669324
-  median: 231.0
-  standard_deviation: 184.11786825695575
-  quantiles: 25%=151.0, 50%=231.0, 75%=365.0, 95%=617.6999999999989
-nb_train_retard_arrivee (n=12907):
-  minimum: 0
-  maximum: 376
-  mean: 38.87479662198807
-  median: 30.0
-  standard_deviation: 32.45443070157637
-  quantiles: 25%=16.0, 50%=30.0, 75%=53.0, 95%=103.0
-nb_train_retard_sup_15 (n=12907):
-  minimum: 0
-  maximum: 312
-  mean: 28.10141783528318
-  median: 22.0
-  standard_deviation: 23.91142846602287
-  quantiles: 25%=11.0, 50%=22.0, 75%=38.0, 95%=74.0
-nb_train_retard_sup_30 (n=12907):
-  minimum: -44
-  maximum: 202
-  mean: 13.328348957929805
-  median: 10.0
-  standard_deviation: 13.030850807444157
-  quantiles: 25%=4.0, 50%=10.0, 75%=18.0, 95%=38.0
-nb_train_retard_sup_60 (n=12907):
-  minimum: 0
-  maximum: 77
-  mean: 5.490818935461378
-  median: 3.0
-  standard_deviation: 6.388148009781446
-  quantiles: 25%=1.0, 50%=3.0, 75%=7.0, 95%=18.0
-prct_cause_externe (n=12907):
-  minimum: 0.0
-  maximum: 100.0
-  mean: 22.204866570302944
-  median: 20.0
-  standard_deviation: 16.21184736003354
-  quantiles: 25%=10.9375, 50%=20.0, 75%=30.76923077, 95%=50.0
-prct_cause_gestion_gare (n=12907):
-  minimum: 0.0
-  maximum: 100.0
-  mean: 8.177636239803611
-  median: 6.12244898
-  standard_deviation: 9.302347376407406
-  quantiles: 25%=0.0, 50%=6.12244898, 75%=11.76470588, 95%=25.0
-prct_cause_gestion_trafic (n=12907):
-  minimum: 0.0
-  maximum: 100.0
-  mean: 19.690203463569087
-  median: 18.18181818
-  standard_deviation: 14.926445490462347
-  quantiles: 25%=9.090909091, 50%=18.18181818, 75%=28.07017544, 95%=45.703703700703656
-prct_cause_infra (n=12907):
-  minimum: 0.0
-  maximum: 100.0
-  mean: 21.071535966465834
-  median: 19.631093544137023
-  standard_deviation: 14.998078004607345
-  quantiles: 25%=11.11111111, 50%=19.631093544137023, 75%=28.88888889, 95%=47.05882353
-prct_cause_materiel_roulant (n=12907):
-  minimum: 0.0
-  maximum: 100.0
-  mean: 19.097682075659055
-  median: 17.30769231
-  standard_deviation: 13.618079883696813
-  quantiles: 25%=10.0, 50%=17.30769231, 75%=25.80645161, 95%=43.28358209
-prct_cause_prise_en_charge_voyageurs (n=12907):
-  minimum: 0.0
-  maximum: 100.0
-  mean: 7.646645271982827
-  median: 5.128205128
-  standard_deviation: 9.504750598270663
-  quantiles: 25%=0.0, 50%=5.128205128, 75%=11.11111111, 95%=25.0
-retard_moyen_arrivee (n=12907):
-  minimum: -40.10925926
-  maximum: 299.6
-  mean: 35.61849576071121
-  median: 33.89583333
-  standard_deviation: 15.61129092495489
-  quantiles: 25%=26.091112535, 50%=33.89583333, 75%=42.912827930000006, 95%=62.389476947171396
-retard_moyen_depart (n=12907):
-  minimum: 0.0
-  maximum: 316.1880952
-  mean: 12.598479205677599
-  median: 10.69607843
-  standard_deviation: 11.58485908300322
-  quantiles: 25%=6.43213716090909, 50%=10.69607843, 75%=16.231349205, 95%=27.596424395999996
-retard_moyen_tous_trains_arrivee (n=12907):
-  minimum: -472.6388889
-  maximum: 92.0
-  mean: 6.302501807839346
-  median: 5.511452991499999
-  standard_deviation: 6.924818768538362
-  quantiles: 25%=3.4960261470000003, 50%=5.511452991499999, 75%=8.360683016500001, 95%=14.311481720999986
-retard_moyen_tous_trains_depart (n=12907):
-  minimum: -229.2694444
-  maximum: 115.0473896
-  mean: 3.2181801612359044
-  median: 2.400416667
-  standard_deviation: 5.016502086219176
-  quantiles: 25%=1.250272941, 50%=2.400416667, 75%=4.09472016825969, 95%=8.315458216399998
-retard_moyen_trains_retard_sup15 (n=12907):
-  minimum: -4.0
-  maximum: 299.6
-  mean: 37.04419731913105
-  median: 38.23297872
-  standard_deviation: 19.33408557379465
-  quantiles: 25%=29.084909539999998, 50%=38.23297872, 75%=47.664249999999996, 95%=66.549938606
+Statistiques numériques
+-----------------------
+duree_moyenne (n=12907) :
+  minimum : 0
+  maximum : 786
+  moyenne : 170.69311226466257
+  médiane : 163.0
+  écart-type : 87.72672400459133
+  quantiles : 25%=99.0, 50%=163.0, 75%=223.0, 95%=336.0
+nb_annulation (n=12907) :
+  minimum : 0
+  maximum : 297
+  moyenne : 8.273649957387464
+  médiane : 2.0
+  écart-type : 21.805355695028513
+  quantiles : 25%=0.0, 50%=2.0, 75%=7.0, 95%=36.0
+nb_train_depart_retard (n=12907) :
+  minimum : 0
+  maximum : 598
+  moyenne : 86.70388161462772
+  médiane : 52.0
+  écart-type : 88.749585565973
+  quantiles : 25%=22.0, 50%=52.0, 75%=127.0, 95%=273.0
+nb_train_prevu (n=12907) :
+  minimum : 0
+  maximum : 1104
+  moyenne : 273.44363523669324
+  médiane : 231.0
+  écart-type : 184.11786825695575
+  quantiles : 25%=151.0, 50%=231.0, 75%=365.0, 95%=617.6999999999989
+nb_train_retard_arrivee (n=12907) :
+  minimum : 0
+  maximum : 376
+  moyenne : 38.87479662198807
+  médiane : 30.0
+  écart-type : 32.45443070157637
+  quantiles : 25%=16.0, 50%=30.0, 75%=53.0, 95%=103.0
+nb_train_retard_sup_15 (n=12907) :
+  minimum : 0
+  maximum : 312
+  moyenne : 28.10141783528318
+  médiane : 22.0
+  écart-type : 23.91142846602287
+  quantiles : 25%=11.0, 50%=22.0, 75%=38.0, 95%=74.0
+nb_train_retard_sup_30 (n=12907) :
+  minimum : -44
+  maximum : 202
+  moyenne : 13.328348957929805
+  médiane : 10.0
+  écart-type : 13.030850807444157
+  quantiles : 25%=4.0, 50%=10.0, 75%=18.0, 95%=38.0
+nb_train_retard_sup_60 (n=12907) :
+  minimum : 0
+  maximum : 77
+  moyenne : 5.490818935461378
+  médiane : 3.0
+  écart-type : 6.388148009781446
+  quantiles : 25%=1.0, 50%=3.0, 75%=7.0, 95%=18.0
+prct_cause_externe (n=12907) :
+  minimum : 0.0
+  maximum : 100.0
+  moyenne : 22.204866570302944
+  médiane : 20.0
+  écart-type : 16.21184736003354
+  quantiles : 25%=10.9375, 50%=20.0, 75%=30.76923077, 95%=50.0
+prct_cause_gestion_gare (n=12907) :
+  minimum : 0.0
+  maximum : 100.0
+  moyenne : 8.177636239803611
+  médiane : 6.12244898
+  écart-type : 9.302347376407406
+  quantiles : 25%=0.0, 50%=6.12244898, 75%=11.76470588, 95%=25.0
+prct_cause_gestion_trafic (n=12907) :
+  minimum : 0.0
+  maximum : 100.0
+  moyenne : 19.690203463569087
+  médiane : 18.18181818
+  écart-type : 14.926445490462347
+  quantiles : 25%=9.090909091, 50%=18.18181818, 75%=28.07017544, 95%=45.703703700703656
+prct_cause_infra (n=12907) :
+  minimum : 0.0
+  maximum : 100.0
+  moyenne : 21.071535966465834
+  médiane : 19.631093544137023
+  écart-type : 14.998078004607345
+  quantiles : 25%=11.11111111, 50%=19.631093544137023, 75%=28.88888889, 95%=47.05882353
+prct_cause_materiel_roulant (n=12907) :
+  minimum : 0.0
+  maximum : 100.0
+  moyenne : 19.097682075659055
+  médiane : 17.30769231
+  écart-type : 13.618079883696813
+  quantiles : 25%=10.0, 50%=17.30769231, 75%=25.80645161, 95%=43.28358209
+prct_cause_prise_en_charge_voyageurs (n=12907) :
+  minimum : 0.0
+  maximum : 100.0
+  moyenne : 7.646645271982827
+  médiane : 5.128205128
+  écart-type : 9.504750598270663
+  quantiles : 25%=0.0, 50%=5.128205128, 75%=11.11111111, 95%=25.0
+retard_moyen_arrivee (n=12907) :
+  minimum : -40.10925926
+  maximum : 299.6
+  moyenne : 35.61849576071121
+  médiane : 33.89583333
+  écart-type : 15.61129092495489
+  quantiles : 25%=26.091112535, 50%=33.89583333, 75%=42.912827930000006, 95%=62.389476947171396
+retard_moyen_depart (n=12907) :
+  minimum : 0.0
+  maximum : 316.1880952
+  moyenne : 12.598479205677599
+  médiane : 10.69607843
+  écart-type : 11.58485908300322
+  quantiles : 25%=6.43213716090909, 50%=10.69607843, 75%=16.231349205, 95%=27.596424395999996
+retard_moyen_tous_trains_arrivee (n=12907) :
+  minimum : -472.6388889
+  maximum : 92.0
+  moyenne : 6.302501807839346
+  médiane : 5.511452991499999
+  écart-type : 6.924818768538362
+  quantiles : 25%=3.4960261470000003, 50%=5.511452991499999, 75%=8.360683016500001, 95%=14.311481720999986
+retard_moyen_tous_trains_depart (n=12907) :
+  minimum : -229.2694444
+  maximum : 115.0473896
+  moyenne : 3.2181801612359044
+  médiane : 2.400416667
+  écart-type : 5.016502086219176
+  quantiles : 25%=1.250272941, 50%=2.400416667, 75%=4.09472016825969, 95%=8.315458216399998
+retard_moyen_trains_retard_sup15 (n=12907) :
+  minimum : -4.0
+  maximum : 299.6
+  moyenne : 37.04419731913105
+  médiane : 38.23297872
+  écart-type : 19.33408557379465
+  quantiles : 25%=29.084909539999998, 50%=38.23297872, 75%=47.664249999999996, 95%=66.549938606
 
-Logical consistency diagnostics
--------------------------------
-nb_annulation_greater_than_nb_train_prevu: 63 affected / 12907 checked
-nb_train_retard_arrivee_greater_than_nb_train_prevu: 0 affected / 12907 checked
-departure_delay_count_greater_than_nb_train_prevu: 0 affected / 12907 checked
-Records with a negative count field: 43
+Diagnostics de cohérence logique
+---------------------------------
+nb_annulation_greater_than_nb_train_prevu : 63 concernés / 12907 vérifiés
+nb_train_retard_arrivee_greater_than_nb_train_prevu : 0 concernés / 12907 vérifiés
+Nombre de trains en retard au départ supérieur au nombre prévu : 0 concernés / 12907 vérifiés
+Enregistrements avec un compte négatif : 43
   nb_annulation: 0
   nb_train_depart_retard: 0
   nb_train_prevu: 0
@@ -248,7 +248,7 @@ Records with a negative count field: 43
   nb_train_retard_sup_15: 0
   nb_train_retard_sup_30: 43
   nb_train_retard_sup_60: 0
-Records with a cause percentage outside [0, 100]: 0
+Enregistrements avec un pourcentage de cause hors de [0, 100] : 0
   prct_cause_externe: 0
   prct_cause_gestion_gare: 0
   prct_cause_gestion_trafic: 0
@@ -256,11 +256,11 @@ Records with a cause percentage outside [0, 100]: 0
   prct_cause_materiel_roulant: 0
   prct_cause_prise_en_charge_voyageurs: 0
 
-Anomaly examples
------------------
-Showing at most 10 records per check.
-Examples include the date, service, stations, and relevant values.
-negative_nb_train_retard_sup_30: 43 records (< 0)
+Exemples d’anomalies
+---------------------
+Au plus 10 enregistrements sont affichés par contrôle.
+Les exemples présentent la date, le service, les gares et les valeurs utiles.
+Valeurs négatives de nb_train_retard_sup_30 : 43 enregistrements (< 0)
   1. {"date": "2025-01", "service": "International", "gare_depart": "LAUSANNE", "gare_arrivee": "PARIS LYON", "nb_train_retard_sup_30": -4, "nb_train_retard_sup_15": 15, "nb_train_retard_sup_60": 9}
   2. {"date": "2025-01", "service": "National", "gare_depart": "DIJON VILLE", "gare_arrivee": "PARIS LYON", "nb_train_retard_sup_30": -1, "nb_train_retard_sup_15": 47, "nb_train_retard_sup_60": 30}
   3. {"date": "2025-01", "service": "National", "gare_depart": "DOUAI", "gare_arrivee": "PARIS NORD", "nb_train_retard_sup_30": -1, "nb_train_retard_sup_15": 21, "nb_train_retard_sup_60": 9}
@@ -271,7 +271,7 @@ negative_nb_train_retard_sup_30: 43 records (< 0)
   8. {"date": "2025-01", "service": "National", "gare_depart": "LYON PART DIEU", "gare_arrivee": "MARNE LA VALLEE", "nb_train_retard_sup_30": -2, "nb_train_retard_sup_15": 42, "nb_train_retard_sup_60": 18}
   9. {"date": "2025-01", "service": "National", "gare_depart": "LYON PART DIEU", "gare_arrivee": "PARIS LYON", "nb_train_retard_sup_30": -3, "nb_train_retard_sup_15": 43, "nb_train_retard_sup_60": 17}
   10. {"date": "2025-01", "service": "National", "gare_depart": "QUIMPER", "gare_arrivee": "PARIS MONTPARNASSE", "nb_train_retard_sup_30": -1, "nb_train_retard_sup_15": 31, "nb_train_retard_sup_60": 14}
-negative_retard_moyen_trains_retard_sup15: 8 records (< 0)
+Valeurs négatives de retard_moyen_trains_retard_sup15 : 8 enregistrements (< 0)
   1. {"date": "2018-04", "service": "National", "gare_depart": "PARIS VAUGIRARD", "gare_arrivee": "BORDEAUX ST JEAN", "retard_moyen_trains_retard_sup15": -0.160714286, "nb_train_retard_sup_15": 1, "retard_moyen_arrivee": 17.3}
   2. {"date": "2018-04", "service": "International", "gare_depart": "MARSEILLE ST CHARLES", "gare_arrivee": "MADRID", "retard_moyen_trains_retard_sup15": -2.714285714, "nb_train_retard_sup_15": 0, "retard_moyen_arrivee": 0.0}
   3. {"date": "2018-09", "service": "National", "gare_depart": "RENNES", "gare_arrivee": "PARIS VAUGIRARD", "retard_moyen_trains_retard_sup15": -0.32654321, "nb_train_retard_sup_15": 0, "retard_moyen_arrivee": 0.0}
@@ -280,7 +280,7 @@ negative_retard_moyen_trains_retard_sup15: 8 records (< 0)
   6. {"date": "2019-03", "service": "National", "gare_depart": "PARIS LYON", "gare_arrivee": "DIJON VILLE", "retard_moyen_trains_retard_sup15": -0.351875902, "nb_train_retard_sup_15": 13, "retard_moyen_arrivee": 34.63666667}
   7. {"date": "2019-03", "service": "International", "gare_depart": "ZURICH", "gare_arrivee": "PARIS LYON", "retard_moyen_trains_retard_sup15": -0.601023392, "nb_train_retard_sup_15": 5, "retard_moyen_arrivee": 38.98333333}
   8. {"date": "2019-04", "service": "International", "gare_depart": "MARSEILLE ST CHARLES", "gare_arrivee": "MADRID", "retard_moyen_trains_retard_sup15": -4.0, "nb_train_retard_sup_15": 0, "retard_moyen_arrivee": 0.0}
-cancellations_exceed_planned: 63 records (nb_annulation > nb_train_prevu)
+Annulations supérieures au nombre de trains prévus : 63 enregistrements (nb_annulation > nb_train_prevu)
   1. {"date": "2020-04", "service": "National", "gare_depart": "PARIS MONTPARNASSE", "gare_arrivee": "ST MALO", "nb_annulation": 8, "nb_train_prevu": 0, "nb_train_depart_retard": 0, "nb_train_retard_arrivee": 0}
   2. {"date": "2020-04", "service": "National", "gare_depart": "PARIS MONTPARNASSE", "gare_arrivee": "TOURS", "nb_annulation": 9, "nb_train_prevu": 0, "nb_train_depart_retard": 0, "nb_train_retard_arrivee": 0}
   3. {"date": "2020-04", "service": "National", "gare_depart": "NANTES", "gare_arrivee": "STRASBOURG", "nb_annulation": 2, "nb_train_prevu": 0, "nb_train_depart_retard": 0, "nb_train_retard_arrivee": 0}
@@ -291,8 +291,8 @@ cancellations_exceed_planned: 63 records (nb_annulation > nb_train_prevu)
   8. {"date": "2020-04", "service": "National", "gare_depart": "MARNE LA VALLEE", "gare_arrivee": "MARSEILLE ST CHARLES", "nb_annulation": 14, "nb_train_prevu": 0, "nb_train_depart_retard": 0, "nb_train_retard_arrivee": 0}
   9. {"date": "2020-04", "service": "National", "gare_depart": "MARSEILLE ST CHARLES", "gare_arrivee": "MARNE LA VALLEE", "nb_annulation": 13, "nb_train_prevu": 0, "nb_train_depart_retard": 0, "nb_train_retard_arrivee": 0}
   10. {"date": "2020-04", "service": "National", "gare_depart": "PARIS LYON", "gare_arrivee": "AIX EN PROVENCE TGV", "nb_annulation": 17, "nb_train_prevu": 0, "nb_train_depart_retard": 0, "nb_train_retard_arrivee": 0}
-Extremely negative delays use the explicit diagnostic threshold < -15 minutes.
-retard_moyen_tous_trains_arrivee: 11 records (< -15)
+Les retards extrêmement négatifs sont repérés au moyen du seuil diagnostique explicite < -15 minutes.
+retard_moyen_tous_trains_arrivee : 11 enregistrements (< -15)
   1. {"date": "2019-10", "service": "National", "gare_depart": "NIMES", "gare_arrivee": "PARIS LYON", "retard_moyen_tous_trains_arrivee": -90.6308399, "retard_moyen_arrivee": 17.23357143, "nb_train_retard_arrivee": 70, "nb_train_prevu": 266}
   2. {"date": "2019-10", "service": "National", "gare_depart": "VALENCE ALIXAN TGV", "gare_arrivee": "PARIS LYON", "retard_moyen_tous_trains_arrivee": -68.92808399, "retard_moyen_arrivee": 35.32647059, "nb_train_retard_arrivee": 68, "nb_train_prevu": 265}
   3. {"date": "2019-10", "service": "National", "gare_depart": "MONTPELLIER", "gare_arrivee": "PARIS LYON", "retard_moyen_tous_trains_arrivee": -80.85511288, "retard_moyen_arrivee": 45.92142857, "nb_train_retard_arrivee": 49, "nb_train_prevu": 263}
@@ -303,22 +303,22 @@ retard_moyen_tous_trains_arrivee: 11 records (< -15)
   8. {"date": "2019-12", "service": "National", "gare_depart": "PARIS NORD", "gare_arrivee": "LILLE", "retard_moyen_tous_trains_arrivee": -15.0986755, "retard_moyen_arrivee": 27.6937037, "nb_train_retard_arrivee": 45, "nb_train_prevu": 367}
   9. {"date": "2019-12", "service": "National", "gare_depart": "LYON PART DIEU", "gare_arrivee": "MONTPELLIER", "retard_moyen_tous_trains_arrivee": -173.0769697, "retard_moyen_arrivee": 35.88111111, "nb_train_retard_arrivee": 15, "nb_train_prevu": 75}
   10. {"date": "2019-12", "service": "National", "gare_depart": "STRASBOURG", "gare_arrivee": "NANTES", "retard_moyen_tous_trains_arrivee": -472.6388889, "retard_moyen_arrivee": 0.0, "nb_train_retard_arrivee": 0, "nb_train_prevu": 10}
-retard_moyen_tous_trains_depart: 5 records (< -15)
+retard_moyen_tous_trains_depart : 5 enregistrements (< -15)
   1. {"date": "2019-10", "service": "National", "gare_depart": "NIMES", "gare_arrivee": "PARIS LYON", "retard_moyen_tous_trains_depart": -92.76830709, "retard_moyen_depart": 11.03809524, "nb_train_depart_retard": 203, "nb_train_prevu": 266}
   2. {"date": "2019-10", "service": "National", "gare_depart": "VALENCE ALIXAN TGV", "gare_arrivee": "PARIS LYON", "retard_moyen_tous_trains_depart": -67.95374016, "retard_moyen_depart": 12.70444947, "nb_train_depart_retard": 221, "nb_train_prevu": 265}
   3. {"date": "2019-11", "service": "National", "gare_depart": "VALENCE ALIXAN TGV", "gare_arrivee": "PARIS LYON", "retard_moyen_tous_trains_depart": -69.83828829, "retard_moyen_depart": 9.356324786, "nb_train_depart_retard": 195, "nb_train_prevu": 233}
   4. {"date": "2019-11", "service": "International", "gare_depart": "BARCELONA", "gare_arrivee": "PARIS LYON", "retard_moyen_tous_trains_depart": -229.2694444, "retard_moyen_depart": 4.466666667, "nb_train_depart_retard": 6, "nb_train_prevu": 20}
   5. {"date": "2019-11", "service": "National", "gare_depart": "NIMES", "gare_arrivee": "PARIS LYON", "retard_moyen_tous_trains_depart": -112.2620155, "retard_moyen_depart": 8.765614035, "nb_train_depart_retard": 190, "nb_train_prevu": 226}
-retard_moyen_arrivee: 2 records (< -15)
+retard_moyen_arrivee : 2 enregistrements (< -15)
   1. {"date": "2019-11", "service": "National", "gare_depart": "MONTPELLIER", "gare_arrivee": "PARIS LYON", "retard_moyen_arrivee": -30.5125, "nb_train_retard_arrivee": 44, "nb_train_prevu": 227, "retard_moyen_tous_trains_arrivee": -150.5621142}
   2. {"date": "2019-11", "service": "National", "gare_depart": "NIMES", "gare_arrivee": "PARIS LYON", "retard_moyen_arrivee": -40.10925926, "nb_train_retard_arrivee": 63, "nb_train_prevu": 226, "retard_moyen_tous_trains_arrivee": -151.2910078}
-Pairwise ordering nb_train_retard_sup_15_ge_nb_train_retard_sup_30: 3 potential violations / 12907 checked
-  Note: The >15 count is documented as applying only to routes that compete with air travel; the dataset has no applicability flag.
+Ordre entre les seuils (nb_train_retard_sup_15 ≥ nb_train_retard_sup_30) : 3 violations potentielles / 12907 vérifiées
+  Note : Le compte >15 ne concerne, selon la documentation, que les liaisons en concurrence avec l’avion ; le jeu de données ne contient aucun flag d’applicabilité.
   1. {"date": "2020-05", "service": "National", "gare_depart": "LILLE", "gare_arrivee": "MARSEILLE ST CHARLES", "nb_train_retard_sup_15": 1, "nb_train_retard_sup_30": 3}
   2. {"date": "2020-05", "service": "National", "gare_depart": "MARNE LA VALLEE", "gare_arrivee": "MARSEILLE ST CHARLES", "nb_train_retard_sup_15": 1, "nb_train_retard_sup_30": 3}
   3. {"date": "2025-03", "service": "National", "gare_depart": "TOURS", "gare_arrivee": "PARIS MONTPARNASSE", "nb_train_retard_sup_15": 2, "nb_train_retard_sup_30": 6}
-Pairwise ordering nb_train_retard_sup_30_ge_nb_train_retard_sup_60: 354 potential violations / 12907 checked
-  Note: The >60-minute count is a subset of the >30-minute count.
+Ordre entre les seuils (nb_train_retard_sup_30 ≥ nb_train_retard_sup_60) : 354 violations potentielles / 12907 vérifiées
+  Note : Le compte >60 minutes est inclus dans le compte >30 minutes.
   1. {"date": "2025-01", "service": "International", "gare_depart": "FRANCFORT", "gare_arrivee": "PARIS EST", "nb_train_retard_sup_30": 0, "nb_train_retard_sup_60": 18}
   2. {"date": "2025-01", "service": "International", "gare_depart": "GENEVE", "gare_arrivee": "PARIS LYON", "nb_train_retard_sup_30": 0, "nb_train_retard_sup_60": 13}
   3. {"date": "2025-01", "service": "International", "gare_depart": "LAUSANNE", "gare_arrivee": "PARIS LYON", "nb_train_retard_sup_30": -4, "nb_train_retard_sup_60": 9}
@@ -329,8 +329,8 @@ Pairwise ordering nb_train_retard_sup_30_ge_nb_train_retard_sup_60: 354 potentia
   8. {"date": "2025-01", "service": "National", "gare_depart": "DUNKERQUE", "gare_arrivee": "PARIS NORD", "nb_train_retard_sup_30": 0, "nb_train_retard_sup_60": 8}
   9. {"date": "2025-01", "service": "National", "gare_depart": "GRENOBLE", "gare_arrivee": "PARIS LYON", "nb_train_retard_sup_30": 0, "nb_train_retard_sup_60": 12}
   10. {"date": "2025-01", "service": "National", "gare_depart": "LAVAL", "gare_arrivee": "PARIS MONTPARNASSE", "nb_train_retard_sup_30": 0, "nb_train_retard_sup_60": 10}
-Threshold ordering (nb_train_retard_sup_15 >= nb_train_retard_sup_30 >= nb_train_retard_sup_60): 357 potential violations / 12907 checked
-  Note: This is a potential ordering check: the SNCF schema describes nb_train_retard_sup_15 as applicable to routes competing with air travel, and the dataset does not provide that applicability flag.
+Ordre attendu des seuils (nb_train_retard_sup_15 >= nb_train_retard_sup_30 >= nb_train_retard_sup_60) : 357 violations potentielles / 12907 vérifiées
+  Note : Ce contrôle porte sur un ordre attendu, à titre diagnostique : le schéma SNCF indique que nb_train_retard_sup_15 s’applique aux liaisons en concurrence avec l’avion, mais le jeu de données ne fournit aucun flag d’applicabilité.
   1. {"date": "2020-05", "service": "National", "gare_depart": "LILLE", "gare_arrivee": "MARSEILLE ST CHARLES", "nb_train_retard_sup_15": 1, "nb_train_retard_sup_30": 3, "nb_train_retard_sup_60": 1}
   2. {"date": "2020-05", "service": "National", "gare_depart": "MARNE LA VALLEE", "gare_arrivee": "MARSEILLE ST CHARLES", "nb_train_retard_sup_15": 1, "nb_train_retard_sup_30": 3, "nb_train_retard_sup_60": 1}
   3. {"date": "2025-01", "service": "International", "gare_depart": "FRANCFORT", "gare_arrivee": "PARIS EST", "nb_train_retard_sup_15": 27, "nb_train_retard_sup_30": 0, "nb_train_retard_sup_60": 18}
@@ -342,8 +342,8 @@ Threshold ordering (nb_train_retard_sup_15 >= nb_train_retard_sup_30 >= nb_train
   9. {"date": "2025-01", "service": "National", "gare_depart": "DOUAI", "gare_arrivee": "PARIS NORD", "nb_train_retard_sup_15": 21, "nb_train_retard_sup_30": -1, "nb_train_retard_sup_60": 9}
   10. {"date": "2025-01", "service": "National", "gare_depart": "DUNKERQUE", "gare_arrivee": "PARIS NORD", "nb_train_retard_sup_15": 22, "nb_train_retard_sup_30": 0, "nb_train_retard_sup_60": 8}
 
-Notes
------
-All checks are diagnostic. No records or values were modified.
-Negative delays are reported and are not automatically treated as invalid.
-Report file: data\reports\data_quality_report.txt
+Remarques
+---------
+Tous les contrôles sont diagnostiques. Aucun enregistrement ni aucune valeur n’a été modifié.
+Les retards négatifs sont signalés, sans être automatiquement considérés comme invalides.
+Rapport : data\reports\data_quality_report.txt

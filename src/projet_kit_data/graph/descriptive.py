@@ -1,4 +1,4 @@
-"""Descriptive summaries of SNCF graph topology, metrics, and outcomes."""
+"""Synthèses descriptives de la topologie, des métriques et des résultats opérationnels du graphe SNCF."""
 
 from __future__ import annotations
 
@@ -45,17 +45,17 @@ OUTCOMES = (
 
 @dataclass
 class DescriptiveResult:
-    """Tables produced by the descriptive analysis.
+    """Tables produites par l’analyse descriptive.
 
-    :ivar network_summary: Overall topology by service.
-    :ivar node_metric_summary: Distribution statistics for overall node metrics.
-    :ivar node_rankings: Overall top station tables.
-    :ivar edge_rankings: Overall top directed liaison tables.
-    :ivar monthly_summary: Month/service topology and selected metric summaries.
-    :ivar operational_summary: Outcome distribution statistics by service.
-    :ivar quality_flag_summary: Counts of existing Boolean quality flags by service.
-    :ivar metadata: Input sources and analysis configuration.
-    :ivar output_paths: Paths written by the file-based pipeline.
+    :ivar network_summary: Topologie globale par service.
+    :ivar node_metric_summary: Statistiques de distribution des métriques globales des nœuds.
+    :ivar node_rankings: Tables globales des gares les mieux classées.
+    :ivar edge_rankings: Tables globales des liaisons orientées les mieux classées.
+    :ivar monthly_summary: Synthèses mensuelles/service de la topologie et de certaines métriques.
+    :ivar operational_summary: Statistiques de distribution des résultats opérationnels par service.
+    :ivar quality_flag_summary: Nombre d’indicateurs de qualité booléens existants par service.
+    :ivar metadata: Sources d’entrée et configuration de l’analyse.
+    :ivar output_paths: Chemins écrits par le pipeline fondé sur des fichiers.
     """
 
     network_summary: pl.DataFrame
@@ -72,7 +72,9 @@ class DescriptiveResult:
 def _check_columns(frame: pl.DataFrame, required: set[str], label: str) -> None:
     missing = required.difference(frame.columns)
     if missing:
-        raise ValueError(f"{label} is missing columns: {', '.join(sorted(missing))}")
+        raise ValueError(
+            f"{label} ne contient pas les colonnes suivantes : {', '.join(sorted(missing))}"
+        )
 
 
 def _stats_by_group(
@@ -120,37 +122,40 @@ def build_descriptive_summaries(
     construction_metadata: dict[str, Any] | None = None,
     top_n: int = 10,
 ) -> DescriptiveResult:
-    """Build reusable descriptive tables from existing Phase 1/2 artifacts.
+    """Construire des tables descriptives réutilisables à partir des artefacts existants.
 
-    Existing graph metrics are summarized as provided; this function does not
-    recalculate them. Network component counts are derived from the existing
-    directed edge table solely to verify and describe topology.
+    Les métriques de graphe existantes sont synthétisées telles quelles ; cette
+    fonction ne les recalcule pas. Les nombres de composantes du réseau sont
+    dérivés de la table d’arêtes orientées existante uniquement pour vérifier
+    et décrire la topologie.
 
-    :param research_data: Phase 2 monthly research dataset.
+    :param research_data: Jeu de recherche mensuel.
     :type research_data: polars.DataFrame
-    :param node_metrics: Phase 1 overall and monthly node metrics.
+    :param node_metrics: Métriques globales et mensuelles des nœuds.
     :type node_metrics: polars.DataFrame
-    :param edge_metrics: Phase 1 overall and monthly edge metrics.
+    :param edge_metrics: Métriques globales et mensuelles des arêtes.
     :type edge_metrics: polars.DataFrame
-    :param nodes: Phase 1 node identifier/name mapping.
+    :param nodes: Correspondance entre identifiants de nœud et noms de gare.
     :type nodes: polars.DataFrame
-    :param edges: Phase 1 overall service-aware directed edges.
+    :param edges: Arêtes orientées globales tenant compte du service.
     :type edges: polars.DataFrame
-    :param construction_metadata: Optional original construction metadata for
-        cross-checking topology counts.
+    :param construction_metadata: Métadonnées de construction d’origine facultatives pour
+        vérifier les nombres liés à la topologie.
     :type construction_metadata: dict[str, Any] | None
-    :param top_n: Number of stations/routes per ranking and service.
+    :param top_n: Nombre de gares/liaisons par classement et par service.
     :type top_n: int
-    :returns: Descriptive tables and provenance metadata.
+    :returns: Tables descriptives et métadonnées de provenance.
     :rtype: DescriptiveResult
-    :raises TypeError: If any input is not a Polars DataFrame.
-    :raises ValueError: If required fields are absent or top_n is invalid.
+    :raises TypeError: Si une entrée n’est pas un DataFrame Polars.
+    :raises ValueError: Si des champs requis sont absents ou si top_n est invalide.
     """
     frames = (research_data, node_metrics, edge_metrics, nodes, edges)
     if any(not isinstance(frame, pl.DataFrame) for frame in frames):
-        raise TypeError("all tabular inputs must be Polars DataFrames")
+        raise TypeError(
+            "Toutes les entrées tabulaires doivent être des DataFrame Polars"
+        )
     if top_n < 1:
-        raise ValueError("top_n must be positive")
+        raise ValueError("top_n doit être positif")
     _check_columns(
         research_data,
         {"date", "service", "gare_depart", "gare_arrivee", *OUTCOMES},
@@ -208,7 +213,7 @@ def build_descriptive_summaries(
                 or reported.get("edges") != row["edge_count"]
             ):
                 raise ValueError(
-                    f"construction metadata topology mismatch for {row['service']}"
+                    f"Incohérence entre les métadonnées de construction et la topologie pour {row['service']}"
                 )
 
     overall_nodes = node_metrics.filter(pl.col("period") == "overall")
@@ -353,11 +358,11 @@ def build_descriptive_summaries(
         "centrality_zero_shares": centrality_zero_shares,
         "monthly_graph_count": monthly_summary.height,
         "metric_columns": {"node": list(NODE_METRICS), "edge": ["edge_betweenness"]},
-        "outlier_definition": "Tukey 1.5*IQR, descriptive only; observations are not removed.",
+        "outlier_definition": "Règle de Tukey à 1,5 × IQR, à visée descriptive uniquement ; les observations ne sont pas supprimées.",
         "limitations": [
-            "OD liaisons are not necessarily train itineraries or physical track segments.",
-            "Centrality is not passenger traffic, train frequency, or delay propagation.",
-            "Overall graph metrics are separate from monthly metrics and outcomes.",
+            "Les liaisons OD ne correspondent pas nécessairement à des itinéraires de train ni à des segments physiques de voie.",
+            "La centralité ne mesure ni le trafic voyageurs, ni la fréquence des trains, ni la propagation des retards.",
+            "Les métriques globales du graphe sont distinctes des métriques et des résultats mensuels.",
         ],
     }
     return DescriptiveResult(
@@ -373,9 +378,9 @@ def build_descriptive_summaries(
 
 
 def _write_report(result: DescriptiveResult, path: Path) -> None:
-    """Maintain concise French research content inside the unified report.
+    """Maintenir une synthèse de recherche en français dans le rapport unifié.
 
-    Human-authored material outside the marked passage is retained.
+    Le contenu rédigé hors du passage balisé est conservé.
     """
     begin = "<!-- BEGIN GENERATED DESCRIPTIVE CONTENT -->"
     end = "<!-- END GENERATED DESCRIPTIVE CONTENT -->"
@@ -445,7 +450,8 @@ def _write_report(result: DescriptiveResult, path: Path) -> None:
                 leader_patterns.append(f"{service} : {metric_names}")
     zero_shares = result.metadata.get("centrality_zero_shares", {})
     zero_text = "; ".join(
-        f"{service}, Betweenness centrality : {100 * values['betweenness_centrality']:.1f}% de valeurs nulles"
+        f"{service}, {METRIC_PRESENTATION['betweenness_centrality'].label} : "
+        f"{100 * values['betweenness_centrality']:.1f}% de valeurs égales à zéro"
         for service, values in zero_shares.items()
     )
 
@@ -564,17 +570,17 @@ def _write_report(result: DescriptiveResult, path: Path) -> None:
                 )
             )
 
+    def component_phrase(count: int, connectivity: str) -> str:
+        if count == 1:
+            return f"une composante {connectivity}"
+        return f"{count} composantes {connectivity}s"
+
     topology_text = "; ".join(
-        f"Le graphe {row['service']} comprend {row['weakly_connected_components']} "
-        f"composante{'s' if row['weakly_connected_components'] != 1 else ''} "
-        f"faiblement connexe"
-        f"{'s' if row['weakly_connected_components'] != 1 else ''} et "
-        f"{row['strongly_connected_components']} composante"
-        f"{'s' if row['strongly_connected_components'] != 1 else ''} "
-        f"fortement connexe"
-        f"{'s' if row['strongly_connected_components'] != 1 else ''}"
+        f"Le graphe {row['service']} comprend "
+        f"{component_phrase(row['weakly_connected_components'], 'faiblement connexe')} et "
+        f"{component_phrase(row['strongly_connected_components'], 'fortement connexe')}"
         for row in result.network_summary.to_dicts()
-    )
+    ).replace("; Le graphe", "; le graphe")
     content = [
         "## 2. Structure du réseau",
         "",
@@ -594,9 +600,9 @@ def _write_report(result: DescriptiveResult, path: Path) -> None:
         "",
         "### Importance des gares",
         "",
-        "Degree compte les relations entrantes et sortantes; Betweenness centrality et PageRank décrivent d’autres positions dans le graphe orienté. Ces mesures aident à repérer les gares centrales dans les OD observées, mais ne mesurent ni le nombre de voyageurs ni la fréquence des trains.",
+        "Le degré compte les relations entrantes et sortantes ; la betweenness centrality et PageRank décrivent d’autres positions dans le graphe orienté. Ces mesures aident à repérer les gares centrales dans les OD observées, mais ne mesurent ni le nombre de voyageurs ni la fréquence des trains.",
         "",
-        f"![Distributions Degree]({image_dir}/degree_distributions.png)",
+        f"![Distributions des degrés]({image_dir}/degree_distributions.png)",
         "",
         f"![Distributions de centralité]({image_dir}/node_centrality_distributions.png)",
         "",
@@ -610,13 +616,13 @@ def _write_report(result: DescriptiveResult, path: Path) -> None:
         "",
         "### Importance des liaisons OD",
         "",
-        "Edge betweenness indique la fréquence avec laquelle une arête intervient dans les plus courts chemins du graphe orienté. La distribution montre des valeurs concentrées près du bas de l’échelle et quelques valeurs plus élevées.",
+        "L’intermédiarité des arêtes (edge betweenness) indique la fréquence avec laquelle une arête intervient dans les plus courts chemins du graphe orienté. La distribution montre des valeurs concentrées près du bas de l’échelle et quelques valeurs plus élevées.",
         "",
-        f"![Distribution Edge betweenness]({image_dir}/edge_betweenness_distribution.png)",
+        f"![Distribution de l’intermédiarité des arêtes]({image_dir}/edge_betweenness_distribution.png)",
         "",
         "**Valeurs observées.** " + " ".join(edge_notes),
         "",
-        "Plusieurs liaisons partagent les valeurs maximales, notamment 20 liaisons International. Edge betweenness est une mesure de position dans le graphe; elle ne représente ni le trafic ni un volume de passagers. Les ex æquo sont conservés dans le tableau de classement.",
+        "Plusieurs liaisons partagent les valeurs maximales, notamment 20 liaisons International. Cette mesure d’intermédiarité des arêtes décrit une position dans le graphe ; elle ne représente ni le trafic ni un volume de passagers. Les ex æquo sont conservés dans le tableau de classement.",
         "",
         "## 3. Évolution temporelle",
         "",
@@ -680,30 +686,30 @@ def run_descriptive_analysis(
     report_path: str | os.PathLike[str] = DEFAULT_REPORT_PATH,
     top_n: int = 10,
 ) -> DescriptiveResult:
-    """Summarize existing research and graph artifacts, writing tables/report.
+    """Résumer les résultats et artefacts du graphe dans des tables et un rapport.
 
-    :param research_data_path: Phase 2 research Parquet path.
+    :param research_data_path: Chemin du fichier Parquet de recherche.
     :type research_data_path: str | os.PathLike[str]
-    :param node_metrics_path: Existing Phase 1 node metric Parquet path.
+    :param node_metrics_path: Chemin existant du fichier Parquet des métriques de nœud.
     :type node_metrics_path: str | os.PathLike[str]
-    :param edge_metrics_path: Existing Phase 1 edge metric Parquet path.
+    :param edge_metrics_path: Chemin existant du fichier Parquet des métriques d’arête.
     :type edge_metrics_path: str | os.PathLike[str]
-    :param nodes_path: Existing node mapping Parquet path.
+    :param nodes_path: Chemin existant du fichier Parquet de correspondance des nœuds.
     :type nodes_path: str | os.PathLike[str]
-    :param edges_path: Existing overall edge Parquet path.
+    :param edges_path: Chemin existant du fichier Parquet des arêtes globales.
     :type edges_path: str | os.PathLike[str]
-    :param construction_metadata_path: Existing construction metadata JSON path.
+    :param construction_metadata_path: Chemin existant du fichier JSON des métadonnées de construction.
     :type construction_metadata_path: str | os.PathLike[str]
-    :param output_dir: Destination directory for descriptive Parquet tables.
+    :param output_dir: Répertoire de destination des tables descriptives Parquet.
     :type output_dir: str | os.PathLike[str]
-    :param report_path: Destination Markdown report path.
+    :param report_path: Chemin de destination du rapport Markdown.
     :type report_path: str | os.PathLike[str]
-    :param top_n: Number of ranked stations/routes to retain per service.
+    :param top_n: Nombre de gares/liaisons classées à conserver par service.
     :type top_n: int
-    :returns: Descriptive tables, metadata, and output paths.
+    :returns: Tables descriptives, métadonnées et chemins de sortie.
     :rtype: DescriptiveResult
-    :raises OSError: If inputs cannot be read or outputs cannot be written.
-    :raises ValueError: If schemas, metadata counts, or top_n are invalid.
+    :raises OSError: Si les entrées ne peuvent pas être lues ou les sorties écrites.
+    :raises ValueError: Si les schémas, comptes des métadonnées ou top_n sont invalides.
     """
     input_paths = {
         "research_data": Path(research_data_path),

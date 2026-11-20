@@ -1,4 +1,4 @@
-"""Fetch and store raw monthly SNCF TGV regularity records."""
+"""Récupérer et enregistrer les données brutes mensuelles de régularité TGV SNCF."""
 
 from __future__ import annotations
 
@@ -23,30 +23,30 @@ _RETRYABLE_STATUS_CODES = {429, *range(500, 600)}
 
 
 class SNCFAPIError(RuntimeError):
-    """Represent an HTTP or response-structure failure from the SNCF API.
+    """Représenter un échec HTTP ou de structure de réponse de l’API SNCF.
 
-    :param message: A description of the API failure.
+    :param message: Description de l’échec de l’API.
     :type message: str
     """
 
     def __init__(self, message: str) -> None:
-        """Initialize the API error with a descriptive message.
+        """Initialiser l’erreur d’API avec un message descriptif.
 
-        :param message: A description of the API failure.
+        :param message: Description de l’échec de l’API.
         :type message: str
-        :returns: No value.
+        :returns: Aucune valeur.
         :rtype: None
         """
         super().__init__(message)
 
 
 def _is_record_array(value: Any) -> TypeGuard[list[dict[str, Any]]]:
-    """Return whether *value* is a JSON array containing only objects."""
+    """Indiquer si *value* est un tableau JSON ne contenant que des objets."""
     return isinstance(value, list) and all(isinstance(record, dict) for record in value)
 
 
 def _retry_after_seconds(value: str | None) -> float | None:
-    """Parse an HTTP Retry-After value into a non-negative delay."""
+    """Convertir la valeur HTTP Retry-After en délai positif ou nul."""
     if value is None:
         return None
 
@@ -68,7 +68,7 @@ def _wait_before_retry(
     backoff_factor: float,
     retry_after: str | None = None,
 ) -> None:
-    """Wait with exponential backoff, honoring a valid Retry-After value."""
+    """Attendre selon un backoff exponentiel en respectant Retry-After si valide."""
     backoff = backoff_factor * (2**retry_number)
     retry_after_delay = _retry_after_seconds(retry_after)
     time.sleep(max(backoff, retry_after_delay or 0.0))
@@ -81,38 +81,40 @@ def fetch_raw_data(
     max_retries: int = 3,
     backoff_factor: float = 1.0,
 ) -> list[dict[str, Any]]:
-    """Fetch all SNCF TGV regularity records without transforming them.
+    """Récupérer toutes les données de régularité TGV SNCF sans les transformer.
 
-    The function calls the SNCF Explore API v2.1 JSON export endpoint with
-    ``limit=-1``. Transient connection failures, timeouts, HTTP 429 responses,
-    and HTTP 5xx responses are retried up to ``max_retries`` times.
+    La fonction appelle le point de terminaison d’export JSON de l’API Explore
+    SNCF v2.1 avec ``limit=-1``. Les erreurs de connexion temporaires, les
+    délais d’attente dépassés, les réponses HTTP 429 et les réponses HTTP 5xx
+    font l’objet d’un maximum de ``max_retries`` nouvelles tentatives.
 
-    :param connect_timeout: Maximum seconds to wait when establishing a
-        connection.
+    :param connect_timeout: Durée maximale, en secondes, d’établissement de la
+        connexion.
     :type connect_timeout: float
-    :param read_timeout: Maximum seconds to wait for response data.
+    :param read_timeout: Durée maximale, en secondes, d’attente des données de
+        réponse.
     :type read_timeout: float
-    :param max_retries: Number of retries after the initial request.
+    :param max_retries: Nombre de nouvelles tentatives après la requête initiale.
     :type max_retries: int
-    :param backoff_factor: Base delay in seconds for exponential backoff.
+    :param backoff_factor: Délai de base, en secondes, du backoff exponentiel.
     :type backoff_factor: float
-    :returns: The records as a list of dictionaries, preserving field names
-        and values from the JSON response.
+    :returns: Les enregistrements sous forme de liste de dictionnaires, avec
+        conservation des noms de champs et valeurs de la réponse JSON.
     :rtype: list[dict[str, Any]]
-    :raises SNCFAPIError: If the request fails after retries, the server
-        returns a non-retryable unsuccessful status, or the JSON structure is
-        not an array of objects.
-    :raises requests.exceptions.JSONDecodeError: If the response body is not
-        valid JSON. This exception is intentionally allowed to propagate.
-    :raises ValueError: If a timeout, retry count, or backoff factor is
-        negative or otherwise invalid.
+    :raises SNCFAPIError: Si la requête échoue après les nouvelles tentatives,
+        si le serveur renvoie un statut d’échec non réessayable ou si la
+        structure JSON n’est pas un tableau d’objets.
+    :raises requests.exceptions.JSONDecodeError: Si le corps de la réponse ne
+        contient pas de JSON valide. Cette exception est propagée telle quelle.
+    :raises ValueError: Si un délai d’attente, le nombre de tentatives ou le
+        facteur de backoff est négatif ou autrement invalide.
     """
     if connect_timeout <= 0 or read_timeout <= 0:
-        raise ValueError("Timeout values must be greater than zero.")
+        raise ValueError("Les délais d’attente doivent être strictement positifs.")
     if max_retries < 0:
-        raise ValueError("max_retries must be zero or greater.")
+        raise ValueError("max_retries doit être positif ou nul.")
     if backoff_factor < 0:
-        raise ValueError("backoff_factor must be zero or greater.")
+        raise ValueError("backoff_factor doit être positif ou nul.")
 
     timeout = (connect_timeout, read_timeout)
     for attempt in range(max_retries + 1):
@@ -127,10 +129,10 @@ def fetch_raw_data(
                 _wait_before_retry(attempt, backoff_factor)
                 continue
             raise SNCFAPIError(
-                f"SNCF API request failed after {max_retries} retries: {exc}"
+                f"La requête à l’API SNCF a échoué après {max_retries} nouvelles tentatives : {exc}"
             ) from exc
         except requests.RequestException as exc:
-            raise SNCFAPIError(f"SNCF API request failed: {exc}") from exc
+            raise SNCFAPIError(f"La requête à l’API SNCF a échoué : {exc}") from exc
 
         if response.status_code in _RETRYABLE_STATUS_CODES:
             if attempt < max_retries:
@@ -144,54 +146,55 @@ def fetch_raw_data(
                 response.raise_for_status()
             except requests.HTTPError as exc:
                 raise SNCFAPIError(
-                    f"SNCF API returned HTTP {response.status_code} after "
-                    f"{max_retries} retries."
+                    f"L’API SNCF a renvoyé le statut HTTP {response.status_code} après "
+                    f"{max_retries} nouvelles tentatives."
                 ) from exc
             raise SNCFAPIError(
-                f"SNCF API returned retryable HTTP {response.status_code} "
-                f"after {max_retries} retries."
+                f"L’API SNCF a renvoyé le statut HTTP {response.status_code}, réessayable, "
+                f"après {max_retries} nouvelles tentatives."
             )
 
         try:
             response.raise_for_status()
         except requests.HTTPError as exc:
             raise SNCFAPIError(
-                f"SNCF API returned HTTP {response.status_code}: {exc}"
+                f"L’API SNCF a renvoyé le statut HTTP {response.status_code} : {exc}"
             ) from exc
 
         records = response.json()
         if not _is_record_array(records):
             raise SNCFAPIError(
-                "Unexpected SNCF API response: expected a JSON array "
-                "containing only objects."
+                "Réponse inattendue de l’API SNCF : un tableau JSON ne contenant "
+                "que des objets était attendu."
             )
         return records
 
-    raise SNCFAPIError("SNCF API request failed without a response.")
+    raise SNCFAPIError("La requête à l’API SNCF a échoué sans réponse.")
 
 
 def save_raw_data(
     records: Sequence[dict[str, Any]],
     path: str | os.PathLike[str] = DEFAULT_RAW_DATA_PATH,
 ) -> Path:
-    """Atomically save raw records as a UTF-8 JSON array.
+    """Enregistrer atomiquement les données brutes dans un tableau JSON UTF-8.
 
-    Parent directories are created as needed. A temporary file in the target
-    directory is replaced into place with :func:`os.replace` so readers do not
-    observe a partially written output.
+    Les répertoires parents sont créés si nécessaire. Un fichier temporaire
+    placé dans le répertoire cible est remplacé à l’aide de :func:`os.replace`,
+    afin que les lecteurs ne voient jamais une sortie partiellement écrite.
 
-    :param records: Raw record dictionaries to serialize without ETL or
-        cleaning.
+    :param records: Dictionnaires des données brutes à sérialiser sans ETL ni
+        nettoyage.
     :type records: Sequence[dict[str, Any]]
-    :param path: Destination file path. Defaults to the project raw-data path.
+    :param path: Chemin du fichier de destination. Par défaut, chemin des
+        données brutes du projet.
     :type path: str | os.PathLike[str]
-    :returns: The destination path.
+    :returns: Chemin de destination.
     :rtype: pathlib.Path
-    :raises OSError: If creating directories, writing the temporary file, or
-        replacing the destination fails. Any temporary file is removed when
-        possible before the error is re-raised.
-    :raises TypeError: If a record contains a value that cannot be encoded as
-        JSON.
+    :raises OSError: Si la création des répertoires, l’écriture du fichier
+        temporaire ou le remplacement de la destination échoue. Le fichier
+        temporaire est supprimé si possible avant de relancer l’erreur.
+    :raises TypeError: Si un enregistrement contient une valeur qui ne peut
+        pas être encodée en JSON.
     """
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -224,25 +227,26 @@ def save_raw_data(
 def load_raw_data(
     path: str | os.PathLike[str] = DEFAULT_RAW_DATA_PATH,
 ) -> list[dict[str, Any]]:
-    """Load a previously saved raw SNCF JSON array.
+    """Charger un tableau JSON brut SNCF précédemment enregistré.
 
-    :param path: JSON file path. Defaults to the project raw-data path.
+    :param path: Chemin du fichier JSON. Par défaut, chemin des données brutes
+        du projet.
     :type path: str | os.PathLike[str]
-    :returns: The decoded record dictionaries with original field names and
-        values.
+    :returns: Dictionnaires décodés des enregistrements, avec leurs noms de
+        champs et valeurs d’origine.
     :rtype: list[dict[str, Any]]
-    :raises OSError: If the file cannot be opened or read. This includes
-        :class:`FileNotFoundError` when the path does not exist.
-    :raises json.JSONDecodeError: If the file does not contain valid JSON.
-    :raises ValueError: If the decoded JSON is not an array containing only
-        objects.
+    :raises OSError: Si le fichier ne peut pas être ouvert ou lu. Cette
+        exception inclut :class:`FileNotFoundError` si le chemin n’existe pas.
+    :raises json.JSONDecodeError: Si le fichier ne contient pas de JSON valide.
+    :raises ValueError: Si le JSON décodé n’est pas un tableau ne contenant
+        que des objets.
     """
     with Path(path).open("r", encoding="utf-8") as input_file:
         records = json.load(input_file)
 
     if not _is_record_array(records):
         raise ValueError(
-            "Unexpected raw data structure: expected a JSON array "
-            "containing only objects."
+            "Structure inattendue des données brutes : un tableau JSON ne "
+            "contenant que des objets était attendu."
         )
     return records

@@ -1,4 +1,4 @@
-"""Tests for descriptive summaries without inferential analysis."""
+"""Tests des synthèses descriptives sans analyse inférentielle."""
 
 import polars as pl
 import pytest
@@ -127,7 +127,7 @@ def test_descriptive_summaries_separate_services_and_use_station_names() -> None
     )
     assert national["retard_moyen_tous_trains_arrivee_missing"] == 0
     assert national["cancellation_rate_missing"] == 1
-    assert result.metadata["outlier_definition"].startswith("Tukey")
+    assert result.metadata["outlier_definition"].startswith("Règle de Tukey")
     assert result.node_rankings.columns == [
         "rank",
         "service",
@@ -151,7 +151,8 @@ def test_metric_presentation_and_display_format_do_not_change_numeric_values() -
     source_value = 0.123456789
 
     assert (
-        METRIC_PRESENTATION["betweenness_centrality"].label == "Betweenness centrality"
+        METRIC_PRESENTATION["betweenness_centrality"].label
+        == "Centralité d’intermédiarité"
     )
     assert format_metric_value("betweenness_centrality", source_value) == "0.1235"
     assert source_value == 0.123456789
@@ -162,7 +163,7 @@ def test_construction_metadata_mismatch_is_visible() -> None:
     metadata = {
         "network_diagnostics_by_service": {"National": {"nodes": 99, "edges": 2}}
     }
-    with pytest.raises(ValueError, match="topology mismatch"):
+    with pytest.raises(ValueError, match="métadonnées de construction et la topologie"):
         build_descriptive_summaries(*inputs, construction_metadata=metadata)
 
 
@@ -202,7 +203,8 @@ def test_unified_report_uses_french_human_tables_and_preserves_other_sections(
     assert "node_count" not in content
     assert "retard_moyen_tous_trains_arrivee_" not in content
     assert "<!-- BEGIN GENERATED DESCRIPTIVE CONTENT -->" in content
-    assert "Degree" in content
-    assert "Betweenness centrality" in content
+    assert "Degré" in content
+    assert "betweenness centrality" in content
+    assert "valeurs égales à zéro" in content
     assert "node_id" not in content
     assert "edge_id" not in content

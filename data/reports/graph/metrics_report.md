@@ -1,26 +1,26 @@
-# Graph Metrics Report
+# Rapport des métriques du graphe
 
-## Inputs and calculation coverage
+## Entrées et couverture des calculs
 
-- Nodes artifact: `data\processed\graph\nodes.parquet` (59 rows)
-- Edges artifact: `data\processed\graph\edges.parquet` (146 rows)
-- Monthly observations: `data\processed\graph\edge_observations.parquet` (12,907 rows)
-- Services: International, National
-- Overall graphs: 2; monthly graphs: 210
-- Output node metric rows: 6,385; edge metric rows: 13,053
+- Artefact des nœuds : `data\processed\graph\nodes.parquet` (59 lignes)
+- Artefact des arêtes : `data\processed\graph\edges.parquet` (146 lignes)
+- Observations mensuelles : `data\processed\graph\edge_observations.parquet` (12,907 lignes)
+- Services : International, National
+- Graphes globaux : 2 ; graphes mensuels : 210
+- Lignes de métriques produites : 6,385 pour les nœuds ; 13,053 pour les arêtes
 
-## Overall graph summary by service
+## Synthèse des graphes globaux par service
 
-| Service | Nodes | Edges | Mean degree | Max PageRank | Max betweenness |
+| Service | Nœuds | Arêtes | Degré moyen | PageRank maximal | Betweenness maximal |
 |---|---:|---:|---:|---:|---:|
 | International | 18 | 30 | 3.3333 | 0.2852883835824953 | 0.33088235294117646 |
 | National | 52 | 116 | 4.4615 | 0.17174441902507526 | 0.5868627450980392 |
 
-## Overall top 10 stations by service
+## Top 10 des gares par service — graphe global
 
 ### in_degree
 
-| Service | Station | Value |
+| Service | Gare | Valeur |
 |---|---|---:|
 | International | PARIS LYON | 10 |
 | International | PARIS EST | 3 |
@@ -45,7 +45,7 @@
 
 ### out_degree
 
-| Service | Station | Value |
+| Service | Gare | Valeur |
 |---|---|---:|
 | International | PARIS LYON | 10 |
 | International | PARIS EST | 3 |
@@ -70,7 +70,7 @@
 
 ### betweenness_centrality
 
-| Service | Station | Value |
+| Service | Gare | Valeur |
 |---|---|---:|
 | International | PARIS LYON | 0.33088235294117646 |
 | International | PARIS EST | 0.022058823529411763 |
@@ -95,7 +95,7 @@
 
 ### pagerank
 
-| Service | Station | Value |
+| Service | Gare | Valeur |
 |---|---|---:|
 | International | PARIS LYON | 0.2852883835824953 |
 | International | PARIS EST | 0.10660729511709768 |
@@ -118,9 +118,9 @@
 | National | LILLE | 0.02227278734688863 |
 | National | PARIS VAUGIRARD | 0.02224213985496885 |
 
-## Overall top 10 edges by edge betweenness
+## Top 10 des arêtes par edge betweenness — graphe global
 
-| Service | Source | Target | Value |
+| Service | Origine | Destination | Valeur |
 |---|---|---|---:|
 | International | node_0083ba017236d4014e222205 | node_d51bae1fb912d26d96c5d7a9 | 0.0326797 |
 | International | node_144639105735a01242c1c896 | node_d51bae1fb912d26d96c5d7a9 | 0.0326797 |
@@ -143,22 +143,22 @@
 | National | node_49deb82e30f926e176764d8d | node_c56be31b4dc114ed836fcca0 | 0.0723982 |
 | National | node_afc46492efa7628d5aec7ef6 | node_d24773a3c3b8c10a3b8a36f3 | 0.0723982 |
 
-## Metric distributions
+## Distributions des métriques
 
-- Overall node `in_degree`: `{'mean': 2.085714285714286, 'std': 3.211134871593076, 'min': 1, 'median': 1.0, 'max': 21}`
-- Overall node `out_degree`: `{'mean': 2.085714285714286, 'std': 3.211134871593076, 'min': 1, 'median': 1.0, 'max': 21}`
-- Overall node `degree`: `{'mean': 4.171428571428572, 'std': 6.422269743186152, 'min': 2, 'median': 2.0, 'max': 42}`
-- Overall node `in_degree_centrality`: `{'mean': 0.057703081232492945, 'std': 0.08938100620374166, 'min': 0.0196078431372549, 'median': 0.0196078431372549, 'max': 0.5882352941176471}`
-- Overall node `out_degree_centrality`: `{'mean': 0.057703081232492945, 'std': 0.08938100620374166, 'min': 0.0196078431372549, 'median': 0.0196078431372549, 'max': 0.5882352941176471}`
-- Overall node `betweenness_centrality`: `{'mean': 0.048116246498599434, 'std': 0.12935629306607951, 'min': 0.0, 'median': 0.0, 'max': 0.5868627450980392}`
-- Overall node `in_closeness`: `{'mean': 0.26136314342866235, 'std': 0.07755415443639571, 'min': 0.0784313725490196, 'median': 0.2670157068062827, 'max': 0.5882352941176471}`
-- Overall node `out_closeness`: `{'mean': 0.26136314342866235, 'std': 0.07755415443639571, 'min': 0.0784313725490196, 'median': 0.2670157068062827, 'max': 0.5882352941176471}`
-- Overall node `pagerank`: `{'mean': 0.02857142857142859, 'std': 0.04180136685775793, 'min': 0.009836369978962489, 'median': 0.011161324073429036, 'max': 0.2852883835824953}`
-- Overall edge `edge_betweenness`: `{'mean': 0.03171725311129017, 'std': 0.038551446813428134, 'min': 0.005656108597285068, 'median': 0.019230769230769232, 'max': 0.22888386123680243}`
+- Nœuds du graphe global, `in_degree` : `{'mean': 2.085714285714286, 'std': 3.211134871593076, 'min': 1, 'median': 1.0, 'max': 21}`
+- Nœuds du graphe global, `out_degree` : `{'mean': 2.085714285714286, 'std': 3.211134871593076, 'min': 1, 'median': 1.0, 'max': 21}`
+- Nœuds du graphe global, `degree` : `{'mean': 4.171428571428572, 'std': 6.422269743186152, 'min': 2, 'median': 2.0, 'max': 42}`
+- Nœuds du graphe global, `in_degree_centrality` : `{'mean': 0.057703081232492945, 'std': 0.08938100620374166, 'min': 0.0196078431372549, 'median': 0.0196078431372549, 'max': 0.5882352941176471}`
+- Nœuds du graphe global, `out_degree_centrality` : `{'mean': 0.057703081232492945, 'std': 0.08938100620374166, 'min': 0.0196078431372549, 'median': 0.0196078431372549, 'max': 0.5882352941176471}`
+- Nœuds du graphe global, `betweenness_centrality` : `{'mean': 0.048116246498599434, 'std': 0.12935629306607951, 'min': 0.0, 'median': 0.0, 'max': 0.5868627450980392}`
+- Nœuds du graphe global, `in_closeness` : `{'mean': 0.26136314342866235, 'std': 0.07755415443639571, 'min': 0.0784313725490196, 'median': 0.2670157068062827, 'max': 0.5882352941176471}`
+- Nœuds du graphe global, `out_closeness` : `{'mean': 0.26136314342866235, 'std': 0.07755415443639571, 'min': 0.0784313725490196, 'median': 0.2670157068062827, 'max': 0.5882352941176471}`
+- Nœuds du graphe global, `pagerank` : `{'mean': 0.02857142857142859, 'std': 0.04180136685775793, 'min': 0.009836369978962489, 'median': 0.011161324073429036, 'max': 0.2852883835824953}`
+- Arêtes du graphe global, `edge_betweenness` : `{'mean': 0.03171725311129017, 'std': 0.038551446813428134, 'min': 0.005656108597285068, 'median': 0.019230769230769232, 'max': 0.22888386123680243}`
 
-## Monthly evolution by service
+## Évolution mensuelle par service
 
-| Month | Service | Nodes | Edges | Mean degree | Max PageRank | Max betweenness |
+| Mois | Service | Nœuds | Arêtes | Degré moyen | PageRank maximal | Betweenness maximal |
 |---|---|---:|---:|---:|---:|---:|
 | 2018-01 | International | 11 | 16 | 2.9091 | 0.25798334267425543 | 0.22222222222222224 |
 | 2018-01 | National | 51 | 114 | 4.4706 | 0.166210083339985 | 0.5700000000000001 |
@@ -371,13 +371,14 @@
 | 2026-09 | International | 8 | 12 | 3.0000 | 0.2972985102951782 | 0.2857142857142857 |
 | 2026-09 | National | 51 | 109 | 4.2745 | 0.16966673297624676 | 0.6327891156462586 |
 
-## PageRank convergence and warnings
+## Convergence de PageRank et avertissements
 
-- PageRank converged for every calculated service-period graph.
+- PageRank a convergé pour chaque graphe calculé par service et période.
+- En cas de non-convergence, le PageRank est manquant (valeur `None`) pour les nœuds du graphe concerné ; il n’est pas remplacé par zéro.
 
-## Interpretation limitations
+## Limites d’interprétation
 
-- Metrics are unweighted and describe shortest paths in observed origin-destination topology, not actual train itineraries or physical track segments.
-- Degree counts distinct observed connections, not train frequency; centrality does not establish passenger volume, operational importance, or delay propagation.
-- Overall values summarize the union of observed edges across the period; monthly values are calculated independently from that month's observations.
-- National and International services are calculated separately.
+- Les métriques sont non pondérées et décrivent les plus courts chemins dans la topologie origine-destination observée ; elles ne représentent ni des itinéraires réels de trains ni des segments physiques de voie.
+- Degree compte les liaisons observées distinctes, et non la fréquence des trains ; la centralité ne mesure ni le nombre de voyageurs, ni l’importance opérationnelle, ni la propagation des retards.
+- Les valeurs globales résument l’union des arêtes observées sur la période ; les valeurs mensuelles sont calculées séparément à partir des observations du mois correspondant.
+- Les services National et International sont calculés séparément.

@@ -15,3 +15,7 @@ htmlcov/
 # Python bytecode and cache directories
 __pycache__/
 *.py[cod]
+
+# Local application logs
+/logs/debug.log
+/logs/error.log

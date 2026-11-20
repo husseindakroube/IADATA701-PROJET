@@ -1,69 +1,82 @@
-# Association analysis for Streamlit integration
+# Analyse des associations pour l’intégration Streamlit
 
-The association module reads the existing Phase 2 file
-`data/processed/research_dataset.parquet`. It does not rerun upstream
-preparation and does not modify input data. The outputs are three compact
-Parquet tables, metadata, reusable PNG figures, and an updated marked section
-in the unified French research report. The module has no Streamlit dependency.
+Le module d’analyse des associations lit le fichier existant de la phase 2,
+`data/processed/research_dataset.parquet`. Il ne relance pas les étapes de
+préparation en amont et ne modifie pas les données d’entrée. Il produit trois
+tables Parquet compactes, des métadonnées, des figures PNG réutilisables et une
+section balisée mise à jour dans le rapport de recherche unifié en français. Le
+module ne dépend pas de Streamlit.
 
-## Run
+## Exécution
 
 ```powershell
 uv run python -c "from projet_kit_data.graph import run_association_analysis_pipeline; result = run_association_analysis_pipeline()"
 ```
 
-## Analysis
+## Analyse
 
-Pearson and Spearman correlations use pairwise finite observations.
-Cancellation-rate observations are included only when the existing
-`cancellation_rate_valid` flag is true. The correlation table keeps raw
-p-values as optional exploratory fields; no multiple-testing correction is
-applied, and p-values are not confirmatory evidence. Monthly observations for
-the same directed liaison are repeated observations, so ordinary p-values may
-overstate the statistical evidence.
+Les corrélations de Pearson et de Spearman utilisent les observations finies
+disponibles par paire. Les observations du taux d’annulation ne sont incluses
+que si le flag existant `cancellation_rate_valid` est vrai. La table de
+corrélations conserve les valeurs p brutes comme champs exploratoires
+facultatifs ; aucune correction pour comparaisons multiples n’est appliquée et
+les valeurs p ne constituent pas une preuve confirmatoire. Les observations
+mensuelles d’une même liaison orientée sont répétées ; les valeurs p classiques
+peuvent donc surestimer le niveau de preuve statistique.
 
-The outcomes are mean arrival delay of all trains, valid cancellation rate, and
-mean arrival delay among delayed trains. The predictors are existing edge
-betweenness and source/target degree, betweenness centrality, and PageRank. The
-restricted-scope `nb_train_retard_sup_15` is not an outcome;
-`arrival_delay_rate` is not created. National and International are reported
-separately. Overall is provided only as a pooled descriptive overview.
+Les variables de résultat sont le retard moyen à l’arrivée de tous les trains,
+le taux d’annulation valide et le retard moyen à l’arrivée des trains en retard.
+Les variables explicatives sont les métriques existantes de betweenness des
+arêtes, ainsi que le degré, la betweenness centrality et le PageRank des nœuds
+source et cible. Le champ `nb_train_retard_sup_15`, dont le périmètre
+d’application est restreint, n’est pas une variable de résultat ;
+`arrival_delay_rate` n’est pas créé. Les services National et International
+sont présentés séparément. La vue Overall est uniquement une synthèse
+descriptive regroupée.
 
-Outcome summaries are available across centrality groups. Group boundaries
-retain ties; a zero group is separated when zero values meet the existing 5%
-threshold, and the existing minimum sample and distinct-value requirements
-remain in force. Summaries include sample size, median, mean, standard
-deviation, quartiles, and IQR.
+Des synthèses des résultats sont également fournies par groupe de centralité.
+Les ex æquo sont conservés aux limites des groupes ; un groupe de valeurs
+égales à zéro est séparé lorsque leur proportion atteint le seuil existant de 5 %.
+Les exigences existantes relatives à la taille minimale des échantillons et au
+nombre de valeurs distinctes restent en vigueur. Les synthèses comprennent la
+taille de l’échantillon, la médiane, la moyenne, l’écart-type, les quartiles et
+l’IQR.
 
-A robustness table compares full-data correlations for the primary outcome
-with correlations after excluding values below -15 minutes for that comparison
-alone. The underlying observations remain unchanged.
+Une table de robustesse compare les corrélations calculées sur toutes les
+données à celles calculées, pour cette comparaison uniquement, après exclusion
+des valeurs inférieures à -15 minutes. Les observations sous-jacentes restent
+inchangées.
 
-## Output contract
+## Contrat de sortie
 
-Files are written to `data/processed/graph/phase3b/`:
+Les fichiers sont écrits dans `data/processed/graph/phase3b/` :
 
-- `correlations.parquet`: one row per scope, service, predictor, outcome, and
-  method; includes coefficient, raw p-value, and effective sample size.
-- `quantile_comparisons.parquet`: one row per group and scope/service, with
-  group label, grouping strategy, sample size, median, mean, standard
-  deviation, Q1, Q3, and IQR.
-- `robustness_comparisons.parquet`: full and sensitivity coefficients,
-  coefficient difference, method, and both effective sample sizes.
-- `association_metadata.json`: input dimensions and period, service liaison
-  counts, grouping rules, interpretation limits, and output schemas.
+- `correlations.parquet` : une ligne par périmètre, service, variable
+  explicative, résultat et méthode ; contient le coefficient, la valeur p brute
+  et la taille effective de l’échantillon.
+- `quantile_comparisons.parquet` : une ligne par groupe et périmètre/service,
+  avec le libellé du groupe, la méthode de regroupement, la taille de
+  l’échantillon, la médiane, la moyenne, l’écart-type, Q1, Q3 et l’IQR.
+- `robustness_comparisons.parquet` : coefficients calculés sur l’ensemble des
+  données et en analyse de sensibilité, différence entre les coefficients,
+  méthode et tailles effectives des deux échantillons.
+- `association_metadata.json` : dimensions et période des données d’entrée,
+  nombres de liaisons par service, règles de regroupement, limites
+  d’interprétation et schémas de sortie.
 
-Four reusable figures are written to
-`data/processed/graph/visualizations/phase3b/`: two service-specific scatter
-plots, a centrality-group outcome plot, and a Spearman overview. The generated
-report section is bounded by dedicated association markers in
-`data/reports/graph/research_report.md`; text outside those markers is retained.
+Quatre figures réutilisables sont écrites dans
+`data/processed/graph/visualizations/phase3b/` : deux nuages de points, un par
+service, une figure des résultats par groupe de centralité et une synthèse de
+Spearman. La section générée dans `data/reports/graph/research_report.md` est
+délimitée par des marqueurs dédiés aux associations ; le texte situé hors de
+ces marqueurs est conservé.
 
-## Interpretation limits
+## Limites d’interprétation
 
-Associations do not establish causality. National and International have
-different route compositions and network structures, so their operational
-outcomes should not be compared without qualification. International has fewer
-distinct OD connections. OD liaisons are not necessarily adjacent physical rail
-segments or confirmed train itineraries. The data do not establish passenger
-volume or delay propagation.
+Les associations ne démontrent pas de lien causal. Les services National et
+International ont des compositions de liaisons et des structures de réseau
+différentes ; leurs résultats opérationnels ne doivent donc pas être comparés
+sans réserve. Le service International comporte moins de liaisons OD
+distinctes. Une liaison OD ne correspond pas nécessairement à un segment
+physique adjacent ni à un itinéraire confirmé. Les données ne permettent
+d’établir ni le volume de voyageurs ni la propagation des retards.
