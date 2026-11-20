@@ -41,6 +41,7 @@ pages = [
     st.Page("pages/main.py", title="Accueil", default=True),
     st.Page("pages/data_quality.py", title="Qualité des données"),
     st.Page("pages/routes_network.py", title="Liaisons et réseau"),
+    st.Page("pages/association_analysis.py", title="Structure et régularité"),
     st.Page("pages/clusters.py", title="Profils et clusters"),
     st.Page("pages/predictions.py", title="Prédictions"),
     st.Page("pages/conclusions.py", title="Conclusions"),

@@ -57,6 +57,7 @@ def test_saved_metrics_match_same_test_rows():
         "clusters.py",
         "predictions.py",
         "conclusions.py",
+        "association_analysis.py",
     ],
 )
 def test_all_pages_render(page):
@@ -220,7 +221,7 @@ def test_ranking_validation_excludes_missing_values_without_zero_imputation():
 
 
 def test_centrality_explanation_limits_od_graph_interpretation():
-    source = (ROOT / "app/pages/routes_network.py").read_text(encoding="utf-8")
+    source = (ROOT / "app/pages/association_analysis.py").read_text(encoding="utf-8")
     assert "Elle ne " in source
     assert "prouve ni le passage de trains réels" in source
     assert "ne doit pas être interprétée comme zéro" in source

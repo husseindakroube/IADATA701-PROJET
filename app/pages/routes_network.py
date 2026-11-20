@@ -13,20 +13,15 @@ from utils.carte import (
     charger_liaisons_detail,
     charger_sncf_mensuel,
     construire_carte,
-    construire_ego_graphe,
-    gares_du_service,
     libelle_liaison,
     LIBELLES_CLUSTERS,
 )
 from utils.data import (
     filters,
-    network_summary_metrics,
     observations,
     scope_metrics,
     table,
-    validate_rankings,
 )
-from projet_kit_data.web_data import ROOT
 
 
 st.caption("EXPLORER LES SERVICES TGV")
@@ -34,15 +29,16 @@ st.title("Une liaison, mois après mois")
 st.write(
     "Explorez les 130 liaisons orientées du réseau sur une carte interactive, "
     "suivez l'évolution des retards et annulations d'une liaison précise, "
-    "ou analysez la structure globale du réseau à travers les centralités."
+    "ou comparez les caractéristiques de deux liaisons. La structure du réseau "
+    "et ses associations avec la régularité sont présentées dans la page "
+    "Structure et régularité."
 )
 
-carte_onglet, routes, comparer, network = st.tabs(
+carte_onglet, routes, comparer = st.tabs(
     [
         "Carte interactive",
         "Explorer une liaison",
         "Comparer deux liaisons",
-        "Comprendre le réseau",
     ]
 )
 
@@ -588,151 +584,3 @@ with comparer:
             ),
         )
         st.plotly_chart(fig_causes, width="stretch")
-
-
-# =============================================================================
-# Onglet 4 — Comprendre le réseau (analyse structurelle)
-# =============================================================================
-with network:
-    st.subheader("Analyse structurelle du réseau TGV")
-    st.write(
-        "Analyse par théorie des graphes de la structure origine-destination "
-        "des services TGV AQST sur l'ensemble de la période 2018-01 → 2026-09. "
-        "Chaque gare est un nœud, chaque liaison orientée une arête."
-    )
-    st.caption(
-        "Le graphe décrit les liaisons origine-destination observées dans les "
-        "données mensuelles. Il ne permet pas d'établir les itinéraires réels, "
-        "les flux de voyageurs, l'infrastructure physique ni une propagation "
-        "des retards."
-    )
-
-    # Encadré pédagogique sur les centralités
-    with st.expander("Comprendre les mesures de centralité", expanded=False):
-        st.markdown(
-            "**Degré entrant / sortant.** Nombre de liaisons origine-destination "
-            "observées qui arrivent à une gare ou en partent dans le graphe. Il "
-            "décrit sa connectivité dans ce graphe, sans mesurer son importance "
-            "dans le réseau ferroviaire physique.\n\n"
-            "**Betweenness Centrality (intermédiarité).** Mesure la position d'une "
-            "gare dans les plus courts chemins du graphe OD construit. Elle ne "
-            "prouve ni le passage de trains réels par cette gare, ni un volume "
-            "de trafic ou un rôle de transit stratégique.\n\n"
-            "**PageRank.** Mesure calculée à partir des connexions dirigées du "
-            "graphe OD et de la structure des voisins. Une valeur manquante indique "
-            "un résultat indisponible, notamment en cas de non-convergence ; elle "
-            "ne doit pas être interprétée comme zéro.\n\n"
-            "**Closeness (proximité).** Résume les distances dans le graphe OD "
-            "construit. Elle ne décrit pas les distances ni l'accessibilité de "
-            "l'infrastructure ferroviaire réelle."
-        )
-
-    # Bandeau de métriques réseau
-    summary = table(
-        "data/processed/graph/descriptive/network_summary.parquet", required=False
-    )
-    if not summary.empty:
-        st.markdown("### Vue d'ensemble des deux réseaux")
-        for _, row in summary.iterrows():
-            with st.container(border=True):
-                st.markdown(f"**Réseau {row.service}**")
-                colonnes = st.columns(4)
-                for index, (libelle, valeur) in enumerate(network_summary_metrics(row)):
-                    colonnes[index % 4].metric(libelle, valeur)
-
-    st.divider()
-
-    # Sélection du service
-    service = st.selectbox(
-        "Choisir un réseau à analyser", ["National", "International"]
-    )
-    log_selection("network_view", service=service)
-
-    # Ego-graphe centré sur une gare
-    st.markdown("### Explorer une gare et ses connexions directes")
-    st.caption(
-        "Choisissez une gare pour voir ses liaisons directes. Rouge = départs "
-        "de la gare, bleu = arrivées. Taille des voisins proportionnelle à leur betweenness."
-    )
-    liste_gares = gares_du_service(service)
-    if liste_gares:
-        # Sélection par défaut : Paris Lyon pour National, Paris Lyon pour Internat
-        default_idx = 0
-        for candidat in ["PARIS LYON", "PARIS EST", "LYON PART DIEU"]:
-            if candidat in liste_gares:
-                default_idx = liste_gares.index(candidat)
-                break
-        gare_centrale = st.selectbox(
-            "Gare centrale",
-            liste_gares,
-            index=default_idx,
-            key=f"ego_gare_{service}",
-        )
-        log_selection("ego_graphe_view", service=service, gare=gare_centrale)
-        fig_ego = construire_ego_graphe(service, gare_centrale)
-        st.plotly_chart(fig_ego, width="stretch")
-
-    # Visualisation statique en complément
-    path = ROOT / f"data/processed/graph/visualizations/network_{service.lower()}.png"
-    if path.is_file():
-        with st.expander(
-            "Voir aussi la visualisation statique issue de l'analyse graphe"
-        ):
-            st.image(
-                str(path),
-                caption=f"Réseau {service} · 2018-01 → 2026-09 · liaisons orientées",
-                width="stretch",
-            )
-
-    # Classements de centralité
-    ranking, ranking_warning = validate_rankings(
-        table("data/processed/graph/descriptive/node_rankings.parquet", required=False)
-    )
-    if ranking_warning:
-        st.warning(ranking_warning)
-    if not ranking.empty:
-        ranking_service = ranking.loc[ranking.service.eq(service)]
-        if not ranking_service.empty:
-            st.markdown("### Classements des gares les plus centrales")
-            st.caption(
-                "Top des gares pour chaque mesure de centralité calculée sur "
-                "l'ensemble de la période. Ces rangs décrivent uniquement le "
-                "graphe OD observé et ne démontrent pas un rôle dans les "
-                "itinéraires ou le trafic ferroviaire réels."
-            )
-            classement_affiche = ranking_service.drop(
-                columns=["node_id"], errors="ignore"
-            ).rename(
-                columns={
-                    "rank": "Rang",
-                    "service": "Service",
-                    "ranking_metric": "Mesure",
-                    "station_name": "Gare",
-                    "value": "Valeur",
-                }
-            )
-            classement_affiche["Mesure"] = classement_affiche["Mesure"].replace(
-                {
-                    "connectivity_degree": "Degré de connectivité",
-                    "betweenness_centrality": "Betweenness Centrality",
-                    "pagerank": "PageRank",
-                }
-            )
-            st.dataframe(classement_affiche, hide_index=True, width="stretch")
-        else:
-            st.info(f"Aucun classement n'est disponible pour le service {service}.")
-
-    # Détails d une gare
-    nodes = table("data/processed/graph/node_metrics.parquet", required=False)
-    if not nodes.empty:
-        nodes_s = nodes.loc[nodes.service.eq(service) & nodes.period.eq("overall")]
-        if not nodes_s.empty:
-            st.markdown("### Métriques détaillées par gare")
-            station = st.selectbox(
-                "Choisir une gare",
-                sorted(nodes_s.station_name.unique()),
-                key=f"station_{service}",
-            )
-            log_selection("station_view", service=service, station=station)
-            detail = nodes_s.loc[nodes_s.station_name.eq(station)]
-            st.dataframe(detail, hide_index=True, width="stretch")
