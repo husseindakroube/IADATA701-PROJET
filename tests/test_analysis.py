@@ -1,4 +1,4 @@
-"Tests des jointures de recherche et des taux d’annulation calculés."
+"""Tests des jointures du jeu de recherche et des taux d’annulation dérivés."""
 
 import json
 
@@ -154,7 +154,7 @@ def test_monthly_edge_and_node_joins_are_service_specific_and_keep_missing_metri
     None
 ):
     observations, edges, nodes = inputs()
-    # Remove the monthly source-node metric for e5; retain its observation.
+    # Supprimer la métrique mensuelle du nœud source pour e5 ; conserver l’observation.
     nodes = nodes.filter(
         ~((pl.col("period") == "2024-02") & (pl.col("node_id") == "C"))
     )
@@ -179,7 +179,7 @@ def test_monthly_edge_and_node_joins_are_service_specific_and_keep_missing_metri
 
 def test_duplicate_keys_and_endpoint_mismatch_are_rejected() -> None:
     observations, edges, nodes = inputs()
-    with pytest.raises(ValueError, match="clés dupliquées"):
+    with pytest.raises(ValueError, match="valeurs de clé en double"):
         prepare_research_dataset(
             pl.concat([observations, observations.head(1)]), edges, nodes
         )
@@ -216,4 +216,6 @@ def test_file_pipeline_exports_dataset_metadata_and_report(tmp_path) -> None:
     assert metadata["output_row_count"] == 5
     report = result.output_paths["quality_report"].read_text(encoding="utf-8")
     assert "Métriques de graphe manquantes" in report
+    assert "Taux manquants : 3" in report
+    assert "Taux nuls" not in report
     assert "Schéma de sortie" in report

@@ -1,23 +1,23 @@
-# Rapport de construction des graphes SNCF
+# Rapport de construction du graphe SNCF
 
-## Aperçu du jeu de données
+## Vue d’ensemble du jeu de données
 
-- Source: `data\processed\sncf.parquet`
-- Lignes sources : 12,907
+- Source : `data\processed\sncf.parquet`
+- Lignes source : 12,907
 - Observations mensuelles valides : 12,907
 - Lignes exclues : 0
 - Motifs d’exclusion : `{}`
-- Couverture temporelle : 2018-01 to 2026-09 (105 mois distincts)
-- Services: International, National
+- Couverture temporelle : de 2018-01 à 2026-09 (105 mois distincts)
+- Services : International, National
 - Gares : 59
-- Arêtes orientées distinguées par service : 146
+- Arêtes orientées tenant compte du service : 146
 - Observations mensuelles : 12,907
 
-## Diagnostics structurels du réseau par service
+## Diagnostics de la structure du réseau par service
 
-Les effectifs décrivent la topologie observée de chaque service. Aucun nœud n’est isolé lorsqu’il existe des arêtes, car les nœuds proviennent des arêtes observées.
+Tous les comptes portent sur la topologie observée propre à chaque service. Les graphes de service contenant des arêtes n’ont aucun nœud isolé, car leurs nœuds sont créés à partir des arêtes observées.
 
-| Service | Nœuds | Arêtes | Isolés | Boucles | Composantes faibles | Composantes fortes | Plus grande composante faible | Entrées multiples | Sorties multiples |
+| Service | Nœuds | Arêtes | Nœuds isolés | Boucles | Composantes faibles | Composantes fortes | Plus grande composante faible | Plusieurs arêtes entrantes | Plusieurs arêtes sortantes |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | International | 18 | 30 | 0 | 0 | 3 | 3 | 11 | 3 | 3 |
 | National | 52 | 116 | 0 | 0 | 1 | 1 | 52 | 15 | 15 |
@@ -25,9 +25,9 @@ Les effectifs décrivent la topologie observée de chaque service. Aucun nœud n
 ## Diagnostics temporels
 
 - Mois distincts observés : 105
-- Lacunes de couverture mensuelle globale : none
+- Mois manquants dans la couverture globale : aucun
 
-| Mois | Observations | Arêtes uniques | Nouvelles arêtes depuis le mois précédent | Arêtes non observées depuis le mois précédent |
+| Mois | Observations | Arêtes uniques | Nouvelles arêtes par rapport au mois précédent | Arêtes qui ne sont plus observées par rapport au mois précédent |
 |---|---:|---:|---:|---:|
 | 2018-01 | 130 | 130 | 130 | 0 |
 | 2018-02 | 130 | 130 | 0 | 0 |
@@ -137,9 +137,9 @@ Les effectifs décrivent la topologie observée de chaque service. Aucun nœud n
 
 ## Diagnostics de qualité des données
 
-- Observations à clé métier dupliquée : 0
-- Effectifs exclus par motif : `{}`
-- Indicateurs de diagnostic actifs dans la source ; observations conservées si les clés du graphe sont valides :
+- Enregistrements dupliqués selon la clé métier : 0
+- Nombre d’exclusions par motif : `{}`
+- Flags diagnostiques déjà activés dans la source (ces observations restent incluses si les clés du graphe sont valides) :
   - `flag_negative_count`: 43
   - `flag_sup30_lt_sup60`: 354
   - `flag_sup15_lt_sup30`: 3
@@ -147,4 +147,4 @@ Les effectifs décrivent la topologie observée de chaque service. Aucun nœud n
 
 ## Interprétation et avertissements
 
-- Une liaison est une paire origine-destination observée, pas nécessairement un tronçon physique adjacent, une étape consécutive ou une correspondance confirmée. L’adjacence ne prouve ni mouvement réel ni propagation des retards.
+- Une liaison est une paire origine-destination observée, mais pas nécessairement un segment ferroviaire physiquement adjacent, un tronçon consécutif du trajet d’un train ni une correspondance confirmée. L’adjacence dans le graphe ne prouve ni un déplacement de train ni une propagation des retards.

@@ -1,4 +1,4 @@
-"Crée des graphiques descriptifs réutilisables du réseau et des résultats au format PNG."
+"""Créer des graphiques réutilisables en PNG sur le réseau et ses résultats."""
 
 from __future__ import annotations
 
@@ -14,6 +14,8 @@ import networkx as nx
 import numpy as np
 import polars as pl
 
+from projet_kit_data.graph.presentation import METRIC_PRESENTATION
+
 GRAPH_DIR = Path("data/processed/graph")
 DEFAULT_RESEARCH_PATH = Path("data/processed/research_dataset.parquet")
 DEFAULT_NODE_METRICS_PATH = GRAPH_DIR / "node_metrics.parquet"
@@ -28,7 +30,9 @@ SERVICE_ORDER = ("National", "International")
 def _require(frame: pl.DataFrame, columns: set[str], label: str) -> None:
     missing = sorted(columns.difference(frame.columns))
     if missing:
-        raise ValueError(f"{label} ne contient pas les colonnes : {', '.join(missing)}")
+        raise ValueError(
+            f"{label} ne contient pas les colonnes suivantes : {', '.join(missing)}"
+        )
 
 
 def _finish(fig: plt.Figure, path: Path) -> None:
@@ -38,7 +42,7 @@ def _finish(fig: plt.Figure, path: Path) -> None:
 
 
 def _component_layout(graph: nx.DiGraph) -> dict[str, np.ndarray]:
-    "Dispose les composantes faiblement connexes indépendamment dans une grille compacte."
+    """Disposer séparément les composantes faiblement connexes dans une grille compacte."""
     components = sorted(nx.weakly_connected_components(graph), key=len, reverse=True)
     columns = (
         len(components)
@@ -153,12 +157,12 @@ def _network_chart(
             },
             arrowprops={"arrowstyle": "-", "color": "#64748b", "lw": 0.6},
         )
-    axis.set_title(f"Réseau de liaisons OD observées — {service}", fontsize=15, pad=22)
+    axis.set_title(f"Réseau OD observé — {service}", fontsize=15, pad=22)
     axis.margins(x=0.12, y=0.18)
     axis.text(
         0.01,
         0.01,
-        "Taille des nœuds : intermédiarité globale. Les liens ne représentent ni trafic, ni itinéraire complet.",
+        f"Taille des nœuds : {METRIC_PRESENTATION['betweenness_centrality'].label} globale. Les liaisons OD ne représentent ni des volumes de trafic ni des itinéraires complets.",
         transform=axis.transAxes,
         fontsize=9,
         color="#444444",
@@ -171,12 +175,8 @@ def _degree_chart(
     overall_nodes: pl.DataFrame, services: list[str], destination: Path
 ) -> Path:
     fig, axes = plt.subplots(1, 2, figsize=(15, 5.8), sharey=True)
-    for axis, column, title in zip(
-        axes,
-        ("in_degree", "out_degree"),
-        ("Degré entrant", "Degré sortant"),
-        strict=True,
-    ):
+    for axis, column in zip(axes, ("in_degree", "out_degree"), strict=True):
+        title = METRIC_PRESENTATION[column].label
         distributions = {}
         for service in services:
             frame = overall_nodes.filter(pl.col("service") == service)
@@ -202,7 +202,7 @@ def _degree_chart(
                 alpha=0.88,
             )
         axis.set_title(title)
-        axis.set_xlabel("Nombre de voisins distincts")
+        axis.set_xlabel("Voisins distincts")
         axis.set_xticks(degrees, [str(value) for value in degrees], rotation=90)
         axis.grid(axis="y", alpha=0.22)
         axis.legend(frameon=False)
@@ -227,12 +227,8 @@ def _centrality_chart(
     overall_nodes: pl.DataFrame, services: list[str], destination: Path
 ) -> Path:
     fig, axes = plt.subplots(1, 2, figsize=(13, 5.4))
-    for axis, column, title in zip(
-        axes,
-        ("betweenness_centrality", "pagerank"),
-        ("Intermédiarité des gares", "PageRank des gares"),
-        strict=True,
-    ):
+    for axis, column in zip(axes, ("betweenness_centrality", "pagerank"), strict=True):
+        title = METRIC_PRESENTATION[column].label
         for service in services:
             frame = overall_nodes.filter(pl.col("service") == service)
             values = frame[column].drop_nulls().to_list()
@@ -249,12 +245,12 @@ def _centrality_chart(
                 linewidth=1.8,
             )
         axis.set_title(title)
-        axis.set_xlabel("Valeur")
+        axis.set_xlabel("Valeur de la métrique")
         axis.set_ylabel("Proportion cumulée")
         axis.set_ylim(0, 1.02)
         axis.grid(alpha=0.22)
         axis.legend(frameon=False)
-    fig.suptitle("Distributions empiriques des centralités globales")
+    fig.suptitle("Distributions empiriques des métriques de centralité des nœuds")
     path = destination / "node_centrality_distributions.png"
     _finish(fig, path)
     return path
@@ -283,7 +279,7 @@ def _edge_betweenness_chart(
         axes[0].text(
             0.02,
             0.96 - 0.12 * list(services).index(service),
-            f"{service}: médiane={median:.3f}; P90={percentile_90:.3f}",
+            f"{service} : médiane={median:.4f} ; P90={percentile_90:.4f}",
             transform=axes[0].transAxes,
             va="top",
             fontsize=8,
@@ -291,19 +287,19 @@ def _edge_betweenness_chart(
         )
     axes[0].set(
         title="Fonction de répartition empirique",
-        xlabel="Intermédiarité des liaisons",
+        xlabel=METRIC_PRESENTATION["edge_betweenness"].label,
         ylabel="Proportion cumulée",
     )
     axes[1].set(
         title="Histogramme complémentaire",
-        xlabel="Intermédiarité des liaisons",
-        ylabel="Nombre de liaisons",
+        xlabel=METRIC_PRESENTATION["edge_betweenness"].label,
+        ylabel="Nombre de liaisons OD",
     )
     for axis in axes:
         axis.grid(alpha=0.2)
         axis.legend(frameon=False)
     fig.suptitle(
-        "Intermédiarité des liaisons — mesure topologique, pas un volume de trafic"
+        f"{METRIC_PRESENTATION['edge_betweenness'].label} — mesure topologique, et non volume de trafic"
     )
     path = destination / "edge_betweenness_distribution.png"
     _finish(fig, path)
@@ -312,35 +308,42 @@ def _edge_betweenness_chart(
 
 def _ranking_charts(
     overall_nodes: pl.DataFrame,
-    overall_edges: pl.DataFrame,
     nodes: pl.DataFrame,
-    edges: pl.DataFrame,
     services: list[str],
     destination: Path,
 ) -> dict[str, Path]:
     paths: dict[str, Path] = {}
     node_names = dict(zip(nodes["node_id"].to_list(), nodes["station_name"].to_list()))
     metrics = (
-        ("degree", "Degré"),
-        ("betweenness_centrality", "Intermédiarité"),
-        ("pagerank", "PageRank"),
+        ("degree", METRIC_PRESENTATION["degree"].label),
+        (
+            "betweenness_centrality",
+            METRIC_PRESENTATION["betweenness_centrality"].label,
+        ),
+        ("pagerank", METRIC_PRESENTATION["pagerank"].label),
     )
-    fig, axes = plt.subplots(3, 2, figsize=(15, 14))
+    fig, axes = plt.subplots(3, len(services), figsize=(14, 11), squeeze=False)
     for row, (metric, title) in enumerate(metrics):
         for column, service in enumerate(services):
             axis = axes[row, column]
+            precision = METRIC_PRESENTATION[metric].precision
             subset = (
-                overall_nodes.filter(pl.col("service") == service)
-                .sort(metric, descending=True)
-                .head(10)
+                overall_nodes.filter(
+                    (pl.col("service") == service) & (pl.col(metric) > 0)
+                )
+                .with_columns(pl.col(metric).round(precision).alias("_display_value"))
+                .with_columns(
+                    pl.col("_display_value")
+                    .rank(method="dense", descending=True)
+                    .alias("_rank")
+                )
+                .filter(pl.col("_rank") <= 3)
+                .sort("_rank")
             )
             names = (
                 subset["station_name"].to_list()
                 if "station_name" in subset.columns
-                else [
-                    node_names.get(value, value)
-                    for value in subset["node_id"].to_list()
-                ]
+                else [node_names.get(node_id, node_id) for node_id in subset["node_id"]]
             )
             values = subset[metric].to_list()
             positions = np.arange(len(names))
@@ -349,53 +352,15 @@ def _ranking_charts(
             axis.invert_yaxis()
             axis.set_title(f"{service} — {title}")
             axis.grid(axis="x", alpha=0.2)
-            axis.set_xlabel("Valeur de la mesure")
-    fig.suptitle("Dix premières gares selon trois mesures distinctes", fontsize=15)
-    path = destination / "top10_station_rankings.png"
-    _finish(fig, path)
-    paths["top10_station_rankings"] = path
-
-    named_edges = (
-        overall_edges.join(
-            edges.select("edge_id", "service", "source", "target"),
-            on=["edge_id", "service"],
-            how="left",
-        )
-        .join(nodes, left_on="source", right_on="node_id", how="left")
-        .rename({"station_name": "origin"})
-        .join(nodes, left_on="target", right_on="node_id", how="left")
-        .rename({"station_name": "destination"})
-    )
-    fig, axes = plt.subplots(
-        1, len(services), figsize=(16, max(6, len(services) * 4)), squeeze=False
-    )
-    for column, service in enumerate(services):
-        subset = (
-            named_edges.filter(pl.col("service") == service)
-            .sort("edge_betweenness", descending=True)
-            .head(10)
-        )
-        labels = [
-            f"{origin} → {target}"
-            for origin, target in zip(
-                subset["origin"].to_list(), subset["destination"].to_list(), strict=True
-            )
-        ]
-        values = subset["edge_betweenness"].to_list()
-        positions = np.arange(len(labels))
-        axis = axes[0, column]
-        axis.barh(positions, values, color=SERVICE_COLORS.get(service), alpha=0.88)
-        axis.set_yticks(positions, labels, fontsize=8)
-        axis.invert_yaxis()
-        axis.set_title(service)
-        axis.set_xlabel("Intermédiarité de liaison")
-        axis.grid(axis="x", alpha=0.2)
+            axis.set_xlabel(title)
+            if not names:
+                axis.text(0.5, 0.5, "Aucune valeur positive", ha="center", va="center")
     fig.suptitle(
-        "Dix premières liaisons selon l’intermédiarité topologique", fontsize=15
+        "Gares les mieux classées par métrique (trois rangs denses, ex æquo inclus)"
     )
-    path = destination / "top10_edge_rankings.png"
+    path = destination / "leading_station_rankings.png"
     _finish(fig, path)
-    paths["top10_edge_rankings"] = path
+    paths["leading_station_rankings"] = path
     return paths
 
 
@@ -425,13 +390,18 @@ def _monthly_chart(
     fig, axes = plt.subplots(2, 2, figsize=(14, 9))
     series = (
         (axes[0, 0], "nodes", "Gares observées", "Nombre de gares"),
-        (axes[0, 1], "edges", "Liaisons dirigées observées", "Nombre de liaisons"),
-        (axes[1, 0], "max_pagerank", "Maximum mensuel du PageRank", "PageRank maximal"),
+        (axes[0, 1], "edges", "Liaisons OD dirigées observées", "Nombre de liaisons"),
+        (
+            axes[1, 0],
+            "max_pagerank",
+            f"Maximum mensuel : {METRIC_PRESENTATION['pagerank'].label}",
+            METRIC_PRESENTATION["pagerank"].label,
+        ),
         (
             axes[1, 1],
             "max_betweenness",
-            "Maximum mensuel de l’intermédiarité",
-            "Intermédiarité maximale",
+            f"Maximum mensuel : {METRIC_PRESENTATION['betweenness_centrality'].label}",
+            METRIC_PRESENTATION["betweenness_centrality"].label,
         ),
     )
     for service in services:
@@ -479,7 +449,7 @@ def _monthly_chart(
                 zorder=5,
             )
             axes[0, 0].annotate(
-                f"{period}: {nodes_count[index]} gares",
+                f"{period} : {nodes_count[index]} gares",
                 (index, nodes_count[index]),
                 xytext=(4, 8),
                 textcoords="offset points",
@@ -494,7 +464,7 @@ def _monthly_chart(
                 zorder=5,
             )
             axes[0, 1].annotate(
-                f"{period}: {edges_count[index]} liaisons",
+                f"{period} : {edges_count[index]} liaisons",
                 (index, edges_count[index]),
                 xytext=(4, 8),
                 textcoords="offset points",
@@ -503,7 +473,7 @@ def _monthly_chart(
             )
     axes[0, 0].legend(frameon=False)
     fig.suptitle(
-        "Évolution mensuelle — les deux centralités sont des maxima, pas des moyennes",
+        "Évolution mensuelle du réseau — les séries de centralité montrent des maxima, et non des moyennes",
         fontsize=14,
     )
     path = destination / "monthly_network_evolution.png"
@@ -716,30 +686,30 @@ def generate_visualizations(
     edges: pl.DataFrame,
     output_dir: str | os.PathLike[str] = DEFAULT_OUTPUT_DIR,
 ) -> dict[str, Path]:
-    """Génère les graphiques comparatifs de distribution, de topologie et de résultats.
+    """Générer des graphiques comparatifs de distributions, de topologie et de résultats.
 
-    :param research_data: Données de recherche mensuelles avec résultats opérationnels.
+    :param research_data: Jeu de recherche mensuel contenant les résultats opérationnels.
     :type research_data: polars.DataFrame
     :param node_metrics: Métriques globales et mensuelles existantes des nœuds.
     :type node_metrics: polars.DataFrame
     :param edge_metrics: Métriques globales et mensuelles existantes des arêtes.
     :type edge_metrics: polars.DataFrame
-    :param nodes: Correspondance existante entre identifiants et noms des gares.
+    :param nodes: Correspondance existante entre identifiants et noms de gare.
     :type nodes: polars.DataFrame
-    :param edges: Table existante des arêtes orientées distinguant les services.
+    :param edges: Table existante des arêtes orientées tenant compte du service.
     :type edges: polars.DataFrame
-    :param output_dir: Dossier de destination des fichiers PNG.
+    :param output_dir: Répertoire de destination des fichiers PNG.
     :type output_dir: str | os.PathLike[str]
-    :returns: Correspondance entre noms des graphiques descriptifs et chemins enregistrés.
+    :returns: Correspondance entre les noms des graphiques descriptifs et leurs chemins enregistrés.
     :rtype: dict[str, pathlib.Path]
     :raises TypeError: Si une entrée n’est pas un DataFrame Polars.
-    :raises ValueError: Si des champs requis pour les graphiques sont absents.
-    :raises OSError: Si les fichiers des graphiques ne peuvent pas être écrits.
+    :raises ValueError: Si des champs requis par les graphiques sont absents.
+    :raises OSError: Si les fichiers graphiques ne peuvent pas être écrits.
     """
     frames = (research_data, node_metrics, edge_metrics, nodes, edges)
     if any(not isinstance(frame, pl.DataFrame) for frame in frames):
         raise TypeError(
-            "Toutes les entrées des visualisations doivent être des DataFrames Polars"
+            "Toutes les entrées de visualisation doivent être des DataFrame Polars."
         )
     _require(
         research_data,
@@ -798,11 +768,7 @@ def generate_visualizations(
     paths["edge_betweenness_distribution"] = _edge_betweenness_chart(
         overall_edges, services, destination
     )
-    paths.update(
-        _ranking_charts(
-            overall_nodes, overall_edges, nodes, edges, services, destination
-        )
-    )
+    paths.update(_ranking_charts(overall_nodes, nodes, services, destination))
     paths["monthly_network_evolution"] = _monthly_chart(
         node_metrics, edge_metrics, services, destination
     )
@@ -820,21 +786,21 @@ def run_visualization_pipeline(
     edges_path: str | os.PathLike[str] = DEFAULT_EDGES_PATH,
     output_dir: str | os.PathLike[str] = DEFAULT_OUTPUT_DIR,
 ) -> dict[str, Path]:
-    """Charge les résultats existants et génère les visualisations descriptives PNG.
+    """Charger les artefacts existants et générer les visualisations descriptives en PNG.
 
-    :param research_data_path: Chemin des données de recherche mensuelles.
+    :param research_data_path: Chemin du jeu de recherche mensuel.
     :type research_data_path: str | os.PathLike[str]
-    :param node_metrics_path: Chemin des métriques existantes des nœuds.
+    :param node_metrics_path: Chemin existant des métriques de nœud.
     :type node_metrics_path: str | os.PathLike[str]
-    :param edge_metrics_path: Chemin des métriques existantes des arêtes.
+    :param edge_metrics_path: Chemin existant des métriques d’arête.
     :type edge_metrics_path: str | os.PathLike[str]
-    :param nodes_path: Chemin de la correspondance existante des gares.
+    :param nodes_path: Chemin existant de la correspondance des gares.
     :type nodes_path: str | os.PathLike[str]
-    :param edges_path: Chemin des arêtes orientées existantes.
+    :param edges_path: Chemin existant des arêtes orientées.
     :type edges_path: str | os.PathLike[str]
-    :param output_dir: Dossier de destination des graphiques.
+    :param output_dir: Répertoire de destination des graphiques.
     :type output_dir: str | os.PathLike[str]
-    :returns: Noms des graphiques associés aux chemins PNG générés.
+    :returns: Correspondance entre les noms des graphiques et les chemins PNG générés.
     :rtype: dict[str, pathlib.Path]
     :raises OSError: Si les entrées ne peuvent pas être lues ou les graphiques enregistrés.
     :raises ValueError: Si des champs d’entrée requis sont absents.

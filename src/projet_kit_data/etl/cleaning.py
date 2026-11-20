@@ -1,4 +1,4 @@
-"Indicateurs qualité non destructifs pour chaque observation SNCF."
+"""Flags non destructifs de qualité des données SNCF au niveau des lignes."""
 
 from __future__ import annotations
 
@@ -23,37 +23,46 @@ FLAG_COLUMNS = (
 
 
 def clean_data(df: pl.DataFrame) -> pl.DataFrame:
-    """Renvoie une copie d’analyse non destructive avec des indicateurs qualité par ligne.
+    """Retourner une copie d’analyse non destructive munie de flags qualité par ligne.
 
-    Toutes les colonnes, valeurs, lignes et leur ordre sont conservés. Quatre colonnes
-    booléennes de diagnostic sont ajoutées, sans correction, suppression ou autre
-    transformation. L’utilisation de Polars correspond à l’audit existant ; le contrat
-    commun n’impose pas aux consommateurs Pandas de migrer vers Polars.
+    La fonction conserve toutes les colonnes et valeurs d’entrée, l’ordre des
+    lignes et leur nombre. Elle ajoute quatre colonnes diagnostiques booléennes ;
+    elle ne corrige, ne supprime ni ne transforme autrement les données source.
+    Polars est utilisé ici pour correspondre à l’implémentation actuelle de
+    l’audit, mais le contrat de données partagé n’impose pas aux consommateurs
+    Pandas de migrer vers Polars.
 
-    Toutes les colonnes de comptage requises doivent être présentes. Seuls les types
-    entiers ou entièrement nuls sont acceptés pour ne pas ignorer silencieusement une
-    comparaison impossible. Une colonne portant déjà le nom d’un indicateur réservé
-    est refusée afin de ne pas écraser les données sources.
+    Toutes les colonnes de compte utilisées par les flags doivent être
+    présentes. Les colonnes entières et celles qui ne contiennent que des
+    valeurs manquantes (type ``pl.Null``) sont acceptées ; les autres types sont
+    rejetés afin qu’une comparaison impossible ne soit pas silencieusement ignorée. Les colonnes
+    d’entrée portant déjà le nom d’un flag diagnostique sont rejetées pour
+    éviter d’écraser les données source.
 
-    :param df: Données SNCF sous forme de DataFrame Polars.
+    :param df: Données SNCF d’entrée sous forme de DataFrame Polars.
     :type df: polars.DataFrame
-    :returns: Nouvelle table avec les données d’origine et les indicateurs de diagnostic ; ceux-ci signalent des observations à examiner, sans déterminer de valeur corrigée.
+    :returns: Nouveau DataFrame contenant les données d’origine et les flags
+        diagnostiques. Les flags signalent les enregistrements à examiner sans
+        définir de valeurs corrigées.
     :rtype: polars.DataFrame
     :raises TypeError: Si ``df`` n’est pas un DataFrame Polars.
-    :raises ValueError: Si un comptage requis manque, a un type autre qu’entier ou ``pl.Null``, ou entre en conflit avec un nom d’indicateur."""
+    :raises ValueError: Si une colonne de compte obligatoire est absente, si
+        son type n’est pas entier ni ``pl.Null``, ou si son nom entre en
+        conflit avec celui d’un flag diagnostique.
+    """
     if not isinstance(df, pl.DataFrame):
         raise TypeError("df doit être un DataFrame Polars.")
 
     missing_columns = sorted(set(COUNT_COLUMNS) - set(df.columns))
     if missing_columns:
         raise ValueError(
-            f"Colonnes de comptage requises pour les indicateurs qualité absentes : {missing_columns}"
+            f"Colonnes de compte manquantes pour les flags de nettoyage : {missing_columns}"
         )
 
     conflicting_flags = sorted(set(FLAG_COLUMNS) & set(df.columns))
     if conflicting_flags:
         raise ValueError(
-            "L’entrée contient déjà des colonnes réservées aux indicateurs de diagnostic : "
+            "L’entrée contient déjà des colonnes réservées aux flags diagnostiques : "
             f"{conflicting_flags}"
         )
 
@@ -64,7 +73,8 @@ def clean_data(df: pl.DataFrame) -> pl.DataFrame:
     }
     if invalid_types:
         raise ValueError(
-            "Les colonnes de comptage doivent être entières ou entièrement nulles : "
+            "Les colonnes de compte obligatoires doivent être entières ou contenir uniquement des "
+            "valeurs manquantes (type Null) : "
             f"{invalid_types}"
         )
 

@@ -1,0 +1,99 @@
+{
+  "business_key_duplicate_count": 0,
+  "cancellation_rate_invalid_or_missing_count": 73,
+  "cancellation_rate_valid_count": 12834,
+  "date_max": "2026-09",
+  "date_min": "2018-01",
+  "directed_cluster_count_by_service": {
+    "International": 30,
+    "National": 116
+  },
+  "input_columns": 56,
+  "input_path": "data\\processed\\research_dataset.parquet",
+  "input_rows": 12907,
+  "input_services": [
+    "International",
+    "National"
+  ],
+  "interpretation_limits": [
+    "Monthly observations of one directed liaison are repeated observations, not fully independent samples.",
+    "Ordinary Pearson and Spearman p-values are exploratory and may overstate statistical evidence because of repeated observations.",
+    "Associations are observational and do not establish causality, train itineraries, passenger volumes, or delay propagation.",
+    "National and International services have different network structures and route compositions; outcome comparisons require qualification.",
+    "Only the primary outcome sensitivity analysis excludes values below -15 minutes; source records are unchanged."
+  ],
+  "outcomes": [
+    "retard_moyen_tous_trains_arrivee",
+    "cancellation_rate",
+    "retard_moyen_arrivee"
+  ],
+  "output_tables": {
+    "correlations": {
+      "columns": 8,
+      "rows": 126,
+      "schema": {
+        "analysis_scope": "String",
+        "coefficient": "Float64",
+        "method": "String",
+        "n_valid": "UInt32",
+        "outcome": "String",
+        "p_value": "Float64",
+        "predictor": "String",
+        "service": "String"
+      }
+    },
+    "quantile_comparisons": {
+      "columns": 13,
+      "rows": 270,
+      "schema": {
+        "analysis_scope": "String",
+        "group_label": "String",
+        "grouping_strategy": "String",
+        "iqr": "Float64",
+        "mean": "Float64",
+        "median": "Float64",
+        "n": "UInt32",
+        "outcome": "String",
+        "predictor": "String",
+        "q25": "Float64",
+        "q75": "Float64",
+        "service": "String",
+        "std": "Float64"
+      }
+    },
+    "robustness_comparisons": {
+      "columns": 10,
+      "rows": 42,
+      "schema": {
+        "analysis_scope": "String",
+        "coefficient_difference": "Float64",
+        "full_coefficient": "Float64",
+        "full_n_valid": "UInt32",
+        "method": "String",
+        "outcome": "String",
+        "predictor": "String",
+        "sensitivity_coefficient": "Float64",
+        "sensitivity_n_valid": "UInt32",
+        "service": "String"
+      }
+    }
+  },
+  "predictors": [
+    "edge_betweenness",
+    "source_degree",
+    "target_degree",
+    "source_betweenness_centrality",
+    "target_betweenness_centrality",
+    "source_pagerank",
+    "target_pagerank"
+  ],
+  "primary_outcome_extreme_count_below_minus_15": 11,
+  "primary_outcome_extreme_count_verified_by_value": 11,
+  "quantile_grouping": {
+    "minimum_positive_rows_for_quantiles": 30,
+    "minimum_unique_values_for_quantiles": 3,
+    "requested_positive_or_all_value_groups": 4,
+    "ties_split": false,
+    "zero_share_threshold": 0.05
+  }
+}

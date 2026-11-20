@@ -1,23 +1,23 @@
-# Régularité mensuelle TGV SNCF : investigation des anomalies
+# Régularité mensuelle des TGV SNCF : investigation des anomalies
 
-## 1. Objectif et méthode
+## 1. Objectif et méthodologie
 
-Cette investigation en lecture seule examine les anomalies de l’audit qualité existant. Elle ne modifie ni les observations brutes ni les règles et n’applique aucun nettoyage. Le code de l’audit et son rapport `data_quality_report.txt` ont été examinés ; leurs schémas SNCF, conditions d’anomalie et seuil extrême de `-15` minutes sont réutilisés.
+Cette investigation en lecture seule porte sur les anomalies relevées par l’audit existant de la qualité des données. Elle ne modifie pas les enregistrements bruts, les règles d’audit ni les données. L’implémentation de l’audit et son fichier généré `data_quality_report.txt` ont été consultés ; le présent rapport reprend le schéma SNCF, les prédicats d’anomalie et le seuil de retard extrême de `-15` minutes.
 
-- Entrée : `data\raw\regularite-mensuelle-tgv-aqst.json` (12,907 observations JSON).
-- Synthèse existante : `data\reports\data_quality_report.txt` (lecture seule).
+- Entrée : `data\raw\regularite-mensuelle-tgv-aqst.json` (12 907 enregistrements JSON).
+- Synthèse d’audit existante : `data\reports\data_quality_report.txt` (lecture seule).
 - Sortie : `data\reports\anomaly_investigation_report.md`.
-- Les pourcentages mensuels utilisent toutes les observations du mois au dénominateur. Les mois sans cas sont omis des tableaux de répartition clairsemés.
-- Les témoins d’une comparaison sont les observations des mêmes mois ne satisfaisant pas la condition d’anomalie étudiée. Ils peuvent relever d’une autre anomalie. Les comparaisons sont descriptives et non causales.
-- Les listes détaillées contiennent toutes les lignes concernées ; le rapport d’audit d’origine reste inchangé lors de cette investigation.
+- Les pourcentages mensuels utilisent le nombre total d’enregistrements du mois comme dénominateur. Les mois sans anomalie sont omis des tableaux de distribution peu denses.
+- Pour les comparaisons à période identique, les témoins sont les enregistrements des mêmes mois concernés qui ne satisfont pas le prédicat d’anomalie considéré. Ils peuvent satisfaire un autre prédicat ; les comparaisons sont descriptives et non causales.
+- Les listes détaillées contiennent toutes les lignes correspondantes ; le rapport d’audit d’origine reste inchangé.
 
-La période complète contient 12,907 observations sur 105 mois et 26 champs. Les exemples numériques utilisent les valeurs sources enregistrées. Le seuil `-15` est un seuil d’investigation hérité de l’audit, pas une règle de nettoyage proposée.
+La période complète compte 12 907 enregistrements répartis sur 105 valeurs mensuelles. L’audit identifie 26 champs. Les exemples numériques ci-dessous reprennent les valeurs telles qu’elles sont stockées dans la source. Le seuil `-15` est un seuil d’investigation repris de l’audit, et non une règle de nettoyage proposée.
 
-## 2. Synthèse et répartition mensuelle
+## 2. Synthèse et distribution mensuelle
 
-Le pourcentage mensuel est le nombre d’observations concernées divisé par l’effectif total du mois.
+Le pourcentage mensuel correspond au nombre d’enregistrements concernés divisé par le nombre total de lignes du mois.
 
-| Catégorie d’anomalie | Mois | Concernés | Observations du mois | Part mensuelle |
+| Catégorie d’anomalie | Mois | Enregistrements concernés | Enregistrements du mois | Part mensuelle |
 | --- | --- | --- | --- | --- |
 | Valeur négative de `nb_train_retard_sup_30` | 2025-01 | 18 | 121 | 14.88% |
 | Valeur négative de `nb_train_retard_sup_30` | 2025-02 | 15 | 121 | 12.40% |
@@ -45,7 +45,7 @@ Le pourcentage mensuel est le nombre d’observations concernées divisé par l�
 
 ### Totaux et concentration par catégorie
 
-| Catégorie | Lignes concernées | Liaisons-service distinctes | Effectifs mensuels non nuls |
+| Catégorie | Lignes concernées | Couples service-liaison distincts | Comptes mensuels non nuls |
 | --- | --- | --- | --- |
 | Valeur négative de `nb_train_retard_sup_30` | 43 | 29 | 2025-01: 18, 2025-02: 15, 2025-03: 10 |
 | Valeur négative de `retard_moyen_trains_retard_sup15` | 8 | 6 | 2018-04: 2, 2018-09: 2, 2019-02: 1, 2019-03: 2, 2019-04: 1 |
@@ -56,9 +56,9 @@ Le pourcentage mensuel est le nombre d’observations concernées divisé par l�
 | `nb_train_retard_sup_30 < nb_train_retard_sup_60` | 354 | 121 | 2025-01: 118, 2025-02: 117, 2025-03: 119 |
 | `nb_train_retard_sup_15 < nb_train_retard_sup_30` | 3 | 3 | 2020-05: 2, 2025-03: 1 |
 
-### Distribution complète des retards négatifs de l’audit
+### Distribution complète des retards négatifs selon l’audit
 
-La section précédente utilise le seuil extrême inférieur à -15 minutes. Ce tableau complémentaire couvre toutes les valeurs négatives (<0) des champs de retard moyen, sans masquer les négatifs de moindre amplitude. La colonne modérée représente [-15, 0), la colonne extrême les valeurs < -15. `retard_moyen_depart` ne contient aucune valeur négative dans cet état des données.
+La section précédente consacrée aux retards extrêmes applique le seuil d’audit inférieur à -15 minutes. Ce tableau complémentaire couvre toutes les valeurs négatives (<0) des champs de retard moyen audités, afin que les valeurs négatives moins marquées ne soient pas masquées par le seuil extrême. La colonne « modérées » couvre l’intervalle [-15, 0) ; la colonne « extrêmes » correspond à < -15. `retard_moyen_depart` ne comporte aucune valeur négative dans cet instantané.
 
 | Champ | Valeurs négatives | [-15, 0) | < -15 |
 | --- | --- | --- | --- |
@@ -68,9 +68,9 @@ La section précédente utilise le seuil extrême inférieur à -15 minutes. Ce 
 | retard_moyen_depart | 0 | 0 | 0 |
 | retard_moyen_trains_retard_sup15 | 8 | 8 | 0 |
 
-#### Effectifs mensuels de toutes les valeurs négatives
+#### Comptes mensuels de toutes les valeurs négatives
 
-| Champ | Mois | Lignes négatives | Observations du mois | Part mensuelle |
+| Champ | Mois | Lignes négatives | Enregistrements du mois | Part mensuelle |
 | --- | --- | --- | --- | --- |
 | retard_moyen_tous_trains_arrivee | 2018-04 | 2 | 130 | 1.54% |
 | retard_moyen_tous_trains_arrivee | 2018-09 | 2 | 130 | 1.54% |
@@ -181,12 +181,12 @@ La section précédente utilise le seuil extrême inférieur à -15 minutes. Ce 
 | retard_moyen_trains_retard_sup15 | 2019-04 | 1 | 123 | 0.81% |
 ## 3. Valeurs négatives de `nb_train_retard_sup_30`
 
-43 lignes sont concernées, pour 29 liaisons-service distinctes, toutes entre janvier et mars 2025 : 18/121 en janvier (14.88%), 15/121 en février (12.40%) et 10/121 en mars (8.26%). La concentration couvre trois mois, pas seulement janvier.
+43 lignes sont concernées sur 29 couples service-liaison distincts, toutes entre janvier et mars 2025. Janvier en compte 18/121 (14,88 %), février 15/121 (12,40 %) et mars 10/121 (8,26 %). La concentration porte donc sur trois mois, et non sur le seul mois de janvier.
 
 
 ### Toutes les liaisons et valeurs négatives de `nb_train_retard_sup_30`
 
-#### 2025-01 (18 observations)
+#### 2025-01 (18 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | nb_train_retard_sup_30 | nb_train_retard_sup_15 | nb_train_retard_sup_60 | nb_train_prevu | nb_annulation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -209,7 +209,7 @@ La section précédente utilise le seuil extrême inférieur à -15 minutes. Ce 
 | 2025-01 | National | LYON PART DIEU | MARSEILLE ST CHARLES | -2 | 75 | 39 | 502 | 0 |
 | 2025-01 | National | RENNES | LYON PART DIEU | -2 | 10 | 3 | 94 | 0 |
 
-#### 2025-02 (15 observations)
+#### 2025-02 (15 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | nb_train_retard_sup_30 | nb_train_retard_sup_15 | nb_train_retard_sup_60 | nb_train_prevu | nb_annulation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -229,7 +229,7 @@ La section précédente utilise le seuil extrême inférieur à -15 minutes. Ce 
 | 2025-02 | National | CHAMBERY CHALLES LES EAUX | PARIS LYON | -3 | 62 | 28 | 276 | 3 |
 | 2025-02 | National | LAVAL | PARIS MONTPARNASSE | -1 | 16 | 5 | 216 | 5 |
 
-#### 2025-03 (10 observations)
+#### 2025-03 (10 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | nb_train_retard_sup_30 | nb_train_retard_sup_15 | nb_train_retard_sup_60 | nb_train_prevu | nb_annulation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -245,18 +245,18 @@ La section précédente utilise le seuil extrême inférieur à -15 minutes. Ce 
 | 2025-03 | National | BESANCON FRANCHE COMTE TGV | PARIS LYON | -3 | 10 | 5 | 175 | 0 |
 
 
-## 4. Investigation de l’ordre des seuils
+## 4. Étude de l’ordre des seuils
 
-La comparaison >30 contre >60 est le contrôle le plus direct des seuils cumulatifs. Le champ >15 comporte une réserve d’applicabilité : le schéma SNCF le réserve aux liaisons en concurrence avec l’avion, mais aucun indicateur d’applicabilité n’est fourni. Les comparaisons >15 contre >30 sont donc des signalements potentiels, pas des violations établies.
+La comparaison par paires entre >30 et >60 constitue le contrôle le plus direct de l’ordre cumulatif des seuils. Le champ >15 est soumis à une réserve d’applicabilité : selon le schéma SNCF, il concerne les liaisons en concurrence avec l’avion, mais le jeu de données ne contient pas d’indicateur d’applicabilité par liaison. Les résultats >15 versus >30 sont donc des alertes potentielles, et non des violations concluantes.
 
 ### `nb_train_retard_sup_30 < nb_train_retard_sup_60`
 
-354 lignes sont concernées, toutes entre janvier et mars 2025 : 118/121 en janvier (97.52%), 117/121 en février (96.69%) et 119/121 en mars (98.35%). Seules 9 des 363 lignes ne satisfont pas l’inégalité. Les 354 lignes sont détaillées ci-dessous avec les trois indicateurs.
+354 lignes présentent cette relation, toutes entre janvier et mars 2025 : 118/121 en janvier (97,52 %), 117/121 en février (96,69 %) et 119/121 en mars (98,35 %). Seules 9 des 363 lignes de ces trois mois ne satisfont pas l’inégalité. Les 354 lignes sont listées ci-dessous avec les trois indicateurs.
 
 
-### Toutes les lignes avec inversion >30/<60, y compris janvier 2025
+### Toutes les lignes où >30/<60 n’est pas ordonné (dont janvier 2025)
 
-#### 2025-01 (118 observations)
+#### 2025-01 (118 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | nb_train_retard_sup_15 | nb_train_retard_sup_30 | nb_train_retard_sup_60 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -379,7 +379,7 @@ La comparaison >30 contre >60 est le contrôle le plus direct des seuils cumulat
 | 2025-01 | National | POITIERS | PARIS MONTPARNASSE | 38 | 0 | 12 |
 | 2025-01 | National | RENNES | LYON PART DIEU | 10 | -2 | 3 |
 
-#### 2025-02 (117 observations)
+#### 2025-02 (117 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | nb_train_retard_sup_15 | nb_train_retard_sup_30 | nb_train_retard_sup_60 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -501,7 +501,7 @@ La comparaison >30 contre >60 est le contrôle le plus direct des seuils cumulat
 | 2025-02 | National | ST PIERRE DES CORPS | PARIS MONTPARNASSE | 18 | 0 | 9 |
 | 2025-02 | National | TOULON | PARIS LYON | 46 | 0 | 29 |
 
-#### 2025-03 (119 observations)
+#### 2025-03 (119 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | nb_train_retard_sup_15 | nb_train_retard_sup_30 | nb_train_retard_sup_60 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -628,33 +628,33 @@ La comparaison >30 contre >60 est le contrôle le plus direct des seuils cumulat
 
 ### `nb_train_retard_sup_15 < nb_train_retard_sup_30`
 
-3 lignes potentielles sont observées : deux en mai 2020 et une en mars 2025. Le champ >15 n’étant pas défini comme universellement applicable, cette relation n’est pas traitée comme un invariant général.
+Trois lignes sont potentiellement concernées : deux en mai 2020 et une en mars 2025. Comme l’applicabilité de >15 n’est pas universelle selon la documentation, cette relation n’est pas considérée comme un invariant général.
 
 
-### Toutes les lignes présentant une inversion potentielle >15/<30
+### Toutes les lignes présentant un ordre potentiellement incohérent entre >15 et >30
 
-#### 2020-05 (2 observations)
+#### 2020-05 (2 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | nb_train_retard_sup_15 | nb_train_retard_sup_30 | nb_train_retard_sup_60 |
 | --- | --- | --- | --- | --- | --- | --- |
 | 2020-05 | National | LILLE | MARSEILLE ST CHARLES | 1 | 3 | 1 |
 | 2020-05 | National | MARNE LA VALLEE | MARSEILLE ST CHARLES | 1 | 3 | 1 |
 
-#### 2025-03 (1 observations)
+#### 2025-03 (1 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | nb_train_retard_sup_15 | nb_train_retard_sup_30 | nb_train_retard_sup_60 |
 | --- | --- | --- | --- | --- | --- | --- |
 | 2025-03 | National | TOURS | PARIS MONTPARNASSE | 2 | 6 | 2 |
 
 
-## 5. Annulations supérieures aux circulations prévues
+## 5. Annulations plus nombreuses que les trains prévus
 
-63 lignes sont concernées entre avril et juin 2020 : 50 en avril, 9 en mai et 4 en juin. Toutes ont `nb_train_prevu = 0`, avec 1 à 21 annulations. Les comptages de retards au départ/à l’arrivée, >15/>30/>60 et les retards moyens sont tous nuls. Ce profil diffère des témoins des mêmes mois, dont la médiane est 86 trains prévus et 14 annulations.
+63 lignes sont concernées entre avril et juin 2020. Elles ne proviennent pas toutes d’avril : 50 sont en avril, 9 en mai et 4 en juin. Pour les 63 lignes, `nb_train_prevu = 0` ; le nombre d’annulations varie de 1 à 21. Les comptes de retards au départ et à l’arrivée, les comptes >15/>30/>60 ainsi que les retards moyens déclarés sont tous nuls. Ce profil diffère de celui des lignes non signalées des mêmes mois, dont la médiane des trains prévus est de 86 et celle des annulations de 14.
 
 
-### Toutes les observations avec annulations supérieures aux prévisions et indicateurs associés
+### Toutes les lignes où les annulations dépassent les trains prévus et indicateurs associés
 
-#### 2020-04 (50 observations)
+#### 2020-04 (50 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | nb_train_prevu | nb_annulation | nb_train_depart_retard | nb_train_retard_arrivee | nb_train_retard_sup_15 | nb_train_retard_sup_30 | nb_train_retard_sup_60 | retard_moyen_tous_trains_depart | retard_moyen_tous_trains_arrivee |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -709,7 +709,7 @@ La comparaison >30 contre >60 est le contrôle le plus direct des seuils cumulat
 | 2020-04 | International | PARIS LYON | ITALIE | 0 | 4 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 2020-04 | International | PARIS LYON | LAUSANNE | 0 | 7 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
-#### 2020-05 (9 observations)
+#### 2020-05 (9 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | nb_train_prevu | nb_annulation | nb_train_depart_retard | nb_train_retard_arrivee | nb_train_retard_sup_15 | nb_train_retard_sup_30 | nb_train_retard_sup_60 | retard_moyen_tous_trains_depart | retard_moyen_tous_trains_arrivee |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -723,7 +723,7 @@ La comparaison >30 contre >60 est le contrôle le plus direct des seuils cumulat
 | 2020-05 | National | NANTES | STRASBOURG | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 2020-05 | National | TOURCOING | BORDEAUX ST JEAN | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
-#### 2020-06 (4 observations)
+#### 2020-06 (4 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | nb_train_prevu | nb_annulation | nb_train_depart_retard | nb_train_retard_arrivee | nb_train_retard_sup_15 | nb_train_retard_sup_30 | nb_train_retard_sup_60 | retard_moyen_tous_trains_depart | retard_moyen_tous_trains_arrivee |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -733,16 +733,16 @@ La comparaison >30 contre >60 est le contrôle le plus direct des seuils cumulat
 | 2020-06 | International | PARIS EST | STUTTGART | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 
-## 6. Retards moyens négatifs extrêmes
+## 6. Retards moyens extrêmement négatifs
 
-Le seuil extrême est celui de l’audit : moins de -15 minutes. Il concerne 11 moyennes à l’arrivée de tous les trains, 5 moyennes au départ de tous les trains et 2 moyennes conditionnelles à l’arrivée. Octobre-décembre 2019 regroupe 10 des 11 cas à l’arrivée de tous les trains, les 5 cas au départ et les 2 cas conditionnels. Le cas supplémentaire à l’arrivée date de février 2020.
+Le seuil extrême reprend celui de l’audit existant, inférieur à -15 minutes. On compte 11 retards moyens à l’arrivée pour tous les trains sous ce seuil, 5 retards moyens au départ pour tous les trains et 2 retards moyens conditionnels à l’arrivée. La période d’octobre à décembre 2019 comprend 10 des 11 cas à l’arrivée tous trains, les 5 cas au départ tous trains et les 2 cas conditionnels à l’arrivée. Un autre cas à l’arrivée tous trains est observé en février 2020.
 
-Les liaisons Nimes → Paris Lyon, Valence Alixan TGV → Paris Lyon et Montpellier → Paris Lyon réapparaissent sur plusieurs mois concernés. Il s’agit de concentrations observées, pas d’une explication des valeurs.
+Certaines liaisons reviennent à plusieurs mois : Nîmes → Paris Lyon, Valence Alixan TGV → Paris Lyon et Montpellier → Paris Lyon. Il s’agit de concentrations observées, et non d’une explication des valeurs.
 
 
 ### `retard_moyen_tous_trains_arrivee < -15`
 
-#### 2019-10 (3 observations)
+#### 2019-10 (3 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | retard_moyen_tous_trains_arrivee | retard_moyen_arrivee | nb_train_retard_arrivee | nb_train_prevu | nb_annulation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -750,7 +750,7 @@ Les liaisons Nimes → Paris Lyon, Valence Alixan TGV → Paris Lyon et Montpell
 | 2019-10 | National | VALENCE ALIXAN TGV | PARIS LYON | -68.92808399 | 35.32647059 | 68 | 265 | 11 |
 | 2019-10 | National | MONTPELLIER | PARIS LYON | -80.85511288 | 45.92142857 | 49 | 263 | 12 |
 
-#### 2019-11 (4 observations)
+#### 2019-11 (4 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | retard_moyen_tous_trains_arrivee | retard_moyen_arrivee | nb_train_retard_arrivee | nb_train_prevu | nb_annulation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -759,7 +759,7 @@ Les liaisons Nimes → Paris Lyon, Valence Alixan TGV → Paris Lyon et Montpell
 | 2019-11 | National | PARIS LYON | MONTPELLIER | -15.19254743 | 37.22719298 | 19 | 138 | 15 |
 | 2019-11 | National | NIMES | PARIS LYON | -151.2910078 | -40.10925926 | 63 | 226 | 11 |
 
-#### 2019-12 (3 observations)
+#### 2019-12 (3 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | retard_moyen_tous_trains_arrivee | retard_moyen_arrivee | nb_train_retard_arrivee | nb_train_prevu | nb_annulation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -767,7 +767,7 @@ Les liaisons Nimes → Paris Lyon, Valence Alixan TGV → Paris Lyon et Montpell
 | 2019-12 | National | LYON PART DIEU | MONTPELLIER | -173.0769697 | 35.88111111 | 15 | 75 | 20 |
 | 2019-12 | National | STRASBOURG | NANTES | -472.6388889 | 0 | 0 | 10 | 4 |
 
-#### 2020-02 (1 observations)
+#### 2020-02 (1 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | retard_moyen_tous_trains_arrivee | retard_moyen_arrivee | nb_train_retard_arrivee | nb_train_prevu | nb_annulation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -776,14 +776,14 @@ Les liaisons Nimes → Paris Lyon, Valence Alixan TGV → Paris Lyon et Montpell
 
 ### `retard_moyen_tous_trains_depart < -15`
 
-#### 2019-10 (2 observations)
+#### 2019-10 (2 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | retard_moyen_tous_trains_depart | retard_moyen_depart | nb_train_depart_retard | nb_train_prevu | nb_annulation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2019-10 | National | NIMES | PARIS LYON | -92.76830709 | 11.03809524 | 203 | 266 | 12 |
 | 2019-10 | National | VALENCE ALIXAN TGV | PARIS LYON | -67.95374016 | 12.70444947 | 221 | 265 | 11 |
 
-#### 2019-11 (3 observations)
+#### 2019-11 (3 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | retard_moyen_tous_trains_depart | retard_moyen_depart | nb_train_depart_retard | nb_train_prevu | nb_annulation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -794,7 +794,7 @@ Les liaisons Nimes → Paris Lyon, Valence Alixan TGV → Paris Lyon et Montpell
 
 ### `retard_moyen_arrivee < -15`
 
-#### 2019-11 (2 observations)
+#### 2019-11 (2 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | retard_moyen_arrivee | retard_moyen_tous_trains_arrivee | nb_train_retard_arrivee | nb_train_prevu | nb_annulation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -804,50 +804,50 @@ Les liaisons Nimes → Paris Lyon, Valence Alixan TGV → Paris Lyon et Montpell
 
 ## 7. Valeurs négatives de `retard_moyen_trains_retard_sup15`
 
-L’audit identifie 8 lignes entre avril 2018 et avril 2019 et 6 liaisons-service distinctes. Marseille Saint Charles → Madrid apparaît trois fois. Plusieurs comptages associés `nb_train_retard_sup_15` valent zéro ou un ; l’interprétation exige donc de connaître précisément le dénominateur et le domaine d’application du champ.
+L’audit a identifié 8 lignes entre avril 2018 et avril 2019. Elles concernent 6 couples service-liaison distincts ; Marseille Saint Charles → Madrid apparaît trois fois. Plusieurs valeurs associées de `nb_train_retard_sup_15` sont égales à zéro ou à un. Leur interprétation dépend donc du dénominateur exact du champ et de son applicabilité.
 
 
-### Toutes les observations négatives de `retard_moyen_trains_retard_sup15`
+### Toutes les lignes avec une valeur négative de `retard_moyen_trains_retard_sup15`
 
-#### 2018-04 (2 observations)
+#### 2018-04 (2 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | retard_moyen_trains_retard_sup15 | nb_train_retard_sup_15 | retard_moyen_arrivee | nb_train_retard_arrivee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2018-04 | National | PARIS VAUGIRARD | BORDEAUX ST JEAN | -0.160714286 | 1 | 17.3 | 2 |
 | 2018-04 | International | MARSEILLE ST CHARLES | MADRID | -2.714285714 | 0 | 0 | 0 |
 
-#### 2018-09 (2 observations)
+#### 2018-09 (2 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | retard_moyen_trains_retard_sup15 | nb_train_retard_sup_15 | retard_moyen_arrivee | nb_train_retard_arrivee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2018-09 | National | RENNES | PARIS VAUGIRARD | -0.32654321 | 0 | 0 | 0 |
 | 2018-09 | National | PARIS MONTPARNASSE | ST MALO | -2.404295533 | 1 | 18.875 | 2 |
 
-#### 2019-02 (1 observations)
+#### 2019-02 (1 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | retard_moyen_trains_retard_sup15 | nb_train_retard_sup_15 | retard_moyen_arrivee | nb_train_retard_arrivee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2019-02 | International | MARSEILLE ST CHARLES | MADRID | -1.571428571 | 1 | 37 | 1 |
 
-#### 2019-03 (2 observations)
+#### 2019-03 (2 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | retard_moyen_trains_retard_sup15 | nb_train_retard_sup_15 | retard_moyen_arrivee | nb_train_retard_arrivee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2019-03 | National | PARIS LYON | DIJON VILLE | -0.351875902 | 13 | 34.63666667 | 15 |
 | 2019-03 | International | ZURICH | PARIS LYON | -0.601023392 | 5 | 38.98333333 | 5 |
 
-#### 2019-04 (1 observations)
+#### 2019-04 (1 enregistrements)
 
 | date | service | gare_depart | gare_arrivee | retard_moyen_trains_retard_sup15 | nb_train_retard_sup_15 | retard_moyen_arrivee | nb_train_retard_arrivee |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2019-04 | International | MARSEILLE ST CHARLES | MADRID | -4 | 0 | 0 | 0 |
 
 
-## 8. Investigation détaillée de janvier 2025
+## 8. Étude détaillée de janvier 2025
 
-Janvier 2025 contient 121 observations, dont 18 comptages >30 négatifs et 118 lignes où >30 < >60, soit 97.52% du mois. Les deux motifs se recoupent : les valeurs >15 et >60 des 18 lignes négatives figurent dans le tableau ci-dessous.
+Janvier 2025 compte 121 enregistrements. On y trouve 18 comptes >30 négatifs et 118 lignes où >30 < >60, soit 97,52 % du mois. Les comptes >30 négatifs font partie du motif d’ordre : les valeurs >15 et >60 correspondantes sont également indiquées dans le tableau ci-dessous.
 
-### Liaisons avec comptage >30 négatif en janvier 2025
+### Liaisons avec un compte >30 négatif en janvier 2025
 
 | date | service | gare_depart | gare_arrivee | nb_train_retard_sup_30 | nb_train_retard_sup_15 | nb_train_retard_sup_60 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -870,7 +870,7 @@ Janvier 2025 contient 121 observations, dont 18 comptages >30 négatifs et 118 l
 | 2025-01 | National | LYON PART DIEU | MARSEILLE ST CHARLES | -2 | 75 | 39 |
 | 2025-01 | National | RENNES | LYON PART DIEU | -2 | 10 | 3 |
 
-### Toutes les liaisons avec inversion >30/<60 en janvier 2025
+### Toutes les liaisons de janvier 2025 où >30/<60 n’est pas ordonné
 
 | date | service | gare_depart | gare_arrivee | nb_train_retard_sup_15 | nb_train_retard_sup_30 | nb_train_retard_sup_60 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -994,69 +994,69 @@ Janvier 2025 contient 121 observations, dont 18 comptages >30 négatifs et 118 l
 | 2025-01 | National | RENNES | LYON PART DIEU | 10 | -2 | 3 |
 
 
-## 9. Investigation détaillée d’avril 2020
+## 9. Étude détaillée d’avril 2020
 
-Avril regroupe 50 des 63 lignes avec annulations supérieures aux prévisions, soit 50/123 (40.65%) des observations du mois. Les 13 autres sont en mai et juin. Pour les lignes signalées sur ces trois mois, `nb_train_prevu` et les indicateurs/moyennes de retard sont nuls, tandis que `nb_annulation` est positif. Les tableaux précédents détaillent les liaisons et comptages d’avril, ainsi que mai et juin, pour rendre visible la durée de trois mois du phénomène.
+Avril compte 50 des 63 lignes où les annulations dépassent les trains prévus, soit 50/123 (40,65 %) des enregistrements du mois. Les 13 autres lignes sont en mai et en juin. Pour toutes les lignes signalées sur ces trois mois, `nb_train_prevu` et les indicateurs/moyennes de retard sont nuls, tandis que `nb_annulation` est positif. Les liaisons et comptes exacts d’avril figurent dans le tableau des annulations ci-dessus ; les lignes de mai et juin y sont également incluses pour montrer que le motif s’étend sur trois mois.
 
-Comparaison observée : les témoins d’avril-juin ont une médiane de 86 trains prévus par ligne, contre zéro pour les lignes signalées. La médiane des annulations est 8 dans les lignes signalées, contre 14 chez les témoins. Un total d’annulations positif avec zéro train prévu déclenche le contrôle ; les seules données ne permettent pas de savoir s’il s’agit d’annulations du programme initial, de réductions ultérieures ou d’une autre convention de publication.
-
-
-## 10. Investigation détaillée d’octobre-décembre 2019
-
-Octobre-décembre 2019 regroupe 10/11 extrêmes à l’arrivée de tous les trains, 5/5 au départ et 2/2 à l’arrivée conditionnelle. Les origines Nimes, Valence Alixan TGV et Montpellier vers Paris Lyon se répètent. Les tableaux détaillent volumes prévus, annulations, trains retardés et autres moyennes pour chaque observation extrême. En novembre 2019, les deux moyennes conditionnelles d’arrivée valent -30.5125 et -40.10925926 avec 44 et 63 trains déclarés retardés ; les moyennes de tous les trains sont -150.5621142 et -151.2910078. Cet écart justifie une vérification des définitions, sans prouver quel champ est erroné.
+Comparaison observée : les témoins d’avril à juin ont une médiane de 86 trains prévus par ligne, contre zéro pour les lignes signalées. Leur médiane d’annulations est de 8, contre 14 pour les témoins de la même période. Le contrôle d’audit est déclenché par un nombre positif d’annulations associé à zéro train prévu ; les données seules ne permettent pas d’établir si les annulations concernent l’horaire initial, une réduction ultérieure de l’offre ou une autre convention de déclaration.
 
 
-## 11. Observations anormales et témoins des mêmes mois
+## 10. Étude détaillée d’octobre à décembre 2019
 
-Le tableau compare moyennes et médianes de chaque catégorie et de ses témoins mensuels. Un témoin est normal uniquement vis-à-vis de la règle étudiée ; une autre règle peut le signaler. Les écarts de distribution sont descriptifs et ne prouvent aucune causalité.
+La période d’octobre à décembre 2019 représente 10/11 des cas extrêmes à l’arrivée tous trains, 5/5 des cas extrêmes au départ tous trains et 2/2 des cas extrêmes conditionnels à l’arrivée. Les mêmes origines — Nîmes, Valence Alixan TGV et Montpellier — vers Paris Lyon réapparaissent. Les tableaux détaillés ci-dessus indiquent, pour chaque cas extrême, les volumes prévus, les annulations, les comptes de trains retardés et l’autre mesure de retard moyen. En novembre 2019, les deux moyennes conditionnelles à l’arrivée valent -30.5125 et -40.10925926, alors que 44 et 63 trains sont déclarés en retard à l’arrivée ; les moyennes à l’arrivée tous trains de ces lignes sont -150.5621142 et -151.2910078. Cette divergence justifie une vérification des définitions source, sans établir à elle seule quel champ serait erroné.
 
-| Catégorie | Champ | Effectif anormal | Médiane des anomalies | Moyenne des anomalies | Effectif témoin | Médiane témoin | Moyenne témoin |
+
+## 11. Comparaison des lignes anormales et non anormales du même mois
+
+Le tableau présente les médianes et moyennes de chaque catégorie ainsi que celles des témoins du même mois. Un témoin est considéré comme normal uniquement au regard de la catégorie de la ligne ; il peut être signalé par un autre contrôle. Les écarts importants entre distributions sont descriptifs et ne doivent pas être interprétés comme des relations causales.
+
+| Catégorie | Champ | n des anomalies | Médiane des anomalies | Moyenne des anomalies | n des témoins | Médiane des témoins | Moyenne des témoins |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Effectif négatifb_train_retard_sup_30 | nb_train_retard_sup_30 | 43 | -2 | -4.953488372 | 320 | 0 | 0.13125 |
-| Effectif négatifb_train_retard_sup_30 | nb_train_retard_sup_15 | 43 | 39 | 36.44186047 | 320 | 22.5 | 26.775 |
-| Effectif négatifb_train_retard_sup_30 | nb_train_retard_sup_60 | 43 | 17 | 16.81395349 | 320 | 11 | 13.146875 |
-| Effectif négatifb_train_retard_sup_30 | nb_train_prevu | 43 | 338 | 359.627907 | 320 | 238 | 291.078125 |
-| Effectif négatifb_train_retard_sup_30 | nb_annulation | 43 | 1 | 4.209302326 | 320 | 0 | 2.525 |
-| Effectif négatifb_train_retard_sup_30 | nb_train_depart_retard | 43 | 130 | 138.3488372 | 320 | 33.5 | 63.0375 |
-| Effectif négatifb_train_retard_sup_30 | nb_train_retard_arrivee | 43 | 49 | 51.46511628 | 320 | 30 | 36.6375 |
+| Valeur négative de nb_train_retard_sup_30 | nb_train_retard_sup_30 | 43 | -2 | -4.953488372 | 320 | 0 | 0.13125 |
+| Valeur négative de nb_train_retard_sup_30 | nb_train_retard_sup_15 | 43 | 39 | 36.44186047 | 320 | 22.5 | 26.775 |
+| Valeur négative de nb_train_retard_sup_30 | nb_train_retard_sup_60 | 43 | 17 | 16.81395349 | 320 | 11 | 13.146875 |
+| Valeur négative de nb_train_retard_sup_30 | nb_train_prevu | 43 | 338 | 359.627907 | 320 | 238 | 291.078125 |
+| Valeur négative de nb_train_retard_sup_30 | nb_annulation | 43 | 1 | 4.209302326 | 320 | 0 | 2.525 |
+| Valeur négative de nb_train_retard_sup_30 | nb_train_depart_retard | 43 | 130 | 138.3488372 | 320 | 33.5 | 63.0375 |
+| Valeur négative de nb_train_retard_sup_30 | nb_train_retard_arrivee | 43 | 49 | 51.46511628 | 320 | 30 | 36.6375 |
 | Valeur négative de retard_moyen_trains_retard_sup15 | retard_moyen_trains_retard_sup15 | 8 | -1.086225981 | -1.516270826 | 621 | 4.696085859 | 5.466786162 |
 | Valeur négative de retard_moyen_trains_retard_sup15 | nb_train_retard_sup_15 | 8 | 1 | 2.625 | 621 | 19 | 21.39935588 |
 | Valeur négative de retard_moyen_trains_retard_sup15 | retard_moyen_arrivee | 8 | 18.0875 | 18.349375 | 621 | 30.86747967 | 34.69558973 |
 | Valeur négative de retard_moyen_trains_retard_sup15 | nb_train_retard_arrivee | 8 | 1.5 | 3.125 | 621 | 27 | 32.48953301 |
-| Extrêmes all-train arrival average | retard_moyen_tous_trains_arrivee | 11 | -90.6308399 | -132.0768229 | 481 | 5.617142857 | 6.353041818 |
-| Extrêmes all-train arrival average | retard_moyen_arrivee | 11 | 27.6937037 | 17.02786276 | 481 | 29.96604938 | 32.15674775 |
-| Extrêmes all-train arrival average | nb_train_retard_arrivee | 11 | 45 | 40.18181818 | 481 | 26 | 33.20790021 |
-| Extrêmes all-train arrival average | nb_train_prevu | 11 | 227 | 203.1818182 | 481 | 193 | 224.4885655 |
-| Extrêmes all-train arrival average | nb_annulation | 11 | 11 | 16.27272727 | 481 | 5 | 9.185031185 |
-| Extrêmes all-train departure average | retard_moyen_tous_trains_depart | 5 | -92.76830709 | -114.4183591 | 241 | 3.178896473 | 5.414381548 |
-| Extrêmes all-train departure average | retard_moyen_depart | 5 | 9.356324786 | 9.26623004 | 241 | 6.097192982 | 10.17749387 |
-| Extrêmes all-train departure average | nb_train_depart_retard | 5 | 195 | 163 | 241 | 137 | 159.9211618 |
-| Extrêmes all-train departure average | nb_train_prevu | 5 | 233 | 202 | 241 | 213 | 258.4149378 |
-| Extrêmes all-train departure average | nb_annulation | 5 | 11 | 9.4 | 241 | 5 | 7.024896266 |
-| Extrêmes conditional arrival average | retard_moyen_arrivee | 2 | -35.31087963 | -35.31087963 | 121 | 28.82424242 | 30.87306544 |
-| Extrêmes conditional arrival average | retard_moyen_tous_trains_arrivee | 2 | -150.926561 | -150.926561 | 121 | 5.546376812 | 5.453182756 |
-| Extrêmes conditional arrival average | nb_train_retard_arrivee | 2 | 53.5 | 53.5 | 121 | 34 | 39.07438017 |
-| Extrêmes conditional arrival average | nb_train_prevu | 2 | 226.5 | 226.5 | 121 | 203 | 249.4793388 |
-| Extrêmes conditional arrival average | nb_annulation | 2 | 11 | 11 | 121 | 4 | 5.685950413 |
-| Cancellations exceed planned | nb_train_prevu | 63 | 0 | 0 | 306 | 86 | 122.0980392 |
-| Cancellations exceed planned | nb_annulation | 63 | 8 | 7.698412698 | 306 | 14 | 16.05882353 |
-| Cancellations exceed planned | nb_train_depart_retard | 63 | 0 | 0 | 306 | 42 | 68.94117647 |
-| Cancellations exceed planned | nb_train_retard_arrivee | 63 | 0 | 0 | 306 | 7 | 11.21568627 |
-| Cancellations exceed planned | retard_moyen_tous_trains_arrivee | 63 | 0 | 0 | 306 | 3.179733911 | 4.697902115 |
-| >30 count below >60 count | nb_train_retard_sup_30 | 354 | 0 | -0.5367231638 | 9 | 0 | 2.111111111 |
-| >30 count below >60 count | nb_train_retard_sup_60 | 354 | 12 | 13.89265537 | 9 | 0 | 1.333333333 |
-| >30 count below >60 count | nb_train_retard_sup_15 | 354 | 23.5 | 28.5 | 9 | 2 | 5.111111111 |
-| >30 count below >60 count | nb_train_prevu | 354 | 249 | 303.0282486 | 9 | 52 | 148.5555556 |
-| >30 count below >60 count | nb_annulation | 354 | 0 | 2.694915254 | 9 | 0 | 3.888888889 |
-| >15 count below >30 count | nb_train_retard_sup_15 | 3 | 1 | 1.333333333 | 241 | 9 | 15.49377593 |
-| >15 count below >30 count | nb_train_retard_sup_30 | 3 | 3 | 4 | 241 | 0 | 0.9419087137 |
-| >15 count below >30 count | nb_train_retard_sup_60 | 3 | 1 | 1.333333333 | 241 | 3 | 6.908713693 |
-| >15 count below >30 count | nb_train_prevu | 3 | 76 | 112.3333333 | 241 | 162 | 203.2282158 |
-| >15 count below >30 count | nb_annulation | 3 | 13 | 13.33333333 | 241 | 4 | 9.020746888 |
+| Moyenne extrême à l’arrivée tous trains | retard_moyen_tous_trains_arrivee | 11 | -90.6308399 | -132.0768229 | 481 | 5.617142857 | 6.353041818 |
+| Moyenne extrême à l’arrivée tous trains | retard_moyen_arrivee | 11 | 27.6937037 | 17.02786276 | 481 | 29.96604938 | 32.15674775 |
+| Moyenne extrême à l’arrivée tous trains | nb_train_retard_arrivee | 11 | 45 | 40.18181818 | 481 | 26 | 33.20790021 |
+| Moyenne extrême à l’arrivée tous trains | nb_train_prevu | 11 | 227 | 203.1818182 | 481 | 193 | 224.4885655 |
+| Moyenne extrême à l’arrivée tous trains | nb_annulation | 11 | 11 | 16.27272727 | 481 | 5 | 9.185031185 |
+| Moyenne extrême au départ tous trains | retard_moyen_tous_trains_depart | 5 | -92.76830709 | -114.4183591 | 241 | 3.178896473 | 5.414381548 |
+| Moyenne extrême au départ tous trains | retard_moyen_depart | 5 | 9.356324786 | 9.26623004 | 241 | 6.097192982 | 10.17749387 |
+| Moyenne extrême au départ tous trains | nb_train_depart_retard | 5 | 195 | 163 | 241 | 137 | 159.9211618 |
+| Moyenne extrême au départ tous trains | nb_train_prevu | 5 | 233 | 202 | 241 | 213 | 258.4149378 |
+| Moyenne extrême au départ tous trains | nb_annulation | 5 | 11 | 9.4 | 241 | 5 | 7.024896266 |
+| Moyenne conditionnelle extrême à l’arrivée | retard_moyen_arrivee | 2 | -35.31087963 | -35.31087963 | 121 | 28.82424242 | 30.87306544 |
+| Moyenne conditionnelle extrême à l’arrivée | retard_moyen_tous_trains_arrivee | 2 | -150.926561 | -150.926561 | 121 | 5.546376812 | 5.453182756 |
+| Moyenne conditionnelle extrême à l’arrivée | nb_train_retard_arrivee | 2 | 53.5 | 53.5 | 121 | 34 | 39.07438017 |
+| Moyenne conditionnelle extrême à l’arrivée | nb_train_prevu | 2 | 226.5 | 226.5 | 121 | 203 | 249.4793388 |
+| Moyenne conditionnelle extrême à l’arrivée | nb_annulation | 2 | 11 | 11 | 121 | 4 | 5.685950413 |
+| Annulations supérieures aux trains prévus | nb_train_prevu | 63 | 0 | 0 | 306 | 86 | 122.0980392 |
+| Annulations supérieures aux trains prévus | nb_annulation | 63 | 8 | 7.698412698 | 306 | 14 | 16.05882353 |
+| Annulations supérieures aux trains prévus | nb_train_depart_retard | 63 | 0 | 0 | 306 | 42 | 68.94117647 |
+| Annulations supérieures aux trains prévus | nb_train_retard_arrivee | 63 | 0 | 0 | 306 | 7 | 11.21568627 |
+| Annulations supérieures aux trains prévus | retard_moyen_tous_trains_arrivee | 63 | 0 | 0 | 306 | 3.179733911 | 4.697902115 |
+| Compte >30 inférieur au compte >60 | nb_train_retard_sup_30 | 354 | 0 | -0.5367231638 | 9 | 0 | 2.111111111 |
+| Compte >30 inférieur au compte >60 | nb_train_retard_sup_60 | 354 | 12 | 13.89265537 | 9 | 0 | 1.333333333 |
+| Compte >30 inférieur au compte >60 | nb_train_retard_sup_15 | 354 | 23.5 | 28.5 | 9 | 2 | 5.111111111 |
+| Compte >30 inférieur au compte >60 | nb_train_prevu | 354 | 249 | 303.0282486 | 9 | 52 | 148.5555556 |
+| Compte >30 inférieur au compte >60 | nb_annulation | 354 | 0 | 2.694915254 | 9 | 0 | 3.888888889 |
+| Compte >15 inférieur au compte >30 | nb_train_retard_sup_15 | 3 | 1 | 1.333333333 | 241 | 9 | 15.49377593 |
+| Compte >15 inférieur au compte >30 | nb_train_retard_sup_30 | 3 | 3 | 4 | 241 | 0 | 0.9419087137 |
+| Compte >15 inférieur au compte >30 | nb_train_retard_sup_60 | 3 | 1 | 1.333333333 | 241 | 3 | 6.908713693 |
+| Compte >15 inférieur au compte >30 | nb_train_prevu | 3 | 76 | 112.3333333 | 241 | 162 | 203.2282158 |
+| Compte >15 inférieur au compte >30 | nb_annulation | 3 | 13 | 13.33333333 | 241 | 4 | 9.020746888 |
 
-### Liaisons-service touchées à plusieurs reprises
+### Couples service-liaison concernés à plusieurs reprises
 
-Seules les identités de liaisons comptant au moins deux mois ou observations concernés figurent ici ; toutes les observations individuelles sont détaillées plus haut.
+Seules les liaisons concernées pendant au moins deux mois ou dans au moins deux enregistrements sont présentées ici ; toutes les lignes correspondantes figurent dans les tableaux détaillés précédents.
 
 | Catégorie | Service | Origine | Destination | Lignes concernées | Mois |
 | --- | --- | --- | --- | --- | --- |
@@ -1082,11 +1082,11 @@ Seules les identités de liaisons comptant au moins deux mois ou observations co
 | `nb_train_retard_sup_30 < nb_train_retard_sup_60` | International | ZURICH | PARIS LYON | 3 | 2025-01, 2025-02, 2025-03 |
 | `nb_train_retard_sup_30 < nb_train_retard_sup_60` | National | ANGOULEME | PARIS MONTPARNASSE | 3 | 2025-01, 2025-02, 2025-03 |
 
-### Comparaisons complémentaires de toutes les moyennes négatives
+### Comparaisons complémentaires de toutes les moyennes de retard négatives
 
-Les témoins des mêmes mois excluent seulement les observations négatives dans le champ indiqué. Les moyennes et médianes comparent le groupe négatif aux témoins non négatifs des mois concernés.
+Ces témoins du même mois excluent uniquement les enregistrements dont la valeur du champ indiqué est négative. Les médianes et moyennes sont présentées pour le groupe des valeurs négatives et celui des témoins non négatifs, pendant les mois où des valeurs négatives sont observées.
 
-| Champ négatif | Métrique comparée | Effectif négatif | Médiane des négatifs | Moyenne des négatifs | Effectif témoin | Médiane témoin | Moyenne témoin |
+| Champ négatif | Métrique comparée | n négatif | Médiane négative | Moyenne négative | n des témoins | Médiane des témoins | Moyenne des témoins |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | retard_moyen_tous_trains_arrivee | retard_moyen_tous_trains_arrivee | 122 | -0.693324561 | -12.90904378 | 5631 | 4.843209877 | 5.665162903 |
 | retard_moyen_tous_trains_arrivee | retard_moyen_arrivee | 122 | 20.63333333 | 20.67739421 | 5631 | 32.66481481 | 34.33929148 |
@@ -1108,30 +1108,30 @@ Les témoins des mêmes mois excluent seulement les observations négatives dans
 | retard_moyen_trains_retard_sup15 | nb_train_retard_sup_15 | 8 | 1 | 2.625 | 621 | 19 | 21.39935588 |
 | retard_moyen_trains_retard_sup15 | retard_moyen_arrivee | 8 | 18.0875 | 18.349375 | 621 | 30.86747967 | 34.69558973 |
 | retard_moyen_trains_retard_sup15 | nb_train_retard_arrivee | 8 | 1.5 | 3.125 | 621 | 27 | 32.48953301 |
-## 12. Résultats, limites et recommandations
+## 12. Résultats, limites et recommandations pour la suite
 
 ### Constats observés
 
-- `nb_train_retard_sup_30` est négatif dans 43 observations, uniquement de janvier à mars 2025. L’anomalie distincte >30/<60 touche 354/363 observations (97.52%) sur ces trois mois ; de nombreux exemples ont >30 nul ou négatif et >60 positif. Ce recoupement indique fortement une incohérence de champ propre à cette période, sans fournir les valeurs de remplacement correctes.
-- `nb_train_retard_sup_15 < nb_train_retard_sup_30` apparaît dans trois lignes seulement, en mai 2020 et mars 2025. L’applicabilité limitée de >15 et l’absence d’indicateur dédié ne permettent pas de règle inconditionnelle.
-- Les annulations dépassent les prévisions dans 63 observations d’avril à juin 2020, pas seulement en avril. Toutes ont zéro train prévu et zéro indicateur ou moyenne de retard. Ce profil est distinctif, mais peut dépendre des conventions du producteur ; leur définition doit précéder toute règle stricte.
-- Les moyennes négatives extrêmes se concentrent sur quelques liaisons en octobre-décembre 2019. Plusieurs lignes combinent une moyenne tous trains très négative, une moyenne positive des trains retardés et des comptages non nuls. Ce signal concret mérite investigation sans prouver une cause précise.
-- Huit valeurs négatives de `retard_moyen_trains_retard_sup15` apparaissent en 2018–2019. Plusieurs sont associées à un comptage >15 de zéro ou un : dénominateur et définition sont particulièrement importants.
+- `nb_train_retard_sup_30` est négatif dans 43 enregistrements, uniquement de janvier à mars 2025. L’anomalie distincte >30/<60 concerne 354/363 (97,52 %) des enregistrements de ces trois mois ; dans de nombreux exemples, la valeur du champ >30 est égale à zéro ou négative tandis que >60 est positif. Ce chevauchement constitue un indice fort d’incohérence de champ propre à une période, mais ne permet pas de déterminer les valeurs de remplacement correctes.
+- `nb_train_retard_sup_15 < nb_train_retard_sup_30` apparaît dans seulement trois lignes (mai 2020 et mars 2025). Le champ >15 ayant une applicabilité limitée aux liaisons et aucun indicateur d’applicabilité n’étant disponible, une règle inconditionnelle ne serait pas étayée.
+- Les annulations dépassent le nombre de trains prévus dans 63 enregistrements d’avril à juin 2020, et non en avril seulement. Chaque ligne signalée présente zéro train prévu et des indicateurs/moyennes de retard égaux à zéro. Ce motif est distinctif dans les données, mais un plan égal à zéro peut coexister avec des annulations selon la convention du producteur ; il faut connaître la sémantique source avant d’imposer une règle.
+- Les retards moyens extrêmement négatifs se concentrent sur un petit nombre de liaisons entre octobre et décembre 2019. Dans plusieurs lignes, une moyenne tous trains fortement négative coexiste avec une moyenne positive pour les trains retardés et des comptes non nuls. Il s’agit d’un signal concret de cohérence à examiner, et non de la preuve d’une cause précise.
+- Huit valeurs négatives de `retard_moyen_trains_retard_sup15` apparaissent entre 2018 et 2019. Plusieurs sont associées à une valeur de `nb_train_retard_sup_15` égale à zéro ou à un ; le dénominateur exact et la définition du champ sont donc particulièrement importants.
 
-### Ce que les données actuelles ne permettent pas d’établir
+### Ce que les données disponibles ne permettent pas d’établir
 
-- Le motif >30/<60 de 2025 peut refléter une évolution de publication, une définition différente, une erreur de saisie ou une autre convention. Aucune métadonnée de version du champ ou d’applicabilité ne permet de trancher.
-- Les annulations positives avec zéro train prévu d’avril-juin 2020 ne sont pas expliquées : le JSON ne contient ni méthode de comptage ni état de l’horaire de référence.
-- Les valeurs seules ne définissent pas le signe et la plage attendus de chaque retard moyen. Une arrivée anticipée peut produire un retard négatif, tandis que les amplitudes extrêmes et agrégats associés posent d’autres questions.
-- La comparaison mensuelle ne contrôle ni les horaires propres aux liaisons, ni la composition des trains, ni les définitions de service, ni les changements de calcul en amont.
+- Les données ne permettent pas d’établir si le motif >30/<60 de 2025 reflète un changement de déclaration côté source, une modification de définition du champ, une erreur de saisie ou une autre convention. Ces enregistrements ne contiennent ni version des champs ni métadonnées d’applicabilité.
+- Elles n’expliquent pas pourquoi des annulations positives coexistent avec zéro train prévu d’avril à juin 2020 ; les enregistrements JSON ne fournissent ni méthode de calcul des annulations ni instantané des horaires.
+- Elles ne permettent pas d’établir le signe ou l’étendue attendus de chaque champ `retard moyen` à partir des seules valeurs. Une marche en avance peut produire des retards négatifs, tandis que les amplitudes extrêmes et les agrégats associés soulèvent d’autres questions.
+- Le rapport compare les enregistrements au sein des mois ; il ne contrôle pas les horaires propres aux liaisons, la composition des trains, les définitions des services ou les changements de calcul en amont.
 
-### Recommandations pour les règles de nettoyage
+### Recommandations pour la conception de règles de nettoyage
 
-1. Traiter les comptages négatifs comme des signalements prioritaires. Conserver les 43 comptages >30 négatifs et les 354 lignes >30/<60 dans un ensemble d’investigation explicitement daté. Ne pas remplacer les négatifs par zéro ni déduire de correction sans preuve de la source.
-2. Consulter le producteur ou l’historique des modifications pour les définitions >30/>60 de janvier-mars 2025 et les valeurs systématiquement nulles ou négatives. N’envisager une règle ciblée qu’après confirmation de la période du changement.
-3. Garder la relation >15 contre >30 conditionnelle jusqu’à confirmation de l’applicabilité par liaison. Ne pas imposer un ordre universel sur la seule base de cet export.
-4. Conserver les annulations supérieures aux prévisions en attendant de savoir si `nb_annulation` se réfère à un programme initial et `nb_train_prevu` à un programme réduit ultérieur. Si confirmé, traiter cela comme exception contextuelle ou avertissement, pas comme motif de suppression.
-5. Vérifier les lignes de retard d’octobre-décembre 2019 avec les définitions sources ou agrégats amont. Un indicateur de moyenne négative extrême peut alimenter une liste de vérification ; une correction automatique n’est pas encore justifiée.
-6. Conserver ce rapport avec l’état des données brutes pour la reproductibilité. Ne pas transformer ces diagnostics en modifications de données à ce stade.
+1. Traiter les comptes négatifs comme des indicateurs de validation prioritaires. En particulier, conserver les 43 comptes >30 négatifs et les 354 lignes >30/<60 dans un ensemble d’investigation explicite, délimité dans le temps. Ne pas remplacer les valeurs négatives par zéro ni déduire des comptes corrigés sans source faisant autorité.
+2. Interroger le producteur des données ou consulter l’historique des modifications du jeu de données pour connaître les définitions >30 et >60 de janvier à mars 2025 ainsi que les valeurs systématiquement égales à zéro ou négatives de 2025. N’envisager une règle ciblée qu’après confirmation de la date de changement.
+3. Conserver la relation >15 versus >30 comme conditionnelle tant que l’applicabilité par liaison n’est pas établie. Ne pas imposer un ordre universel à partir de ce seul jeu de données.
+4. Préserver les lignes où les annulations dépassent les trains prévus tant qu’il n’est pas établi si `nb_annulation` se rapporte aux services initialement prévus tandis que `nb_train_prevu` reflète un horaire réduit ultérieur. Si cela est confirmé, représenter le cas par une exception contextuelle ou un avertissement plutôt que supprimer les lignes.
+5. Comparer les retards par liaison d’octobre à décembre 2019 à la documentation source ou aux agrégats en amont. Un indicateur fondé sur un seuil de retards moyens extrêmement négatifs pourrait alimenter une file de vérification, mais une règle de correction stricte n’est pas encore justifiée.
+6. Conserver ensemble ce rapport d’investigation et l’instantané brut source pour assurer la reproductibilité ; ne pas encore encoder ces conditions diagnostiques sous forme de transformations.
 
-Tous les résultats sont descriptifs. Aucune cause n’est affirmée et aucune valeur brute n’a été modifiée.
+Tous les résultats de ce document sont des constats descriptifs. Aucune cause n’est avancée et aucune valeur brute n’a été modifiée.

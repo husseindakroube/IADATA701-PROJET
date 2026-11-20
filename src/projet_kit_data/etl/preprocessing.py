@@ -1,4 +1,4 @@
-"Préparation typée des données brutes SNCF selon le schéma commun."
+"""Préparation typée des données SNCF brutes selon le schéma partagé."""
 
 from __future__ import annotations
 
@@ -80,49 +80,52 @@ _INT64_MAX = 2**63 - 1
 def _conversion_error(
     field: str, row_index: int, value: Any, reason: str
 ) -> ValueError:
-    "Construit une erreur de conversion concise indiquant la position dans la source."
+    """Créer une erreur de conversion concise avec le contexte de la source."""
     value_description = repr(value)
     if len(value_description) > 80:
         value_description = f"{value_description[:77]}..."
     return ValueError(
-        f"Valeur invalide pour le champ {field!r} à l’indice de ligne source {row_index}: "
+        f"Valeur invalide pour le champ {field!r} à la ligne source {row_index} : "
         f"{value_description} ({reason})."
     )
 
 
 def _as_decimal(value: Any, field: str, row_index: int) -> Decimal:
-    "Convertit une valeur numérique compatible en Decimal fini."
+    """Analyser une valeur numérique prise en charge en Decimal fini."""
     if isinstance(value, bool) or not isinstance(value, (int, float, str, Decimal)):
-        raise _conversion_error(field, row_index, value, "un nombre est attendu")
+        raise _conversion_error(field, row_index, value, "un nombre était attendu")
 
     try:
         parsed = Decimal(str(value).strip())
     except (InvalidOperation, ValueError):
         raise _conversion_error(
-            field, row_index, value, "un nombre est attendu"
+            field, row_index, value, "un nombre était attendu"
         ) from None
 
     if not parsed.is_finite():
-        raise _conversion_error(field, row_index, value, "un nombre fini est attendu")
+        raise _conversion_error(field, row_index, value, "un nombre fini était attendu")
     return parsed
 
 
 def _convert_value(field: str, value: Any, row_index: int) -> Any:
-    "Convertit une valeur source selon son type logique canonique."
+    """Convertir une valeur source selon son type logique canonique."""
     if value is None:
         return None
 
     if field in STRING_COLUMNS:
         if not isinstance(value, str):
             raise _conversion_error(
-                field, row_index, value, "une chaîne ou une valeur nulle est attendue"
+                field,
+                row_index,
+                value,
+                "une chaîne ou une valeur manquante (None) était attendue",
             )
         if field == "date" and DATE_PATTERN.fullmatch(value) is None:
             raise _conversion_error(
                 field,
                 row_index,
                 value,
-                "un mois valide au format YYYY-MM est attendu",
+                "un mois valide au format YYYY-MM était attendu",
             )
         return value
 
@@ -130,7 +133,7 @@ def _convert_value(field: str, value: Any, row_index: int) -> Any:
         parsed = _as_decimal(value, field, row_index)
         if parsed != parsed.to_integral_value():
             raise _conversion_error(
-                field, row_index, value, "une valeur entière est attendue"
+                field, row_index, value, "une valeur entière était attendue"
             )
         converted = int(parsed)
         if not _INT64_MIN <= converted <= _INT64_MAX:
@@ -150,25 +153,33 @@ def _convert_value(field: str, value: Any, row_index: int) -> Any:
 
 
 def preprocess_data(records: list[dict[str, Any]]) -> pl.DataFrame:
-    """Convertit les observations brutes SNCF selon le schéma canonique typé à 26 colonnes.
+    """Convertir les données SNCF brutes au schéma canonique typé de 26 colonnes.
 
-    Les conversions sont explicites et suivent l’ordre stable de :data:`POLARS_SCHEMA`.
-    L’ordre des lignes, les valeurs nulles et conformes sont préservés sans modifier
-    les entrées. Les champs absents ou inattendus sont refusés, sans insertion ni
-    suppression silencieuse. Une liste vide produit une table vide au schéma complet.
-    Les consommateurs Pandas peuvent adapter la sortie Polars sans modifier le contrat
-    commun indépendant des bibliothèques.
+    Les champs source sont convertis explicitement dans l’ordre stable déclaré
+    par :data:`POLARS_SCHEMA`. La fonction conserve l’ordre des lignes, les
+    valeurs manquantes et toutes les valeurs conformes, sans modifier les données
+    d’entrée. Les champs manquants ou inattendus sont rejetés plutôt que
+    silencieusement insérés ou supprimés. Une liste vide renvoie un DataFrame
+    sans ligne, mais doté du schéma canonique complet. Ce module utilise
+    Polars en interne ; les consommateurs Pandas peuvent adapter la sortie
+    typée sans modifier le contrat partagé, indépendant des bibliothèques.
 
-    Cette fonction prépare uniquement le schéma et les types. Elle n’appelle pas
-    :func:`projet_kit_data.etl.cleaning.clean_data`, ne corrige pas les anomalies et
-    n’ajoute aucune variable spécifique à une analyse.
+    La fonction se limite à la préparation du schéma et des types. Elle
+    n’appelle pas :func:`projet_kit_data.etl.cleaning.clean_data`, ne corrige
+    pas les anomalies et n’ajoute pas de caractéristiques propres à une analyse.
 
-    :param records: Observations JSON brutes, notamment celles de :func:`projet_kit_data.ingestion.sncf_api.load_raw_data`.
+    :param records: Enregistrements JSON bruts, par exemple ceux renvoyés par
+        :func:`projet_kit_data.ingestion.sncf_api.load_raw_data`.
     :type records: list[dict[str, Any]]
-    :returns: Table Polars avec les 26 champs canoniques dans un ordre stable.
+    :returns: DataFrame Polars contenant les 26 champs canoniques dans l’ordre stable.
     :rtype: polars.DataFrame
-    :raises TypeError: Si ``records`` n’est pas une liste ou une ligne n’est pas un dictionnaire.
-    :raises ValueError: Si un champ manque, est inattendu ou ne peut pas être converti ; l’erreur indique le champ et l’indice source à partir de zéro."""
+    :raises TypeError: Si ``records`` n’est pas une liste ou si une ligne
+        n’est pas un dictionnaire.
+    :raises ValueError: Si une ligne comporte des champs manquants ou inattendus,
+        ou si une valeur ne peut pas être convertie vers le type canonique. Les
+        erreurs de conversion indiquent le champ et l’index source de la ligne,
+        numéroté à partir de zéro.
+    """
     if not isinstance(records, list):
         raise TypeError("records doit être une liste de dictionnaires.")
 
@@ -178,23 +189,23 @@ def preprocess_data(records: list[dict[str, Any]]) -> pl.DataFrame:
     for row_index, record in enumerate(records):
         if not isinstance(record, dict):
             raise TypeError(
-                f"Indice de ligne source {row_index} must be a dictionary; "
-                f"received {type(record).__name__}."
+                f"La ligne source {row_index} doit être un dictionnaire ; "
+                f"type reçu : {type(record).__name__}."
             )
 
         unexpected_fields = sorted(set(record) - expected_fields)
         if unexpected_fields:
             field = unexpected_fields[0]
             raise ValueError(
-                f"Champ inattendu {field!r} à l’indice de ligne source {row_index}."
+                f"Champ inattendu {field!r} à la ligne source {row_index}."
             )
 
         missing_fields = sorted(expected_fields - set(record))
         if missing_fields:
             field = missing_fields[0]
             raise ValueError(
-                f"Champ obligatoire absent {field!r} à l’indice de ligne source {row_index}; "
-                "use null for an explicitly missing value."
+                f"Champ obligatoire {field!r} manquant à la ligne source {row_index} ; "
+                "utilisez null pour indiquer explicitement une valeur absente."
             )
 
         converted_records.append(

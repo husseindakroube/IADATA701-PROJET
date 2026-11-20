@@ -1,4 +1,4 @@
-"Tests de préparation typée des observations brutes SNCF."
+"""Tests de la préparation typée des enregistrements bruts SNCF."""
 
 from __future__ import annotations
 
@@ -47,7 +47,7 @@ EXPECTED_COLUMNS = [
 
 
 def make_record(**overrides: Any) -> dict[str, Any]:
-    "Construit une observation complète et valide selon le schéma canonique."
+    """Construire un enregistrement complet et valide selon le schéma canonique."""
     record: dict[str, Any] = {
         "date": "2025-01",
         "service": "National",
@@ -144,14 +144,14 @@ def test_missing_field_raises_with_field_and_source_row_index() -> None:
     second = make_record()
     del second["nb_train_prevu"]
 
-    with pytest.raises(ValueError, match="nb_train_prevu.*indice de ligne source 1"):
+    with pytest.raises(ValueError, match="nb_train_prevu.*ligne source 1"):
         preprocess_data([first, second])
 
 
 def test_unexpected_field_is_rejected_with_source_row_index() -> None:
     record = make_record(unexpected_metric=1)
 
-    with pytest.raises(ValueError, match="unexpected_metric.*indice de ligne source 0"):
+    with pytest.raises(ValueError, match="unexpected_metric.*ligne source 0"):
         preprocess_data([record])
 
 
@@ -159,7 +159,7 @@ def test_unexpected_field_is_rejected_with_source_row_index() -> None:
 def test_invalid_date_format_raises_with_field_and_row(
     date: str,
 ) -> None:
-    with pytest.raises(ValueError, match="date.*indice de ligne source 0"):
+    with pytest.raises(ValueError, match="date.*ligne source 0"):
         preprocess_data([make_record(date=date)])
 
 
@@ -175,7 +175,7 @@ def test_fractional_integer_field_is_rejected() -> None:
 
 
 def test_non_numeric_integer_string_is_rejected() -> None:
-    with pytest.raises(ValueError, match="nb_train_prevu.*un nombre est attendu"):
+    with pytest.raises(ValueError, match="nb_train_prevu.*nombre était attendu"):
         preprocess_data([make_record(nb_train_prevu="many")])
 
 
@@ -189,7 +189,7 @@ def test_valid_integer_in_decimal_field_is_converted_to_float64() -> None:
 def test_non_numeric_decimal_value_is_rejected() -> None:
     with pytest.raises(
         ValueError,
-        match="prct_cause_externe.*indice de ligne source 0.*un nombre est attendu",
+        match="prct_cause_externe.*ligne source 0.*nombre était attendu",
     ):
         preprocess_data([make_record(prct_cause_externe="unknown")])
 
@@ -197,7 +197,7 @@ def test_non_numeric_decimal_value_is_rejected() -> None:
 def test_numeric_value_in_string_field_is_rejected() -> None:
     with pytest.raises(
         ValueError,
-        match="gare_depart.*indice de ligne source 0.*une chaîne ou une valeur nulle est attendue",
+        match="gare_depart.*ligne source 0.*chaîne ou une valeur manquante \\(None\\) était attendue",
     ):
         preprocess_data([make_record(gare_depart=123)])
 
@@ -215,7 +215,7 @@ def test_conversion_error_identifies_field_and_source_row_index() -> None:
 
     with pytest.raises(
         ValueError,
-        match="prct_cause_infra.*indice de ligne source 1",
+        match="prct_cause_infra.*ligne source 1",
     ):
         preprocess_data(records)
 

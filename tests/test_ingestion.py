@@ -1,4 +1,4 @@
-"Tests des fonctions d’acquisition des données brutes SNCF."
+"""Tests des fonctions d’ingestion des données brutes SNCF."""
 
 import json
 from pathlib import Path
@@ -16,7 +16,7 @@ def make_response(
     status_code: int = 200,
     headers: dict[str, str] | None = None,
 ) -> requests.Response:
-    "Crée un véritable objet réponse Requests sans accès au réseau."
+    """Créer un véritable objet réponse Requests sans accès réseau."""
     response = requests.Response()
     response.status_code = status_code
     response.headers.update(headers or {})
@@ -96,7 +96,7 @@ def test_fetch_raw_data_raises_after_retry_limit(
     monkeypatch.setattr(sncf_api.requests, "get", get)
     monkeypatch.setattr(sncf_api.time, "sleep", sleep)
 
-    with pytest.raises(sncf_api.SNCFAPIError, match="3 nouvelles tentatives"):
+    with pytest.raises(sncf_api.SNCFAPIError, match="après 3 nouvelles tentatives"):
         sncf_api.fetch_raw_data()
 
     assert get.call_count == 4
@@ -111,7 +111,7 @@ def test_fetch_raw_data_does_not_retry_non_transient_http_errors(
     monkeypatch.setattr(sncf_api.requests, "get", get)
     monkeypatch.setattr(sncf_api.time, "sleep", sleep)
 
-    with pytest.raises(sncf_api.SNCFAPIError, match="HTTP 404"):
+    with pytest.raises(sncf_api.SNCFAPIError, match="statut HTTP 404"):
         sncf_api.fetch_raw_data()
 
     get.assert_called_once()
@@ -129,7 +129,7 @@ def test_fetch_raw_data_rejects_unexpected_response_structure(
         Mock(return_value=make_response(payload)),
     )
 
-    with pytest.raises(sncf_api.SNCFAPIError, match="expected a JSON array"):
+    with pytest.raises(sncf_api.SNCFAPIError, match="tableau JSON"):
         sncf_api.fetch_raw_data()
 
 
@@ -206,5 +206,5 @@ def test_load_raw_data_rejects_unexpected_structure(
     path = tmp_path / "raw.json"
     path.write_text(json.dumps(payload), encoding="utf-8")
 
-    with pytest.raises(ValueError, match="expected a JSON array"):
+    with pytest.raises(ValueError, match="tableau JSON"):
         sncf_api.load_raw_data(path)

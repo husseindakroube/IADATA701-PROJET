@@ -1,4 +1,4 @@
-"Construit et exporte les graphes mensuels de liaisons SNCF en distinguant les services."
+"""Construire et exporter les graphes mensuels des liaisons SNCF par service."""
 
 from __future__ import annotations
 
@@ -26,21 +26,27 @@ FLAG_COLUMNS = (
     "flag_cancellations_gt_planned",
 )
 _DATE_PATTERN = re.compile(r"^\d{4}-\d{2}$")
-_INTERPRETATION_WARNING = "Une liaison est une paire origine-destination observée, pas nécessairement un tronçon physique adjacent, une étape consécutive ou une correspondance confirmée. L’adjacence ne prouve ni mouvement réel ni propagation des retards."
+_INTERPRETATION_WARNING = (
+    "Une liaison est une paire origine-destination observée, mais pas nécessairement "
+    "un segment ferroviaire physiquement adjacent, un tronçon consécutif du trajet "
+    "d’un train ni une correspondance confirmée. L’adjacence dans le graphe ne prouve "
+    "ni un déplacement de train ni une propagation des retards."
+)
 
 
 @dataclass
 class GraphConstructionResult:
-    """Résultat structuré de construction du graphe.
+    """Résultat structuré de la construction du graphe.
 
-    :ivar nodes: Une ligne par gare avec identifiant déterministe.
-    :ivar edges: Une ligne par arête orientée unique et par service.
-    :ivar edge_observations: Observations mensuelles d’origine avec identifiants du graphe.
-    :ivar excluded_records: Lignes exclues de la construction et motifs associés.
-    :ivar graph: Multigraphe orienté combiné avec clés d’arêtes distinguant les services.
-    :ivar service_graphs: Topologie orientée globale de chaque service observé.
-    :ivar metadata: Métadonnées structurées de construction.
-    :ivar output_paths: Chemins écrits par :func:`export_graph_artifacts`."""
+    :ivar nodes: Une ligne par gare, avec des identifiants de nœud déterministes.
+    :ivar edges: Une ligne par arête orientée unique tenant compte du service.
+    :ivar edge_observations: Enregistrements mensuels d’origine avec les identifiants du graphe.
+    :ivar excluded_records: Lignes d’entrée exclues de la construction et motifs associés.
+    :ivar graph: Multigraphe orienté combiné, avec des clés d’arête tenant compte du service.
+    :ivar service_graphs: Topologie orientée globale pour chaque service observé.
+    :ivar metadata: Métadonnées de construction lisibles par machine.
+    :ivar output_paths: Chemins écrits par :func:`export_graph_artifacts`.
+    """
 
     nodes: pl.DataFrame
     edges: pl.DataFrame
@@ -77,15 +83,13 @@ def _validate_input(data: pl.DataFrame) -> None:
         raise TypeError("data doit être un DataFrame Polars")
     missing = [column for column in GRAPH_KEY_COLUMNS if column not in data.columns]
     if missing:
-        raise ValueError(
-            f"Colonnes de clé du graphe requises absentes : {', '.join(missing)}"
-        )
+        raise ValueError(f"Colonnes de clé du graphe manquantes : {', '.join(missing)}")
     non_string = [
         column for column in GRAPH_KEY_COLUMNS if data.schema[column] != pl.String
     ]
     if non_string:
         raise TypeError(
-            "Les colonnes de clé du graphe doivent utiliser le type String de Polars : "
+            "Les colonnes de clé du graphe doivent être de type String Polars : "
             + ", ".join(non_string)
         )
 
@@ -165,21 +169,25 @@ def construct_graph_data(
     data: pl.DataFrame,
     source_dataset_path: str | os.PathLike[str] = "<in-memory>",
 ) -> GraphConstructionResult:
-    """Construit des nœuds, arêtes, observations et graphes NetworkX déterministes.
+    """Construire des nœuds, arêtes, observations et graphes NetworkX déterministes.
 
-    Les clés invalides sont enregistrées dans ``excluded_records``. Toutes les lignes
-    d’un groupe de clés métier dupliquées sont exclues pour éviter un choix arbitraire.
-    Les mesures opérationnelles et indicateurs qualité ne déterminent pas
-    l’admissibilité des clés du graphe.
+    Les clés de graphe invalides sont consignées explicitement dans
+    ``excluded_records``. Si une clé métier du graphe apparaît plusieurs fois,
+    toutes les lignes du groupe dupliqué sont exclues afin qu’aucune ligne source
+    ne soit choisie arbitrairement. Les valeurs opérationnelles et les flags
+    diagnostiques ne déterminent pas l’admissibilité des clés de graphe.
 
-    :param data: Observations SNCF traitées ; l’entrée n’est jamais modifiée.
+    :param data: Enregistrements SNCF prétraités. L’entrée n’est jamais modifiée.
     :type data: polars.DataFrame
-    :param source_dataset_path: Source inscrite dans les métadonnées ; ``"<in-memory>"`` sans fichier source.
+    :param source_dataset_path: Chemin source consigné dans les métadonnées, ou
+        ``"<in-memory>"`` si l’entrée ne provient pas d’un fichier.
     :type source_dataset_path: str | os.PathLike[str]
     :returns: Tables, graphes orientés réutilisables, exclusions et métadonnées.
     :rtype: GraphConstructionResult
-    :raises TypeError: Si ``data`` n’est pas un DataFrame Polars ou si les clés ne sont pas des chaînes.
-    :raises ValueError: Si une colonne de clé requise est absente."""
+    :raises TypeError: Si ``data`` n’est pas un DataFrame Polars ou si les
+        colonnes de clé de graphe ne sont pas des chaînes.
+    :raises ValueError: Si des colonnes de clé de graphe requises sont absentes.
+    """
     _validate_input(data)
     rows = data.to_dicts()
     eligible: list[dict[str, Any]] = []
@@ -366,15 +374,17 @@ def construct_graph_data(
         "maximum_observation_month": max(valid_dates) if valid_dates else None,
         "distinct_month_count": temporal["distinct_months"],
         "graph_directionality": "orienté ; le graphe combiné est un MultiDiGraph indexé par edge_id",
-        "node_identity_definition": "Libellé exact de la gare source (gare_depart/gare_arrivee)",
-        "edge_identity_definition": "(service, libellé de la gare de départ, libellé de la gare d’arrivée)",
+        "node_identity_definition": "Libellé source exact de la gare (gare_depart/gare_arrivee)",
+        "edge_identity_definition": "(service, libellé de la gare d’origine, libellé de la gare de destination)",
         "identifier_generation_strategy": (
-            "24 premiers caractères hexadécimaux du SHA-256 des tuples d’identité JSON UTF-8 compacts ; identifiants node_<digest> et edge_<digest>."
+            "Les 24 premiers caractères hexadécimaux du SHA-256 calculé sur les tuples "
+            "d’identité JSON UTF-8 compacts ; les ID de nœud utilisent node_<digest> "
+            "et les ID d’arête edge_<digest>."
         ),
         "construction_configuration": {
             "input_rows_with_duplicate_business_keys": "exclure toutes les lignes des groupes dupliqués",
-            "empty_key_policy": "refuser les clés composées uniquement d’espaces ; préserver toutes les valeurs sources retenues",
-            "operational_measurement_policy": "conserver les valeurs nulles, valeurs et indicateurs de diagnostic inchangés",
+            "empty_key_policy": "rejeter les clés composées uniquement d’espaces ; préserver toutes les valeurs source conservées",
+            "operational_measurement_policy": "préserver à l’identique les valeurs manquantes (None/null), les valeurs observées (y compris zéro) et les flags diagnostiques",
         },
         "exclusion_reasons": dict(sorted(reason_counts.items())),
         "duplicate_business_key_records": duplicate_count,
@@ -393,18 +403,21 @@ def reconstruct_monthly_graph(
     service: str,
     month: str,
 ) -> nx.DiGraph:
-    """Reconstruit le graphe orienté d’un service pour un mois.
+    """Reconstruire le graphe orienté d’un service pour un mois donné.
 
-    :param observations: Observations mensuelles issues de la construction ou du fichier ``edge_observations.parquet``.
+    :param observations: Observations mensuelles des arêtes issues d’un résultat
+        de construction ou du fichier exporté ``edge_observations.parquet``.
     :type observations: polars.DataFrame
-    :param service: Libellé exact du service à sélectionner.
+    :param service: Catégorie de service exacte à sélectionner.
     :type service: str
-    :param month: Mois au format ``YYYY-MM``.
+    :param month: Mois de référence au format ``YYYY-MM``.
     :type month: str
-    :returns: Graphe orienté avec noms des gares et attributs d’origine sur les arêtes.
+    :returns: Graphe orienté avec les libellés de gare et les attributs de
+        l’observation d’origine sur chaque arête.
     :rtype: networkx.DiGraph
     :raises TypeError: Si observations n’est pas un DataFrame Polars.
-    :raises ValueError: Si des colonnes requises manquent ou si le mois est invalide."""
+    :raises ValueError: Si des colonnes requises manquent ou si le mois est invalide.
+    """
     if not isinstance(observations, pl.DataFrame):
         raise TypeError("observations doit être un DataFrame Polars")
     required = {
@@ -418,7 +431,7 @@ def reconstruct_monthly_graph(
     }
     missing = sorted(required.difference(observations.columns))
     if missing:
-        raise ValueError("Colonnes d’observation absentes : " + ", ".join(missing))
+        raise ValueError("Colonnes d’observation manquantes : " + ", ".join(missing))
     if not _DATE_PATTERN.fullmatch(month):
         raise ValueError("month doit être un mois calendaire valide au format YYYY-MM")
     try:
@@ -450,26 +463,26 @@ def _render_report(result: GraphConstructionResult) -> str:
     metadata = result.metadata
     temporal = metadata["temporal_diagnostics"]
     lines = [
-        "# Rapport de construction des graphes SNCF",
+        "# Rapport de construction du graphe SNCF",
         "",
-        "## Aperçu du jeu de données",
+        "## Vue d’ensemble du jeu de données",
         "",
-        f"- Source: `{metadata['source_dataset_path']}`",
-        f"- Lignes sources : {metadata['source_row_count']:,}",
+        f"- Source : `{metadata['source_dataset_path']}`",
+        f"- Lignes source : {metadata['source_row_count']:,}",
         f"- Observations mensuelles valides : {metadata['valid_monthly_observation_count']:,}",
         f"- Lignes exclues : {metadata['excluded_record_count']:,}",
         f"- Motifs d’exclusion : `{json.dumps(metadata['exclusion_reasons_and_counts'], ensure_ascii=False, sort_keys=True)}`",
-        f"- Couverture temporelle : {metadata['minimum_observation_month'] or 'n/a'} to {metadata['maximum_observation_month'] or 'n/a'} ({metadata['distinct_month_count']} mois distincts)",
-        f"- Services: {', '.join(metadata['service_categories']) or 'none'}",
+        f"- Couverture temporelle : de {metadata['minimum_observation_month'] or 'N/D'} à {metadata['maximum_observation_month'] or 'N/D'} ({metadata['distinct_month_count']} mois distincts)",
+        f"- Services : {', '.join(metadata['service_categories']) or 'aucun'}",
         f"- Gares : {metadata['node_count']:,}",
-        f"- Arêtes orientées distinguées par service : {metadata['service_aware_edge_count']:,}",
+        f"- Arêtes orientées tenant compte du service : {metadata['service_aware_edge_count']:,}",
         f"- Observations mensuelles : {metadata['monthly_observation_count']:,}",
         "",
-        "## Diagnostics structurels du réseau par service",
+        "## Diagnostics de la structure du réseau par service",
         "",
-        "Les effectifs décrivent la topologie observée de chaque service. Aucun nœud n’est isolé lorsqu’il existe des arêtes, car les nœuds proviennent des arêtes observées.",
+        "Tous les comptes portent sur la topologie observée propre à chaque service. Les graphes de service contenant des arêtes n’ont aucun nœud isolé, car leurs nœuds sont créés à partir des arêtes observées.",
         "",
-        "| Service | Nœuds | Arêtes | Isolés | Boucles | Composantes faibles | Composantes fortes | Plus grande composante faible | Entrées multiples | Sorties multiples |",
+        "| Service | Nœuds | Arêtes | Nœuds isolés | Boucles | Composantes faibles | Composantes fortes | Plus grande composante faible | Plusieurs arêtes entrantes | Plusieurs arêtes sortantes |",
         "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for service, values in metadata["network_diagnostics_by_service"].items():
@@ -483,9 +496,9 @@ def _render_report(result: GraphConstructionResult) -> str:
         "## Diagnostics temporels",
         "",
         f"- Mois distincts observés : {temporal['distinct_months']}",
-        f"- Lacunes de couverture mensuelle globale : {', '.join(temporal['missing_months']) or 'none'}",
+        f"- Mois manquants dans la couverture globale : {', '.join(temporal['missing_months']) or 'aucun'}",
         "",
-        "| Mois | Observations | Arêtes uniques | Nouvelles arêtes depuis le mois précédent | Arêtes non observées depuis le mois précédent |",
+        "| Mois | Observations | Arêtes uniques | Nouvelles arêtes par rapport au mois précédent | Arêtes qui ne sont plus observées par rapport au mois précédent |",
         "|---|---:|---:|---:|---:|",
     ]
     for month, count in temporal["observations_per_month"].items():
@@ -497,17 +510,21 @@ def _render_report(result: GraphConstructionResult) -> str:
         "",
         "## Diagnostics de qualité des données",
         "",
-        f"- Observations à clé métier dupliquée : {metadata['duplicate_business_key_record_count']}",
-        f"- Effectifs exclus par motif : `{json.dumps(metadata['exclusion_reasons_and_counts'], ensure_ascii=False, sort_keys=True)}`",
-        "- Indicateurs de diagnostic actifs dans la source ; observations conservées si les clés du graphe sont valides :",
+        f"- Enregistrements dupliqués selon la clé métier : {metadata['duplicate_business_key_record_count']}",
+        f"- Nombre d’exclusions par motif : `{json.dumps(metadata['exclusion_reasons_and_counts'], ensure_ascii=False, sort_keys=True)}`",
+        "- Flags diagnostiques déjà activés dans la source (ces observations restent incluses si les clés du graphe sont valides) :",
     ]
     if metadata["flagged_record_counts_in_source"]:
+        flag_counts = metadata["flagged_record_counts_in_source"]
+        ordered_flags = [column for column in FLAG_COLUMNS if column in flag_counts]
+        ordered_flags.extend(sorted(set(flag_counts).difference(ordered_flags)))
         lines.extend(
-            f"  - `{column}`: {count:,}"
-            for column, count in metadata["flagged_record_counts_in_source"].items()
+            f"  - `{column}`: {flag_counts[column]:,}" for column in ordered_flags
         )
     else:
-        lines.append("  - Aucune colonne d’indicateur reconnue n’était présente.")
+        lines.append(
+            "  - Aucune colonne de flag diagnostique reconnue n’était présente."
+        )
     lines += [
         "",
         "## Interprétation et avertissements",
@@ -523,19 +540,20 @@ def export_graph_artifacts(
     output_dir: str | os.PathLike[str] = DEFAULT_OUTPUT_DIR,
     report_path: str | os.PathLike[str] = DEFAULT_REPORT_PATH,
 ) -> GraphConstructionResult:
-    """Écrit les tables du graphe, les métadonnées JSON et le rapport Markdown.
+    """Écrire les tables du graphe, les métadonnées JSON et le rapport Markdown.
 
-    :param result: Résultat structuré de construction à exporter.
+    :param result: Résultat structuré de construction du graphe à exporter.
     :type result: GraphConstructionResult
-    :param output_dir: Dossier des trois tables Parquet et des métadonnées.
+    :param output_dir: Répertoire des trois artefacts Parquet et des métadonnées.
     :type output_dir: str | os.PathLike[str]
-    :param report_path: Destination du rapport Markdown lisible.
+    :param report_path: Destination du rapport Markdown destiné aux lecteurs.
     :type report_path: str | os.PathLike[str]
-    :returns: Même résultat avec ``output_paths`` renseigné.
+    :returns: Le même résultat, avec ``output_paths`` renseigné.
     :rtype: GraphConstructionResult
-    :raises TypeError: Si ``result`` a un type incompatible.
-    :raises OSError: Si un dossier ou fichier de sortie ne peut pas être écrit.
-    :raises ValueError: Si les métadonnées ne sont pas sérialisables en JSON."""
+    :raises TypeError: Si ``result`` est d’un type non pris en charge.
+    :raises OSError: Si un répertoire de sortie ou un artefact ne peut pas être écrit.
+    :raises ValueError: Si les métadonnées ne peuvent pas être sérialisées en JSON.
+    """
     if not isinstance(result, GraphConstructionResult):
         raise TypeError("result doit être un GraphConstructionResult")
     destination = Path(output_dir)
@@ -567,19 +585,19 @@ def run_graph_construction_pipeline(
     output_dir: str | os.PathLike[str] = DEFAULT_OUTPUT_DIR,
     report_path: str | os.PathLike[str] = DEFAULT_REPORT_PATH,
 ) -> GraphConstructionResult:
-    """Lit les données Parquet traitées et exécute la chaîne complète d’export du graphe.
+    """Lire les données Parquet traitées et exécuter le pipeline complet d’export du graphe.
 
-    :param input_path: Chemin du fichier Parquet SNCF traité en entrée.
+    :param input_path: Chemin du fichier Parquet SNCF prétraité.
     :type input_path: str | os.PathLike[str]
-    :param output_dir: Dossier des tables Parquet du graphe et des métadonnées JSON.
+    :param output_dir: Répertoire des tables Parquet du graphe et des métadonnées JSON.
     :type output_dir: str | os.PathLike[str]
     :param report_path: Destination du rapport de construction.
     :type report_path: str | os.PathLike[str]
-    :returns: Tables, objets de graphe, métadonnées, diagnostics et chemins de sortie.
+    :returns: Tables et objets du graphe, métadonnées, diagnostics et chemins de sortie.
     :rtype: GraphConstructionResult
-    :raises OSError: Si l’entrée ne peut pas être lue ou les sorties écrites.
-    :raises TypeError: Si les colonnes de clé du graphe ont des types incompatibles.
-    :raises ValueError: Si les colonnes de clé du graphe sont absentes.
+    :raises OSError: Si l’entrée ne peut pas être lue ou si les sorties ne peuvent pas être écrites.
+    :raises TypeError: Si les colonnes de clé du graphe ont des types non pris en charge.
+    :raises ValueError: Si des colonnes de clé du graphe sont absentes.
     """
     source_path = Path(input_path)
     data = pl.read_parquet(source_path)

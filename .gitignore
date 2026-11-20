@@ -1,27 +1,21 @@
-# Fichiers générés par Python
-__pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
-
-# Environnements virtuels
-.venv
-.uv-cache/
+# Testing and linting
 .pytest_cache/
-logs/*.log*
-!logs/examples/debug.log
-!logs/examples/error.log
-docs/_build/
-reports/
-.coverage*
-.env
-
-# Additional shared development ignores
-*.py[cod]
-.ipynb_checkpoints/
 .ruff_cache/
+.coverage
 htmlcov/
+
+# Environment variables and secrets
+.env
 .env.*
-.vscode/
+!.env.example
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python bytecode and cache directories
+__pycache__/
+*.py[cod]
+
+# Local application logs
+/logs/debug.log
+/logs/error.log

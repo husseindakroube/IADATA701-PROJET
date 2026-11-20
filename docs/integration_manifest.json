@@ -252,12 +252,8 @@
     "sha256": "e02748bf21d10717a9a50999437d60d3406bb8642ebde86a9d78a5b3f1e6f98d"
   },
   {
-    "path": "data/processed/graph/visualizations/top10_edge_rankings.png",
-    "sha256": "919960231b77cf12a1fc1d2b29ea522f730fbb26c1789f235b418d5c9704ddf6"
-  },
-  {
-    "path": "data/processed/graph/visualizations/top10_station_rankings.png",
-    "sha256": "2b8159fb2933dea46ec13db3ed15dc456d7e2365fcdb3a48c206cecee7621074"
+    "path": "data/processed/graph/visualizations/leading_station_rankings.png",
+    "sha256": "80dc81caa2e965d9f00f3ed38e440667dc509e974ed2630e8bd0de38a34f0e83"
   },
   {
     "path": "data/reports/graph/construction_report.md",
@@ -404,7 +400,7 @@
     "sha256": "acaad2e3a3e13aab28263e6908a160ee006870a7c045c73c292bfac92f256df7"
   },
   {
-    "path": "image/Projet_SNCF.svg",
+    "path": "docs/images/Projet_SNCF.svg",
     "sha256": "51c0c141917914ed28ede966affc62920c5eaee6e0bfc6dc1578746e7a9e40ba"
   },
   {

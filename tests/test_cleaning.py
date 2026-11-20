@@ -1,4 +1,4 @@
-"Tests des indicateurs qualité non destructifs par observation."
+"""Tests des indicateurs de nettoyage non destructifs par ligne."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from projet_kit_data.etl.cleaning import COUNT_COLUMNS, FLAG_COLUMNS, clean_data
 def make_frame(
     rows: list[dict[str, int | None]] | None = None,
 ) -> pl.DataFrame:
-    "Construit une petite table avec les colonnes de comptage requises."
+    """Construire un petit DataFrame d’entrée avec les colonnes de comptage requises."""
     if rows is None:
         rows = [
             {
@@ -196,16 +196,17 @@ def test_flags_have_boolean_types() -> None:
 def test_reserved_flag_column_is_not_overwritten() -> None:
     frame = make_frame().with_columns(pl.lit("source value").alias(FLAG_COLUMNS[0]))
 
-    with pytest.raises(
-        ValueError, match="colonnes réservées aux indicateurs de diagnostic"
-    ):
+    with pytest.raises(ValueError, match="colonnes réservées aux flags diagnostiques"):
         clean_data(frame)
 
 
 def test_non_numeric_required_count_column_raises() -> None:
     frame = make_frame().with_columns(pl.Series("nb_train_prevu", ["unknown"]))
 
-    with pytest.raises(ValueError, match="entières ou entièrement nulles"):
+    with pytest.raises(
+        ValueError,
+        match="doivent être entières ou contenir uniquement des valeurs manquantes",
+    ):
         clean_data(frame)
 
 
@@ -214,7 +215,10 @@ def test_float_count_column_raises() -> None:
         pl.Series("nb_train_prevu", [10.0], dtype=pl.Float64)
     )
 
-    with pytest.raises(ValueError, match="entières ou entièrement nulles"):
+    with pytest.raises(
+        ValueError,
+        match="doivent être entières ou contenir uniquement des valeurs manquantes",
+    ):
         clean_data(frame)
 
 

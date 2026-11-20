@@ -18,11 +18,11 @@
     "min": "2018-01"
   },
   "derived_variables": {
-    "arrival_delay_rate": "non calculé ; dénominateur non établi",
-    "cancellation_rate": "nb_annulation / nb_train_prevu uniquement si le nombre prévu est positif et les annulations comprises entre zéro et ce nombre",
-    "cancellation_rate_invalid_reason": "Valeur nulle si le taux est valide ; sinon code du motif",
-    "cancellation_rate_valid": "Validité booléenne de la règle du numérateur et du dénominateur de cancellation_rate",
-    "flag_primary_arrival_delay_below_minus_15": "retard_moyen_tous_trains_arrivee < -15 minutes ; la valeur d’origine est conservée"
+    "arrival_delay_rate": "not calculated; denominator is not established",
+    "cancellation_rate": "nb_annulation / nb_train_prevu only when planned > 0 and 0 <= cancellations <= planned",
+    "cancellation_rate_invalid_reason": "Null when rate is valid; otherwise a reason code",
+    "cancellation_rate_valid": "Boolean validity of cancellation_rate denominator/numerator rule",
+    "flag_primary_arrival_delay_below_minus_15": "retard_moyen_tous_trains_arrivee < -15 minutes; original outcome is preserved"
   },
   "extreme_negative_primary_outcome_count": 11,
   "input_artifacts": {
@@ -156,8 +156,8 @@
     "National"
   ],
   "warnings": [
-    "Le retard principal est conservé, y compris les valeurs négatives ; les valeurs signalées ne sont pas exclues.",
-    "Les métriques décrivent la topologie ; elles ne prouvent ni itinéraires de trains ni propagation des retards.",
-    "Aucun arrival_delay_rate n’est calculé car son dénominateur n’est pas établi."
+    "The primary delay outcome is preserved, including negative values; flagged values are not excluded.",
+    "Graph metrics are structural topology measures and do not establish train itineraries or delay propagation.",
+    "No arrival_delay_rate is calculated because its denominator is not established."
   ]
 }

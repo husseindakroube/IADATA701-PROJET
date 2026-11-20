@@ -1,4 +1,4 @@
-"Prépare les données mensuelles par liaison pour les analyses de recherche ultérieures."
+"""Préparer les données mensuelles par liaison pour les analyses ultérieures."""
 
 from __future__ import annotations
 
@@ -24,11 +24,12 @@ _EXTREME_DELAY_FLAG = "flag_primary_arrival_delay_below_minus_15"
 
 @dataclass
 class ResearchDataResult:
-    """Table de recherche préparée et métadonnées de qualité.
+    """Table de recherche préparée et métadonnées de qualité associées.
 
-    :ivar data: Une ligne par observation mensuelle d’origine, service et liaison.
-    :ivar metadata: Statistiques d’entrée, de jointure, de couverture et de qualité.
-    :ivar output_paths: Chemins écrits par la chaîne de traitement des fichiers."""
+    :ivar data: Une ligne par observation mensuelle initiale de service et de liaison.
+    :ivar metadata: Statistiques sur les entrées, les jointures, la couverture et la qualité.
+    :ivar output_paths: Chemins écrits par le pipeline fondé sur des fichiers.
+    """
 
     data: pl.DataFrame
     metadata: dict[str, Any]
@@ -45,7 +46,7 @@ def _require_columns(frame: pl.DataFrame, columns: set[str], label: str) -> None
 
 def _assert_unique(frame: pl.DataFrame, keys: tuple[str, ...], label: str) -> None:
     if frame.select(pl.struct(list(keys)).n_unique()).item() != frame.height:
-        raise ValueError(f"{label} contient des clés dupliquées pour {keys}")
+        raise ValueError(f"{label} contient des valeurs de clé en double pour {keys}")
 
 
 def _monthly_node_metrics(node_metrics: pl.DataFrame, endpoint: str) -> pl.DataFrame:
@@ -68,28 +69,32 @@ def prepare_research_dataset(
     edge_metrics: pl.DataFrame,
     node_metrics: pl.DataFrame,
 ) -> ResearchDataResult:
-    """Joint les observations opérationnelles aux métriques du graphe du même mois.
+    """Joindre les observations opérationnelles aux métriques du graphe du même mois.
 
-    Toutes les observations et valeurs sources sont conservées. Seules les métriques
-    mensuelles sont utilisées ; les lignes ``period="overall"`` sont exclues. Le taux
-    d’annulation est calculé si le nombre prévu est positif et si les annulations sont
-    comprises entre zéro et ce nombre. Sinon, les comptages sont conservés, le taux
-    reste nul et un motif de diagnostic est ajouté.
+    La fonction conserve chaque observation d’entrée et ses valeurs d’origine.
+    Elle utilise uniquement les métriques mensuelles du graphe ; les lignes
+    ``period="overall"`` sont exclues. Le taux d’annulation est calculé seulement
+    si le nombre de trains prévus est positif et si le nombre d’annulations est
+    positif ou nul et inférieur ou égal au nombre de trains prévus. Les cas non
+    valides conservent leurs comptes, ont un taux manquant (``None``) et
+    reçoivent un motif de diagnostic.
 
     :param observations: Observations mensuelles des arêtes issues de la construction.
     :type observations: polars.DataFrame
-    :param edge_metrics: Métriques globales et mensuelles des arêtes de la phase 1.
+    :param edge_metrics: Métriques globales et mensuelles des arêtes.
     :type edge_metrics: polars.DataFrame
-    :param node_metrics: Métriques globales et mensuelles des nœuds de la phase 1.
+    :param node_metrics: Métriques globales et mensuelles des nœuds.
     :type node_metrics: polars.DataFrame
-    :returns: Données de recherche et métadonnées structurées de qualité et de jointure.
+    :returns: Données de recherche et métadonnées de qualité/jointure lisibles par machine.
     :rtype: ResearchDataResult
     :raises TypeError: Si une entrée n’est pas un DataFrame Polars.
-    :raises ValueError: Si les schémas sont invalides, les clés dupliquées ou les identités des arêtes incohérentes."""
+    :raises ValueError: Si les schémas d’entrée sont invalides, si des clés sont
+        dupliquées ou si les identifiants d’arête du graphe sont incohérents.
+    """
     frames = (observations, edge_metrics, node_metrics)
     if any(not isinstance(frame, pl.DataFrame) for frame in frames):
         raise TypeError(
-            "observations, edge_metrics et node_metrics doivent être des DataFrames Polars"
+            "observations, edge_metrics et node_metrics doivent être des DataFrame Polars"
         )
     _require_columns(
         observations,
@@ -128,7 +133,7 @@ def prepare_research_dataset(
         "node_metrics",
     )
     if observations.schema["date"] != pl.String:
-        raise TypeError("observations.date doit utiliser le type String de Polars")
+        raise TypeError("observations.date doit être de type String Polars")
     _assert_unique(observations, BUSINESS_KEY, "observations")
     _assert_unique(edge_metrics, ("period", "service", "edge_id"), "edge_metrics")
     _assert_unique(node_metrics, ("period", "service", "node_id"), "node_metrics")
@@ -149,7 +154,7 @@ def prepare_research_dataset(
     )
     if edge_matches.height != source_count:
         raise ValueError(
-            "La jointure des métriques d’arêtes a modifié le nombre d’observations"
+            "La jointure des métriques d’arêtes a modifié le nombre de lignes d’observation"
         )
     edge_mismatch = edge_matches.filter(
         (pl.col("source") != pl.col("source_metric"))
@@ -157,7 +162,7 @@ def prepare_research_dataset(
     ).height
     if edge_mismatch:
         raise ValueError(
-            f"{edge_mismatch} lignes de métriques d’arêtes ont des extrémités orientées incohérentes"
+            f"{edge_mismatch} lignes de métriques d’arêtes présentent des extrémités orientées incohérentes"
         )
 
     prepared = observations.join(
@@ -168,7 +173,7 @@ def prepare_research_dataset(
     )
     if prepared.height != source_count:
         raise ValueError(
-            "La jointure des métriques d’arêtes a modifié le nombre d’observations"
+            "La jointure des métriques d’arêtes a modifié le nombre de lignes d’observation"
         )
     source_metrics = _monthly_node_metrics(node_metrics, "source")
     target_metrics = _monthly_node_metrics(node_metrics, "target")
@@ -177,14 +182,14 @@ def prepare_research_dataset(
     )
     if prepared.height != source_count:
         raise ValueError(
-            "La jointure des nœuds de départ a modifié le nombre d’observations"
+            "La jointure des métriques des nœuds d’origine a modifié le nombre de lignes d’observation"
         )
     prepared = prepared.join(
         target_metrics, on=["date", "service", "target"], how="left", validate="m:1"
     )
     if prepared.height != source_count:
         raise ValueError(
-            "La jointure des nœuds d’arrivée a modifié le nombre d’observations"
+            "La jointure des métriques des nœuds de destination a modifié le nombre de lignes d’observation"
         )
 
     planned = pl.col("nb_train_prevu")
@@ -224,10 +229,10 @@ def prepare_research_dataset(
         rate_valid.fill_null(False).alias("cancellation_rate_valid"),
         reason.alias("cancellation_rate_invalid_reason"),
     )
-    _assert_unique(prepared, BUSINESS_KEY, "jeu de recherche préparé")
+    _assert_unique(prepared, BUSINESS_KEY, "prepared research dataset")
     if prepared.height != source_count:
         raise ValueError(
-            "La préparation de recherche n’a pas conservé toutes les observations"
+            "La préparation de recherche n’a pas préservé toutes les observations"
         )
 
     metric_columns = [
@@ -281,11 +286,11 @@ def prepare_research_dataset(
             "overall_metrics_excluded": True,
         },
         "derived_variables": {
-            "cancellation_rate": "nb_annulation / nb_train_prevu uniquement si le nombre prévu est positif et les annulations comprises entre zéro et ce nombre",
-            "cancellation_rate_valid": "Validité booléenne de la règle du numérateur et du dénominateur de cancellation_rate",
-            "cancellation_rate_invalid_reason": "Valeur nulle si le taux est valide ; sinon code du motif",
-            _EXTREME_DELAY_FLAG: f"{_PRIMARY_DELAY} < -15 minutes ; la valeur d’origine est conservée",
-            "arrival_delay_rate": "non calculé ; dénominateur non établi",
+            "cancellation_rate": "nb_annulation / nb_train_prevu, calculé uniquement si nb_train_prevu > 0 et 0 <= nb_annulation <= nb_train_prevu",
+            "cancellation_rate_valid": "Indique si les règles sur le numérateur et le dénominateur de cancellation_rate sont respectées",
+            "cancellation_rate_invalid_reason": "Valeur manquante (None) lorsque le taux est valide ; sinon, contient un code de motif",
+            _EXTREME_DELAY_FLAG: f"{_PRIMARY_DELAY} < -15 minutes ; la valeur de résultat d’origine est conservée",
+            "arrival_delay_rate": "non calculé ; le dénominateur n’est pas établi",
         },
         "cancellation_rate_valid_count": prepared.filter(
             pl.col("cancellation_rate_valid")
@@ -306,9 +311,9 @@ def prepare_research_dataset(
             column: str(dtype) for column, dtype in prepared.schema.items()
         },
         "warnings": [
-            "Le retard principal est conservé, y compris les valeurs négatives ; les valeurs signalées ne sont pas exclues.",
-            "Les métriques décrivent la topologie ; elles ne prouvent ni itinéraires de trains ni propagation des retards.",
-            "Aucun arrival_delay_rate n’est calculé car son dénominateur n’est pas établi.",
+            "Le résultat principal de retard est conservé, y compris ses valeurs négatives ; les valeurs signalées ne sont pas exclues.",
+            "Les métriques de graphe décrivent la topologie et ne prouvent ni des itinéraires de trains ni une propagation des retards.",
+            "Aucun arrival_delay_rate n’est calculé, car son dénominateur n’est pas établi.",
         ],
     }
     return ResearchDataResult(prepared, metadata)
@@ -317,30 +322,30 @@ def prepare_research_dataset(
 def _quality_report(result: ResearchDataResult) -> str:
     metadata = result.metadata
     lines = [
-        "# Rapport qualité du jeu de recherche",
+        "# Rapport de qualité du jeu de recherche",
         "",
-        f"- Observations en entrée : {metadata['input_row_counts']['observations']:,}",
-        f"- Lignes de métriques mensuelles des arêtes en entrée : {metadata['input_row_counts']['monthly_edge_metrics']:,}",
-        f"- Lignes de métriques des nœuds en entrée, globales comprises : {metadata['input_row_counts']['all_node_metrics']:,}",
+        f"- Lignes d’observation en entrée : {metadata['input_row_counts']['observations']:,}",
+        f"- Lignes de métriques d’arêtes mensuelles en entrée : {metadata['input_row_counts']['monthly_edge_metrics']:,}",
+        f"- Lignes de métriques de nœuds en entrée (y compris globales) : {metadata['input_row_counts']['all_node_metrics']:,}",
         f"- Lignes en sortie : {metadata['output_row_count']:,}",
         f"- Colonnes en sortie : {metadata['output_column_count']:,}",
-        f"- Couverture temporelle : {metadata['date_coverage']['min']} to {metadata['date_coverage']['max']}",
-        f"- Services: {', '.join(metadata['services'])}",
-        f"- Clé métier unique `{tuple(BUSINESS_KEY)}`: {metadata['join_validation']['output_business_key_unique']}",
-        f"- Métriques globales exclues : {metadata['join_validation']['overall_metrics_excluded']}",
-        f"- Effectif conservé après chaque jointure : {metadata['join_validation']['row_count_after_each_join'] == metadata['output_row_count']}",
-        f"- Extrémités d’arêtes incohérentes : {metadata['join_validation']['edge_metric_endpoint_mismatches']}",
+        f"- Couverture des dates : de {metadata['date_coverage']['min']} à {metadata['date_coverage']['max']}",
+        f"- Services : {', '.join(metadata['services'])}",
+        f"- Unicité de la clé métier `{tuple(BUSINESS_KEY)}` : {metadata['join_validation']['output_business_key_unique']}",
+        f"- Métriques globales du graphe exclues : {metadata['join_validation']['overall_metrics_excluded']}",
+        f"- Nombre de lignes préservé après chaque jointure : {metadata['join_validation']['row_count_after_each_join'] == metadata['output_row_count']}",
+        f"- Incohérences entre extrémités d’arêtes : {metadata['join_validation']['edge_metric_endpoint_mismatches']}",
         "",
         "## Validité du taux d’annulation",
         "",
         f"- Taux valides : {metadata['cancellation_rate_valid_count']:,}",
-        f"- Taux absents : {metadata['cancellation_rate_null_count']:,}",
+        f"- Taux manquants : {metadata['cancellation_rate_null_count']:,}",
         f"- Motifs d’invalidité : `{json.dumps(metadata['cancellation_rate_invalid_reasons'], ensure_ascii=False)}`",
         "",
         "## Retard principal à l’arrivée",
         "",
         f"- Valeurs négatives conservées : {metadata['negative_primary_outcome_count']:,}",
-        f"- Valeurs sous -15 minutes, signalées et conservées : {metadata['extreme_negative_primary_outcome_count']:,}",
+        f"- Valeurs inférieures à -15 minutes, signalées et conservées : {metadata['extreme_negative_primary_outcome_count']:,}",
         "",
         "## Métriques de graphe manquantes",
         "",
@@ -349,7 +354,7 @@ def _quality_report(result: ResearchDataResult) -> str:
         f"- `{column}`: {count:,}"
         for column, count in metadata["missing_graph_metrics"].items()
     )
-    lines += ["", "## Indicateurs qualité", ""]
+    lines += ["", "## Flags de qualité", ""]
     lines.extend(
         f"- `{column}`: {count:,}"
         for column, count in metadata["quality_flag_true_counts"].items()
@@ -371,25 +376,25 @@ def run_research_data_preparation_pipeline(
     metadata_path: str | os.PathLike[str] = DEFAULT_METADATA_PATH,
     report_path: str | os.PathLike[str] = DEFAULT_REPORT_PATH,
 ) -> ResearchDataResult:
-    """Charge les résultats de la phase 1, prépare les données de recherche et les exporte.
+    """Charger les artefacts de la phase 1, préparer le jeu de recherche et exporter les résultats.
 
-    :param observations_path: Chemin Parquet des observations mensuelles issues de la construction.
+    :param observations_path: Chemin du fichier Parquet des observations mensuelles.
     :type observations_path: str | os.PathLike[str]
-    :param edge_metrics_path: Chemin Parquet des métriques d’arêtes de la phase 1.
+    :param edge_metrics_path: Chemin du fichier Parquet des métriques d’arête.
     :type edge_metrics_path: str | os.PathLike[str]
-    :param node_metrics_path: Chemin Parquet des métriques de nœuds de la phase 1.
+    :param node_metrics_path: Chemin du fichier Parquet des métriques de nœud.
     :type node_metrics_path: str | os.PathLike[str]
-    :param output_path: Destination Parquet des données de recherche.
+    :param output_path: Chemin de destination du jeu de recherche Parquet.
     :type output_path: str | os.PathLike[str]
-    :param metadata_path: Destination du fichier JSON de métadonnées.
+    :param metadata_path: Chemin de destination des métadonnées JSON.
     :type metadata_path: str | os.PathLike[str]
-    :param report_path: Destination du rapport qualité Markdown.
+    :param report_path: Chemin de destination du rapport qualité Markdown.
     :type report_path: str | os.PathLike[str]
-    :returns: Données préparées, métadonnées et chemins des fichiers générés.
+    :returns: Données préparées, métadonnées et chemins des artefacts générés.
     :rtype: ResearchDataResult
-    :raises OSError: Si les sources ne peuvent pas être lues ou les résultats écrits.
-    :raises TypeError: Si les colonnes de clé requises ont un type incompatible.
-    :raises ValueError: Si les schémas, clés ou relations de jointure sont invalides.
+    :raises OSError: Si les artefacts source ne peuvent pas être lus ou les sorties écrites.
+    :raises TypeError: Si les colonnes de clé requises utilisent des types non pris en charge.
+    :raises ValueError: Si les schémas, les clés ou les relations de jointure sont invalides.
     """
     input_paths = {
         "observations": Path(observations_path),

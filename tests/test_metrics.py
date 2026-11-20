@@ -1,4 +1,4 @@
-"Tests du calcul des métriques de graphe globales et mensuelles."
+"""Tests du calcul des métriques globales et mensuelles du graphe."""
 
 import json
 
@@ -121,6 +121,9 @@ def test_page_rank_failure_is_null_and_recorded(tmp_path, monkeypatch) -> None:
     monkeypatch.setattr(metrics.nx, "pagerank", fail)
     result = run(tmp_path, paths, alpha=0.9, max_iter=2, tol=1e-8)
     assert result.node_metrics["pagerank"].null_count() == result.node_metrics.height
+    report = result.output_paths["report"].read_text(encoding="utf-8")
+    assert "PageRank est manquant (valeur `None`)" in report
+    assert "il n’est pas remplacé par zéro" in report
     assert (
         result.edge_metrics["source_pagerank"].null_count()
         == result.edge_metrics.height
@@ -189,7 +192,7 @@ def test_invalid_parameters_and_inconsistent_artifacts_raise(tmp_path) -> None:
     )
     bad_path = tmp_path / "bad-edges.parquet"
     bad_edges.write_parquet(bad_path)
-    with pytest.raises(ValueError, match="absents du fichier des nœuds"):
+    with pytest.raises(ValueError, match="absents de l’artefact nodes"):
         run_graph_metrics_pipeline(
             paths[0], bad_path, paths[2], tmp_path / "out", tmp_path / "r.md"
         )
